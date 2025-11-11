@@ -28,7 +28,7 @@ const benefits = [
 
 export default function WhyCrib() {
   return (
-    <section className="py-24 px-6 bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <section className="py-24 px-6 bg-linear-to-br from-slate-900 via-red-900 to-slate-900 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
@@ -46,7 +46,7 @@ export default function WhyCrib() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-sm font-semibold text-purple-400 uppercase tracking-wider mb-4">
+            <h2 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-4">
               Why Choose Crib
             </h2>
             <h3 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
@@ -74,7 +74,7 @@ export default function WhyCrib() {
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                   className="flex items-center gap-3"
                 >
-                  <div className="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-blue-500 flex items-center justify-center shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-linear-to-br from-red-500 to-red-500 flex items-center justify-center shrink-0">
                     <Check className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-white/90 text-lg">{item}</span>
@@ -100,7 +100,7 @@ export default function WhyCrib() {
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group"
               >
-                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-purple-500 to-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-xl bg-linear-to-br from-red-500 to-red-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <benefit.icon className="w-6 h-6 text-white" />
                 </div>
                 <h4 className="text-lg font-bold text-white mb-2">
