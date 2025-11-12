@@ -53,16 +53,34 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl"
           >
-Infrastructure. Engineered for growth.
+            Infrastructure. Engineered for growth.
           </motion.h1>
 
-          <motion.p
+          {/* <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl"
           >
-From strategy to code, Crib merges design, engineering, and growth in one stack.          </motion.p>
+            From strategy to code, Crib merges design, engineering, and growth
+            in one stack.{" "}
+          </motion.p> */}
+               <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="flex flex-wrap gap-3 text-sm text-white/70"
+          >
+            {capabilityPill.map((item) => (
+              <span
+                key={item.label}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur"
+              >
+                <item.icon className="h-4 w-4" />
+                {item.label}
+              </span>
+            ))}
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -86,22 +104,7 @@ From strategy to code, Crib merges design, engineering, and growth in one stack.
             </Button>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap gap-3 text-sm text-white/70"
-          >
-            {capabilityPill.map((item) => (
-              <span
-                key={item.label}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur"
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </span>
-            ))}
-          </motion.div>
+     
         </div>
 
         <motion.div
@@ -119,7 +122,9 @@ From strategy to code, Crib merges design, engineering, and growth in one stack.
                 Connected software, search, and social systems that convert.
               </h3>
               <p className="text-sm text-white/60">
-                Every engagement starts with a unified roadmap across product, marketing, and automation to create compounding impact from day one.
+                Every engagement starts with a unified roadmap across product,
+                marketing, and automation to create compounding impact from day
+                one.
               </p>
             </div>
 
@@ -128,25 +133,35 @@ From strategy to code, Crib merges design, engineering, and growth in one stack.
                 {
                   title: "Launch-ready platforms",
                   metric: "90 days",
-                  description: "Average timeline to ship a custom SaaS or web app MVP.",
+                  description:
+                    "Average timeline to ship a custom SaaS or web app MVP.",
                 },
                 {
                   title: "SEO visibility",
                   metric: "+140%",
-                  description: "Traffic lift from our technical & content search programs.",
+                  description:
+                    "Traffic lift from our technical & content search programs.",
                 },
                 {
                   title: "Social pipeline",
                   metric: "4x",
-                  description: "Increase in qualified leads from multi-channel content systems.",
+                  description:
+                    "Increase in qualified leads from multi-channel content systems.",
                 },
               ].map((card) => (
-                <div key={card.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div
+                  key={card.title}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                >
                   <div className="text-xs font-semibold uppercase tracking-wide text-white/50">
                     {card.title}
                   </div>
-                  <div className="mt-3 text-3xl font-bold text-white">{card.metric}</div>
-                  <p className="mt-2 text-xs leading-relaxed text-white/60">{card.description}</p>
+                  <div className="mt-3 text-3xl font-bold text-white">
+                    {card.metric}
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-white/60">
+                    {card.description}
+                  </p>
                 </div>
               ))}
             </div>
