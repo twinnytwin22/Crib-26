@@ -77,7 +77,7 @@ function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; dura
 
 export default function Results() {
   return (
-    <section id="results" className="bg-gradient-to-b from-white to-[#F4F5F7] py-24 px-6">
+    <section id="results" className="bg-linear-to-b from-white to-[#F4F5F7] py-24 px-6">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -107,17 +107,17 @@ export default function Results() {
               transition={{ delay: index * 0.08, duration: 0.5 }}
               className="group relative h-full overflow-hidden rounded-2xl border border-slate-200/70 bg-white p-8 shadow-lg shadow-slate-200/60"
             >
-              <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${result.gradient} text-white shadow-lg shadow-red-500/30 transition-transform duration-300 group-hover:scale-110`}>
+              <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br ${result.gradient} text-white shadow-lg shadow-red-500/30 transition-transform duration-300 group-hover:scale-110`}>
                 <result.icon className="h-7 w-7" />
               </div>
               <div className={`text-5xl font-bold text-slate-900 md:text-6xl`}>
-                <span className="bg-gradient-to-br from-red-500 to-rose-500 bg-clip-text text-transparent">
+                <span className="bg-linear-to-br from-red-500 to-rose-500 bg-clip-text text-transparent">
                   <AnimatedCounter end={parseInt(result.metric, 10)} suffix={result.suffix} />
                 </span>
               </div>
               <h3 className="mt-4 text-lg font-semibold text-slate-900">{result.label}</h3>
               <p className="mt-2 text-sm text-slate-600">{result.description}</p>
-              <div className={`pointer-events-none absolute -inset-0.5 rounded-2xl bg-gradient-to-br ${result.gradient} opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-20`} />
+              <div className={`pointer-events-none absolute -inset-0.5 rounded-2xl bg-linear-to-br ${result.gradient} opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-20`} />
             </motion.div>
           ))}
         </div>
@@ -157,7 +157,7 @@ export default function Results() {
               transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
               className="group relative overflow-hidden rounded-2xl shadow-xl"
             >
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-4/3 overflow-hidden">
                 <Image
                   src={study.image}
                   alt={study.brand}
@@ -166,7 +166,7 @@ export default function Results() {
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
-              <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent p-6 text-white">
+              <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-950 via-slate-950/70 to-transparent p-6 text-white">
                 <span className="text-xs font-semibold uppercase tracking-[0.2em] text-red-200">
                   {study.industry}
                 </span>

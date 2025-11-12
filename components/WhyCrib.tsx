@@ -68,7 +68,7 @@ export default function WhyCrib() {
                   transition={{ delay: index * 0.08, duration: 0.4 }}
                   className="flex items-center gap-3"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-rose-500">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br from-red-500 to-rose-500">
                     <Check className="h-4 w-4 text-white" />
                   </span>
                   <span className="text-base text-white/80">{item}</span>
@@ -93,7 +93,7 @@ export default function WhyCrib() {
                 transition={{ delay: index * 0.1, duration: 0.45 }}
                 className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white shadow-lg shadow-red-500/10 backdrop-blur"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-rose-500">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-red-500 to-rose-500">
                   <benefit.icon className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mb-2 text-lg font-semibold">{benefit.title}</h3>

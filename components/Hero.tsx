@@ -28,7 +28,7 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden pt-32">
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800"
+        className="absolute inset-0 bg-linear-to-br from-slate-950 via-slate-900 to-slate-800"
         style={{ transform: `translateY(${scrollY * 0.25}px)` }}
       />
       <div className="absolute inset-x-0 top-0 h-[580px] bg-[radial-gradient(circle_at_top,rgba(244,114,182,0.4),transparent_55%)]" />

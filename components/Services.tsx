@@ -50,7 +50,7 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="bg-gradient-to-b from-[#FAFAF9] to-white py-24 px-6">
+    <section id="services" className="bg-linear-to-b from-[#FAFAF9] to-white py-24 px-6">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -79,12 +79,12 @@ export default function Services() {
               whileHover={{ y: -8, transition: { duration: 0.25 } }}
               className="group relative overflow-hidden rounded-2xl border border-slate-200/60 bg-white p-8 shadow-lg shadow-slate-200/50 transition-all duration-300"
             >
-              <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${service.gradient} text-white shadow-lg shadow-red-500/40 transition-transform duration-300 group-hover:scale-110`}>
+              <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br ${service.gradient} text-white shadow-lg shadow-red-500/40 transition-transform duration-300 group-hover:scale-110`}>
                 <service.icon className="h-7 w-7" />
               </div>
               <h3 className="mb-3 text-xl font-semibold text-slate-900">{service.title}</h3>
               <p className="text-slate-600">{service.description}</p>
-              <div className={`pointer-events-none absolute -inset-0.5 rounded-2xl bg-gradient-to-br ${service.gradient} opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-20`} />
+              <div className={`pointer-events-none absolute -inset-0.5 rounded-2xl bg-linear-to-br ${service.gradient} opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-20`} />
             </motion.div>
           ))}
         </div>
