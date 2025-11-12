@@ -32,7 +32,7 @@ export default function Hero() {
             </div>
 
             {/* Floating orbs */}
-            <motion.div
+            {/* <motion.div
                 className="absolute top-20 left-10 w-72 h-72 bg-red-500/20 rounded-full blur-3xl"
                 animate={{
                     y: [0, 30, 0],
@@ -45,7 +45,9 @@ export default function Hero() {
                 }}
             />
             <motion.div
-                className="absolute bottom-20 right-10 w-96 h-96 bg-red-500/20 rounded-full blur-3xl"
+                className="absolute bottom-20 right-10 w-96 h-96
+                //  bg-red-500/20
+                 rounded-full blur-3xl"
                 animate={{
                     y: [0, -40, 0],
                     x: [0, -30, 0],
@@ -55,7 +57,7 @@ export default function Hero() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-            />
+            /> */}
 
             {/* Content */}
             <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">

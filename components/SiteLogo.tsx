@@ -9,7 +9,7 @@ function SiteLogo() {
 
     return (
         <motion.div
-            className="fixed top-4 left-4 z-50"
+            className="fixed top-10 left-16 z-50"
             style={{ scale, opacity }}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -18,8 +18,8 @@ function SiteLogo() {
             <Image
                 src="/crib-26-red-logo.png"
                 alt="Site Logo"
-                width={120}
-                height={40}
+                width={170}
+                height={60}
                 priority
             />
         </motion.div>

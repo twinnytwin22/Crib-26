@@ -84,13 +84,13 @@ export default function Results() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-sm font-semibold text-purple-600 uppercase tracking-wider mb-4">
+          <h2 className="text-sm font-semibold text-red-600 uppercase tracking-wider mb-4">
             Proven Results
           </h2>
           <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
             From Concept to
             <br />
-            <span className="bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-rose-600 to-red-600 bg-clip-text text-transparent">
               Conversion
             </span>
           </h3>

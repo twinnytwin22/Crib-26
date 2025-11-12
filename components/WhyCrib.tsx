@@ -28,7 +28,7 @@ const benefits = [
 
 export default function WhyCrib() {
   return (
-    <section className="py-24 px-6 bg-linear-to-br from-red-900 via-red-800 to-red-900 relative overflow-hidden">
+    <section className="py-24 px-6 bg-black relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{

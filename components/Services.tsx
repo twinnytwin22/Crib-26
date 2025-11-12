@@ -83,7 +83,7 @@ export default function Services() {
               </div>
 
               {/* Content */}
-              <h4 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-purple-600 transition-colors">
+              <h4 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-black transition-colors">
                 {service.title}
               </h4>
               <p className="text-slate-600 leading-relaxed">

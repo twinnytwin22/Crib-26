@@ -41,13 +41,13 @@ export default function Testimonials() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-sm font-semibold text-purple-600 uppercase tracking-wider mb-4">
+          <h2 className="text-sm font-semibold text-red-600 uppercase tracking-wider mb-4">
             Client Love
           </h2>
           <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
             Trusted by Brands
             <br />
-            <span className="bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-rose-600 to-red-600 bg-clip-text text-transparent">
               Who Demand Results
             </span>
           </h3>
@@ -66,7 +66,7 @@ export default function Testimonials() {
               <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
                 {/* Quote icon */}
                 <div className="mb-6">
-                  <Quote className="w-10 h-10 text-purple-200" />
+                  <Quote className="w-10 h-10 text-amber-100" />
                 </div>
 
                 {/* Rating */}
@@ -111,14 +111,14 @@ export default function Testimonials() {
           transition={{ delay: 0.5, duration: 0.6 }}
           className="mt-16 text-center"
         >
-          <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-linear-to-r from-purple-600 to-blue-600 rounded-2xl p-8 text-white">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-4 bg-linear-to-r from-rose-600 to-red-600 rounded-2xl p-8 text-white">
             <div className="grow text-left">
               <h4 className="text-2xl font-bold mb-2">Ready to Join Them?</h4>
               <p className="text-white/90">Let's talk about your growth goals</p>
             </div>
             <button
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold hover:bg-purple-50 transition-colors whitespace-nowrap"
+              className="bg-white text-red-600 px-8 py-3 rounded-full font-semibold hover:bg-red-50 transition-colors whitespace-nowrap"
             >
               Start Your Journey
             </button>
