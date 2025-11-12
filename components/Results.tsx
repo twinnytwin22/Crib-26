@@ -1,58 +1,60 @@
-'use client';
-import React, { useState, useEffect, useRef } from "react";
+"use client";
+
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { TrendingUp, Users, VideoIcon, Target } from "lucide-react";
+import { CircuitBoard, Globe, Layers3, TrendingUp } from "lucide-react";
 
 const results = [
   {
-    icon: TrendingUp,
-    metric: "120",
+    icon: Layers3,
+    metric: "68",
     suffix: "%",
-    label: "Average Engagement Boost",
-    description: "Across all client accounts in 90 days",
-    gradient: "from-purple-500 to-pink-500",
+    label: "Faster go-lives",
+    description: "Average reduction in time-to-launch for new software and web products.",
+    gradient: "from-red-500 to-rose-500",
   },
   {
-    icon: VideoIcon,
+    icon: Globe,
+    metric: "140",
+    suffix: "%",
+    label: "Organic growth",
+    description: "SEO visibility lift in the first six months for growth-stage teams.",
+    gradient: "from-red-500 to-rose-500",
+  },
+  {
+    icon: TrendingUp,
     metric: "4",
     suffix: "x",
-    label: "Content Output Multiplier",
-    description: "More content, same budget",
-    gradient: "from-blue-500 to-cyan-500",
+    label: "Social-sourced pipeline",
+    description: "Increase in qualified demos attributed to multi-channel content systems.",
+    gradient: "from-red-500 to-rose-500",
   },
   {
-    icon: Users,
-    metric: "30",
+    icon: CircuitBoard,
+    metric: "92",
     suffix: "%",
-    label: "More Organic Reach",
-    description: "Without paid advertising spend",
-    gradient: "from-pink-500 to-rose-500",
-  },
-  {
-    icon: Target,
-    metric: "85",
-    suffix: "%",
-    label: "Client Retention Rate",
-    description: "Partners who stay and grow with us",
-    gradient: "from-indigo-500 to-purple-500",
+    label: "Partner retention",
+    description: "Clients who renew for ongoing optimization after the first engagement.",
+    gradient: "from-red-500 to-rose-500",
   },
 ];
 
 function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
   const [count, setCount] = useState(0);
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement | null>(null);
   const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
     if (!isInView) return;
 
-    let startTime: any;
+    let startTime: number | null = null;
     let animationFrame: number;
 
-    const animate = (currentTime: any) => {
+    const animate = (currentTime: number) => {
       if (!startTime) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / (duration * 1000), 1);
-      
+
       setCount(Math.floor(progress * end));
 
       if (progress < 1) {
@@ -75,97 +77,76 @@ function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; dura
 
 export default function Results() {
   return (
-    <section className="py-24 px-6 bg-linear-to-b from-white to-[#FAFAF9]">
-      <div className="max-w-7xl mx-auto">
+    <section id="results" className="bg-gradient-to-b from-white to-[#F4F5F7] py-24 px-6">
+      <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center"
         >
-          <h2 className="text-sm font-semibold text-red-600 uppercase tracking-wider mb-4">
-            Proven Results
+          <div className="mb-4 text-sm font-semibold uppercase tracking-widest text-red-600">
+            Impact by the numbers
+          </div>
+          <h2 className="mb-6 text-4xl font-bold text-slate-900 md:text-5xl lg:text-6xl">
+            Outcome-focused engagements, not vanity metrics.
           </h2>
-          <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
-            From Concept to
-            <br />
-            <span className="bg-linear-to-r from-rose-600 to-red-600 bg-clip-text text-transparent">
-              Conversion
-            </span>
-          </h3>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Real metrics from real brands who've transformed their social presence with Crib.
+          <p className="mx-auto max-w-3xl text-xl text-slate-600">
+            From platform launches to omnichannel growth programs, we build measurable momentum that keeps compounding long after the first release.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {results.map((result, index) => (
             <motion.div
               key={result.label}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-              className="relative group"
+              transition={{ delay: index * 0.08, duration: 0.5 }}
+              className="group relative h-full overflow-hidden rounded-2xl border border-slate-200/70 bg-white p-8 shadow-lg shadow-slate-200/60"
             >
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
-                {/* Icon */}
-                <div className={`w-14 h-14 rounded-xl bg-linear-to-br ${result.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <result.icon className="w-7 h-7 text-white" />
-                </div>
-
-                {/* Metric */}
-                <div className={`text-5xl md:text-6xl font-bold bg-linear-to-br ${result.gradient} bg-clip-text text-transparent mb-3`}>
-                  <AnimatedCounter 
-                    end={parseInt(result.metric)} 
-                    suffix={result.suffix}
-                  />
-                </div>
-
-                {/* Label */}
-                <h4 className="text-lg font-bold text-slate-900 mb-2">
-                  {result.label}
-                </h4>
-
-                {/* Description */}
-                <p className="text-slate-600 text-sm leading-relaxed mt-auto">
-                  {result.description}
-                </p>
-
-                {/* Hover glow effect */}
-                <div className={`absolute -inset-0.5 bg-linear-to-br ${result.gradient} rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300 -z-10`} />
+              <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${result.gradient} text-white shadow-lg shadow-red-500/30 transition-transform duration-300 group-hover:scale-110`}>
+                <result.icon className="h-7 w-7" />
               </div>
+              <div className={`text-5xl font-bold text-slate-900 md:text-6xl`}>
+                <span className="bg-gradient-to-br from-red-500 to-rose-500 bg-clip-text text-transparent">
+                  <AnimatedCounter end={parseInt(result.metric, 10)} suffix={result.suffix} />
+                </span>
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-slate-900">{result.label}</h3>
+              <p className="mt-2 text-sm text-slate-600">{result.description}</p>
+              <div className={`pointer-events-none absolute -inset-0.5 rounded-2xl bg-gradient-to-br ${result.gradient} opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-20`} />
             </motion.div>
           ))}
         </div>
 
-        {/* Case study cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-16 grid md:grid-cols-3 gap-6"
+          className="mt-16 grid gap-6 md:grid-cols-3"
         >
           {[
             {
-              brand: "TechFlow",
-              industry: "SaaS",
-              result: "From 2K to 50K followers in 6 months",
-              image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop",
+              brand: "NovaStack",
+              industry: "B2B SaaS",
+              result: "Rebuilt product onboarding & marketing site, increasing activation by 36%.",
+              image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop",
             },
             {
-              brand: "WellnessHub",
-              industry: "Health & Fitness",
-              result: "3.2M impressions with repurposed content",
-              image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&auto=format&fit=crop",
+              brand: "Brightline Health",
+              industry: "Healthcare",
+              result: "Technical SEO and authority content program delivering +180% organic sessions.",
+              image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop",
             },
             {
-              brand: "UrbanStyle",
-              industry: "Fashion E-commerce",
-              result: "200% increase in social-driven sales",
-              image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&auto=format&fit=crop",
+              brand: "Orbit Commerce",
+              industry: "E-commerce",
+              result: "Automated social + CRM workflows generating 4.5x more qualified leads.",
+              image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&auto=format&fit=crop",
             },
           ].map((study, index) => (
             <motion.div
@@ -174,25 +155,23 @@ export default function Results() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
-              className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
+              className="group relative overflow-hidden rounded-2xl shadow-xl"
             >
-              <div className="aspect-4/3 overflow-hidden">
-                <img 
-                  src={study.image} 
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <Image
+                  src={study.image}
                   alt={study.brand}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
-              <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/60 to-transparent flex flex-col justify-end p-6">
-                <div className="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-2">
+              <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent p-6 text-white">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-red-200">
                   {study.industry}
-                </div>
-                <h4 className="text-2xl font-bold text-white mb-2">
-                  {study.brand}
-                </h4>
-                <p className="text-white/90">
-                  {study.result}
-                </p>
+                </span>
+                <h3 className="mt-2 text-2xl font-semibold">{study.brand}</h3>
+                <p className="mt-2 text-sm text-white/80">{study.result}</p>
               </div>
             </motion.div>
           ))}
