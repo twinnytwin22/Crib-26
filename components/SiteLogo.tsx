@@ -20,7 +20,7 @@ export default function SiteLogo() {
             fill
             priority
             sizes="(min-width: 768px) 160px, 128px"
-            className="object-contain  [&_svg]:text-red-600 [&_path]:fill-red-600"
+            className="object-contain brightness-125"
           />
         </div>
   

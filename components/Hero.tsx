@@ -53,7 +53,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl"
           >
-            Software, websites & growth engines engineered for modern brands.
+Infrastructure. Engineered for growth.
           </motion.h1>
 
           <motion.p
@@ -62,8 +62,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl"
           >
-            Crib delivers sleek digital products, SEO-first web experiences, and audience-building social media systems. We combine design, engineering, and performance marketing to help you launch faster and scale smarter.
-          </motion.p>
+From strategy to code, Crib merges design, engineering, and growth in one stack.          </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

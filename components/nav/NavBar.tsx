@@ -31,12 +31,12 @@ export default function NavBar() {
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="fixed inset-x-0 top-0 z-50"
+      className="fixed inset-x-0 top-0 z-50 backdrop-blur"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 rounded-full bg-white/70 px-6 py-4 shadow-sm ring-1 ring-slate-200/60 backdrop-blur md:mt-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 shadow-sm  backdrop-blur md:mt-6">
         <SiteLogo />
 
-        <nav className="hidden items-center gap-10 text-sm font-medium text-slate-700 md:flex">
+        <nav className="hidden items-center gap-10 text-sm font-medium text-slate-100 md:flex">
           {navLinks.map((link) => (
             <button
               key={link.href}
