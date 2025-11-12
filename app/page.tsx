@@ -6,6 +6,7 @@ import Services from "@/components/Services";
 import Testimonials from "@/components/Testimonials";
 import React, { useEffect } from "react";
 import WhyCrib from "@/components/WhyCrib";
+import SiteLogo from "@/components/SiteLogo";
 
 export default function Home() {
   useEffect(() => {
@@ -19,6 +20,7 @@ export default function Home() {
 
   return (
     <div className="bg-[#FAFAF9] min-h-screen">
+      <SiteLogo />
       <Hero />
       <Services />
       <WhyCrib />

@@ -28,7 +28,7 @@ const benefits = [
 
 export default function WhyCrib() {
   return (
-    <section className="py-24 px-6 bg-linear-to-br from-slate-900 via-red-900 to-slate-900 relative overflow-hidden">
+    <section className="py-24 px-6 bg-linear-to-br from-red-900 via-red-800 to-red-900 relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
@@ -46,7 +46,7 @@ export default function WhyCrib() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-4">
+            <h2 className="text-sm font-semibold text-amber-100 uppercase tracking-wider mb-4">
               Why Choose Crib
             </h2>
             <h3 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">

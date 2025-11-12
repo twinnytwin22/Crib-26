@@ -4,35 +4,35 @@ import { motion } from "framer-motion";
 import { Sparkles, Video, BarChart3, Users, Target } from "lucide-react";
 
 const services = [
-  {
-    icon: Sparkles,
-    title: "Content Strategy & Automation",
-    description: "Data-driven content strategies that scale. We automate the creative process while maintaining your unique brand voice.",
-    gradient: "from-purple-500 to-pink-500",
-  },
-  {
-    icon: Video,
-    title: "Short-Form Video Clipping & Repurposing",
-    description: "Turn long-form content into viral clips. Maximize your reach across TikTok, Reels, Shorts, and beyond.",
-    gradient: "from-blue-500 to-cyan-500",
-  },
+  // {
+  //   icon: Sparkles,
+  //   title: "Content Strategy & Automation",
+  //   description: "Data-driven content strategies that scale. We automate the creative process while maintaining your unique brand voice.",
+  //   gradient: "from-purple-500 to-pink-500",
+  // },
+  // {
+  //   icon: Video,
+  //   title: "Short-Form Video Clipping & Repurposing",
+  //   description: "Turn long-form content into viral clips. Maximize your reach across TikTok, Reels, Shorts, and beyond.",
+  //   gradient: "from-blue-500 to-cyan-500",
+  // },
   {
     icon: Users,
     title: "Social Media Management",
     description: "End-to-end social media execution. From scheduling to engagement, we handle it all so you can focus on growth.",
-    gradient: "from-pink-500 to-rose-500",
+    gradient: "from-red-500 to-rose-500",
   },
   {
     icon: BarChart3,
     title: "Performance Analytics & SEO",
     description: "Deep insights that drive decisions. Track what matters and optimize for organic visibility and conversions.",
-    gradient: "from-indigo-500 to-purple-500",
+    gradient: "from-red-500 to-rose-500",
   },
   {
     icon: Target,
     title: "Audience Growth & Brand Positioning",
     description: "Build a loyal community around your brand. Strategic positioning that turns followers into customers.",
-    gradient: "from-cyan-500 to-blue-500",
+    gradient: "from-red-500 to-rose-500",
   },
 ];
 
@@ -47,13 +47,13 @@ export default function Services() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-sm font-semibold text-purple-600 uppercase tracking-wider mb-4">
+          <h2 className="text-sm font-semibold text-red-600 uppercase tracking-wider mb-4">
             What We Do
           </h2>
           <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
             Your Content Should Work
             <br />
-            <span className="bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
               Smarter, Not Harder
             </span>
           </h3>

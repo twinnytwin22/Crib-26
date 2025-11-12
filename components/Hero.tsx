@@ -21,14 +21,14 @@ export default function Hero() {
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
             {/* Background image with parallax */}
             <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat grayscale"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{
-                    backgroundImage: `url('https://cdn.sanity.io/images/6d8w1e5g/production/eb038251c03c29753beec89d9399a187335a7be5-5760x3240.jpg')`,
+                    // backgroundImage: `url('https://cdn.sanity.io/images/6d8w1e5g/production/eb038251c03c29753beec89d9399a187335a7be5-5760x3240.jpg')`,
                     transform: `translateY(${scrollY * 0.5}px)`,
                 }}
             >
                 {/* Overlay for better text readability */}
-                <div className="absolute inset-0 bg-black/10" />
+                <div className="absolute inset-0 bg-amber-600/10" />
             </div>
 
             {/* Floating orbs */}
@@ -70,21 +70,21 @@ export default function Hero() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.2 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-lg border border-white/20 rounded-full text-white text-sm"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-black/10 backdrop-blur-lg border border-white/20 rounded-full text-black text-sm"
                     >
                         <Sparkles className="w-4 h-4" />
                         <span>Where Creativity Meets Growth</span>
                     </motion.div>
 
                     {/* Main headline */}
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-tight tracking-tight">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-black leading-tight tracking-tight">
                         Transform Ideas
                         <br />
-                        Into <span className="bg-linear-to-r from-red-400 via-pink-400 to-red-400 bg-clip-text text-transparent">Measurable Growth</span>
+                        Into <span className="bg-linear-to-r from-red-500 via-rose-500 to-red-500 bg-clip-text text-transparent">Measurable Growth</span>
                     </h1>
 
                     {/* Subtext */}
-                    <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed">
+                    <p className="text-xl md:text-2xl text-black/80 max-w-3xl mx-auto leading-relaxed">
                         Crib helps brands scale social media and SEO visibility through creative automation, 
                         smart analytics, and data-driven strategies that deliver real results.
                     </p>
@@ -103,7 +103,7 @@ export default function Hero() {
                         //  variant="outline"
                          // size="lg"
                             onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-                            className="bg-white/10 backdrop-blur-lg border-white/20 text-white hover:bg-white/20 px-8 py-6 text-lg rounded-full"
+                            className="bg-black/10 backdrop-blur-lg border-black/20 text-black hover:bg-black/20 px-8 py-6 text-lg rounded-full"
                         >
                             See What We Do
                         </Button>
@@ -117,16 +117,16 @@ export default function Hero() {
                         className="grid grid-cols-3 gap-8 pt-12 max-w-3xl mx-auto"
                     >
                         <div className="text-center">
-                            <div className="text-3xl md:text-4xl font-bold text-white mb-2">120%+</div>
-                            <div className="text-sm text-white/60">Avg. Engagement Boost</div>
+                            <div className="text-3xl md:text-4xl font-bold text-black mb-2">120%+</div>
+                            <div className="text-sm text-black/60">Avg. Engagement Boost</div>
                         </div>
-                        <div className="text-center border-x border-white/20">
-                            <div className="text-3xl md:text-4xl font-bold text-white mb-2">4x</div>
-                            <div className="text-sm text-white/60">Content Output</div>
+                        <div className="text-center border-x border-black/20">
+                            <div className="text-3xl md:text-4xl font-bold text-black mb-2">4x</div>
+                            <div className="text-sm text-black/60">Content Output</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-3xl md:text-4xl font-bold text-white mb-2">30%+</div>
-                            <div className="text-sm text-white/60">Organic Reach</div>
+                            <div className="text-3xl md:text-4xl font-bold text-black mb-2">30%+</div>
+                            <div className="text-sm text-black/60">Organic Reach</div>
                         </div>
                     </motion.div>
                 </motion.div>
@@ -140,7 +140,7 @@ export default function Hero() {
             >
                 <div className="w-6 h-10 border-2 border-white/30 rounded-full p-1">
                     <motion.div
-                        className="w-1 h-2 bg-white rounded-full mx-auto"
+                        className="w-1 h-2 bg-black rounded-full mx-auto"
                         animate={{ y: [0, 16, 0] }}
                         transition={{ duration: 2, repeat: Infinity }}
                     />
