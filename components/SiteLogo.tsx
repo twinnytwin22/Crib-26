@@ -13,19 +13,17 @@ export default function SiteLogo() {
       transition={{ duration: 0.4 }}
     >
       <Link href="/" className="flex items-center gap-3">
-        <div className="relative h-10 w-32 md:w-40">
+        <div className="relative h-10 w-32 md:w-40 [&_svg]:text-red-600 [&_path]:fill-red-600">
           <Image
-            src="/crib-26-red-logo.png"
+            src="/CRIB_LOGO_RED.svg"
             alt="Crib logo"
             fill
             priority
             sizes="(min-width: 768px) 160px, 128px"
-            className="object-contain"
+            className="object-contain  [&_svg]:text-red-600 [&_path]:fill-red-600"
           />
         </div>
-        <span className="hidden font-semibold tracking-wider text-slate-900 md:inline">
-          Crib Digital
-        </span>
+  
       </Link>
     </motion.div>
   );

@@ -1,3 +1,4 @@
+@import url("https://use.typekit.net/smr3juh.css");
 @import "tailwindcss";
 
 :root {
@@ -23,4 +24,17 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+font-family: "paralucent-text", sans-serif;
+font-weight: 700;
+font-style: normal;
+}
+
+Button {
+font-family: "paralucent-text", sans-serif;
+font-weight: 700;
+font-style: normal;
+text-transform: uppercase;
 }
