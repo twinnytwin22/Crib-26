@@ -4,7 +4,7 @@ export const stripe = new Stripe(
   process.env.STRIPE_SECRET_KEY_LIVE ?? process.env.STRIPE_SECRET_KEY ?? "",
   {
     // https://github.com/stripe/stripe-node#configuration
-    apiVersion: "2024-06-20",
+    apiVersion: "2025-10-29.clover",
     // Register this as an official Stripe plugin.
     // https://stripe.com/docs/building-plugins#setappinfo
     appInfo: {
