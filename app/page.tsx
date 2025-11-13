@@ -11,13 +11,14 @@ import { Suspense } from "react";
 
 // Metadata is now in layout.tsx to avoid duplication
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 0; // Revalidate every hour
 
 export default async function Home() {
   const blogPostsPromise = getBlogPosts();
 
   return (
     <div>
+      <Suspense>
       <NavBar />
       <Hero />
       <Services />
@@ -25,9 +26,10 @@ export default async function Home() {
       <Results />
       <Testimonials />
       <Suspense fallback={<BlogPostsSkeleton />}>
-        <BlogPosts blogPostsPromise={blogPostsPromise} />
+      <BlogPosts blogPostsPromise={blogPostsPromise} />
       </Suspense>
       <ContactCTA />
+      </Suspense>
     </div>
   );
 }

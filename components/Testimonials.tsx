@@ -34,7 +34,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="bg-gradient-to-br from-slate-100 via-white to-slate-50 py-24 px-6">
+    <section id="testimonials" className="bg-linear-to-br from-slate-100 via-white to-slate-50 py-24 px-6">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -92,7 +92,7 @@ export default function Testimonials() {
                     </div>
                   </div>
                 </div>
-                <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-red-500/5 to-rose-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br from-red-500/5 to-rose-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
             </motion.div>
           ))}
@@ -105,7 +105,7 @@ export default function Testimonials() {
           transition={{ delay: 0.5, duration: 0.6 }}
           className="mt-16 text-center"
         >
-          <div className="inline-flex flex-col items-center gap-4 rounded-3xl bg-gradient-to-r from-red-500 to-rose-500 p-8 text-white shadow-xl shadow-red-500/30 sm:flex-row sm:gap-6">
+          <div className="inline-flex flex-col items-center gap-4 rounded-3xl bg-linear-to-r from-red-500 to-rose-500 p-8 text-white shadow-xl shadow-red-500/30 sm:flex-row sm:gap-6">
             <div className="text-left">
               <h3 className="text-2xl font-semibold">Let’s map your next release.</h3>
               <p className="text-white/80">Co-build a roadmap for software, SEO, and social in one session.</p>
