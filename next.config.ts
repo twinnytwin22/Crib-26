@@ -21,6 +21,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  compress: true, // Enable gzip compression
   experimental: {},
   images: {
     remotePatterns: [
