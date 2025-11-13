@@ -1,0 +1,128 @@
+# CRIB Network
+
+> Connect. Revolutionize. Innovate. Boost.
+
+## About
+
+CRIB is a full-stack digital growth partner specializing in custom software development, conversion-driven websites, SEO strategy, and social media acceleration. We build the systems and platforms your next stage of growth demands.
+
+## Services
+
+### Custom Software Platforms
+- Design, engineer, and launch scalable SaaS products
+- Internal tools and customer portals
+- Modern tech stacks (Next.js, React, TypeScript)
+- Full-stack development
+
+### Conversion-Driven Websites
+- Lightning-fast marketing sites
+- Digital experiences optimized for conversions
+- Mobile-responsive design
+- Performance-optimized architecture
+
+### SEO & Content Architecture
+- Technical SEO optimization
+- Content strategy and planning
+- Marketing automation
+- Compound traffic growth strategies
+
+### Social Media Acceleration
+- Always-on content engines
+- Insight-led social strategies
+- Multi-channel audience growth
+- Community building and engagement
+
+### Automation & Integrations
+- CRM integrations
+- Data warehouse connections
+- Marketing tool automation
+- No-code and custom solutions
+
+### Growth Operations
+- Experimentation programs
+- Analytics and reporting
+- Data-driven decision frameworks
+- Performance metrics tracking
+
+## Why Choose CRIB
+
+### Unified Product & Marketing
+Product strategists, engineers, and growth leads work in integrated pods to ensure launches are cohesive from code to campaign.
+
+### Modular Delivery
+Sprint-based roadmaps keep software, web, SEO, and social initiatives shipping every two weeks without bottlenecks.
+
+### Data-Backed Decisions
+Live dashboards, attribution models, and experimentation frameworks translate insights into actionable next steps.
+
+### Momentum After Launch
+Retainers focused on iteration—support, optimization, and enablement ensure your team is never left stranded.
+
+## Results & Impact
+
+- **68% faster go-lives**: Average reduction in time-to-launch for new software and web products
+- **140% organic growth**: SEO visibility lift in the first six months for growth-stage teams
+- **4x social-sourced pipeline**: Increase in qualified demos attributed to multi-channel content systems
+- **92% partner retention**: Clients who renew for ongoing optimization after the first engagement
+
+## Technology Stack
+
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- Sanity CMS
+- Supabase
+- Stripe
+- Radix UI
+
+## Contact
+
+Website: https://cribnetwork.io
+Email: Available via contact form on website
+
+## Key Pages
+
+- Homepage: / - Overview of services and capabilities
+- Blog: /post/[slug] - Industry insights and updates
+- Privacy Policy: /privacy-policy
+- Terms of Service: /terms
+
+## Core Capabilities
+
+- High-performing websites
+- Custom software workflows
+- SEO & social growth strategies
+- Product thinking and creative storytelling
+- Performance marketing
+- Full customer journey optimization
+
+## Target Audience
+
+- Growth-stage startups
+- B2B SaaS companies
+- E-commerce businesses
+- Healthcare technology companies
+- Businesses needing digital transformation
+- Companies seeking omnichannel growth
+
+## Founder
+
+Randal Herndon
+- Full stack developer
+- Educator
+- CEO, CRIB LLC
+
+## API Endpoints
+
+- POST /api/contact - Contact form submission endpoint
+
+## SEO & Keywords
+
+Focus areas: web development, software development, SEO optimization, social media marketing, digital growth, SaaS development, conversion optimization, marketing automation, growth operations, Next.js development
+
+---
+
+Last updated: November 2025
+Generated for LLM consumption per llms.txt specification
