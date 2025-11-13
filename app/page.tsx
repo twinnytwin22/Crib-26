@@ -31,10 +31,6 @@ export const metadata = {
   },
 };
 
-<<<<<<< HEAD
-=======
-
->>>>>>> parent of 2206692 (update)
 export default async function Home() {
   const blogPostsPromise = getBlogPosts();
 
@@ -62,21 +58,4 @@ async function BlogPosts({
   const response = await blogPostsPromise;
   const blogPosts = response.res || [];
   return <BlogPostsPreview blogPosts={blogPosts} />;
-<<<<<<< HEAD
-}
-
-function BlogPostsSkeleton() {
-  return (
-    <section className="bg-linear-to-b from-white to-[#F4F5F7] py-24 px-6">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid gap-6 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-2xl bg-slate-200 aspect-4/3 animate-pulse" />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-=======
->>>>>>> parent of 2206692 (update)
 }

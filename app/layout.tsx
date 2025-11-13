@@ -3,11 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from '@next/third-parties/google'
-<<<<<<< HEAD
 import { WebVitals } from '@/components/WebVitals'
-=======
-
->>>>>>> parent of 2206692 (update)
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +25,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-<<<<<<< HEAD
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
@@ -40,13 +35,6 @@ export default function RootLayout({
       >
         <WebVitals />
         {gaId && <GoogleAnalytics gaId={gaId} />}
-=======
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-              <GoogleAnalytics gaId={gaId} />
-
->>>>>>> parent of 2206692 (update)
         {children}
       </body>
     </html>
