@@ -34,14 +34,55 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
       },
     ],
-    // Remove the deprecated domains field and loaderFile if not needed
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   reactStrictMode: true,
+  poweredByHeader: false, // Remove X-Powered-By header
   async headers() {
     return [
       {
         source: "/(.*)",
-        headers: securityHeaders,
+        headers: [
+          ...securityHeaders,
+          {
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+        ],
+      },
+      // Cache static assets
+      {
+        source: "/fonts/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
       },
       {
         source: "/api/(.*)",
@@ -59,13 +100,9 @@ const nextConfig: NextConfig = {
             value: "Content-Type, Authorization",
           },
           {
-            key: "Accept-Encoding",
-            value: "gzip, deflate, br",
+            key: "Cache-Control",
+            value: "public, s-maxage=60, stale-while-revalidate=30",
           },
-          {
-            key: 'Content-Encoding',
-            value: 'gzip'
-          }
         ],
       },
     ];

@@ -1,3 +1,13 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://cribnetwork.io/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 0
+
+# Specific bot rules
 User-agent: Googlebot
 Allow: /
 
@@ -8,7 +18,4 @@ User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
-Allow: /
-
-User-agent: *
 Allow: /
