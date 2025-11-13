@@ -2,6 +2,7 @@ import allKeywords from "@/lib/seoKeywords";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -36,6 +37,8 @@ export const metadata = {
   },
 };
 
+const gaId:string = process.env.GA_TAG || process.env.NEXT_PUBLIC_GA_TAG ||"";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -46,6 +49,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+              <GoogleAnalytics gaId={gaId} />
+
         {children}
       </body>
     </html>
