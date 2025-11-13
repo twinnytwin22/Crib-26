@@ -6,7 +6,7 @@ import Testimonials from "@/components/Testimonials";
 import WhyCrib from "@/components/WhyCrib";
 import NavBar from "@/components/nav/NavBar";
 import BlogPostsPreview from "@/components/BlogPreview";
-import { getBlogPosts } from "@/lib/providers/sanity/sanity";
+import { getBlogPosts } from "@/lib/providers/sanity/sanity"
 
 export default async function Home() {
     const response = await getBlogPosts();
