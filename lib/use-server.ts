@@ -1,5 +1,5 @@
 "use server";
-import { supabaseAdmin } from "@/lib/providers/supabase/supabase-lib-admin";
+//import { supabaseAdmin } from "@/lib/providers/supabase/supabase-lib-admin";
 import { cookies } from "next/headers";
 import { v4 as uuid } from "uuid";
 
@@ -226,59 +226,59 @@ export const addMewSong = async ({ updates }: any) => {
   }
 };
 
-export async function downloadItem({
-  path,
-  bucket,
-}: {
-  path: string;
-  bucket: string;
-}) {
-  try {
-    const { data, error } = await supabaseAdmin.storage
-      .from(bucket)
-      .download(path);
-    if (error) {
-      throw error;
-    }
+// export async function downloadItem({
+//   path,
+//   bucket,
+// }: {
+//   path: string;
+//   bucket: string;
+// }) {
+//   try {
+//     const { data, error } = await supabaseAdmin.storage
+//       .from(bucket)
+//       .download(path);
+//     if (error) {
+//       throw error;
+//     }
 
-    const url = URL.createObjectURL(data);
-    return url;
-  } catch (error) {
-    console.log("Error downloading image: ", error);
-  }
-}
+//     const url = URL.createObjectURL(data);
+//     return url;
+//   } catch (error) {
+//     console.log("Error downloading image: ", error);
+//   }
+// }
 
-export const uploadFile = async ({
-  event,
-  bucket,
-}: {
-  event: any;
-  bucket: string;
-}) => {
-  try {
-    if (!event.target.files || event.target.files.length === 0) {
-      throw new Error("You must select an image to upload.");
-    }
-    const uid = uuid();
-    const file = event.target.files[0];
-    const fileExt = file.name.split(".").pop();
-    const filePath = `${uid}.${fileExt}`;
+// export const uploadFile = async ({
+//   event,
+//   bucket,
+// }: {
+//   event: any;
+//   bucket: string;
+// }) => {
+//   try {
+//     if (!event.target.files || event.target.files.length === 0) {
+//       throw new Error("You must select an image to upload.");
+//     }
+//     const uid = uuid();
+//     const file = event.target.files[0];
+//     const fileExt = file.name.split(".").pop();
+//     const filePath = `${uid}.${fileExt}`;
 
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from(bucket)
-      .upload(filePath, file);
+//     const { error: uploadError } = await supabaseAdmin.storage
+//       .from(bucket)
+//       .upload(filePath, file);
 
-    if (uploadError) {
-      throw uploadError;
-    }
+//     if (uploadError) {
+//       throw uploadError;
+//     }
 
-    return filePath;
-  } catch (error) {
-    alert(JSON.stringify(error));
-  } finally {
-    //setUploading(false)
-  }
-};
+//     return filePath;
+//   } catch (error) {
+//     alert(JSON.stringify(error));
+//   } finally {
+//     //setUploading(false)
+//   }
+// };
 
 export {
   fetchCreators, fetchProfileForEvent, fetchProfilesForDrops, fetchUserEnrollments,
