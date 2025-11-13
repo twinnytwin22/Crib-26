@@ -6,12 +6,12 @@
   --foreground: #171717;
 }
 
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 /* 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -42,4 +42,22 @@ p, span, li, a {
 font-family: "paralucent-text", sans-serif;
 font-weight: 400;
 font-style: normal;
+}
+
+/* Animation Utilities (hydration-safe: only class-based, deterministic HTML) */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes bounceSlow {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+  .animate-fade-slide { animation: fadeSlide .6s ease forwards; }
+  .animate-bounce-slow { animation: bounceSlow 2.2s ease-in-out infinite; }
+  /* Delay helpers */
+  .delay-100 { animation-delay: .1s; }
+  .delay-200 { animation-delay: .2s; }
+  .delay-300 { animation-delay: .3s; }
 }

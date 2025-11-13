@@ -5,9 +5,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Globe2, Layers, LineChart, Sparkles } from "lucide-react";
 
+// Capability / value shorthand pills (variant 6 style)
 const capabilityPill = [
-  { icon: Globe2, label: "High-performing websites" },
-  { icon: Layers, label: "Custom software workflows" },
+  { icon: Globe2, label: "High-converting websites" },
+  { icon: Layers, label: "SaaS MVP delivery" },
   { icon: LineChart, label: "SEO & social growth" },
 ];
 
@@ -53,19 +54,20 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl"
           >
-            Infrastructure. Engineered for growth.
+            Unified Platform + Growth Strategy, Under One Roof
           </motion.h1>
 
-          {/* <motion.p
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl"
           >
-            From strategy to code, Crib merges design, engineering, and growth
-            in one stack.{" "}
-          </motion.p> */}
-               <motion.div
+            We deliver conversion-driven sites, SaaS MVPs, and full-stack
+            integrations across web, software, social, and business tech to
+            accelerate qualified pipeline.
+          </motion.p>
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
@@ -92,7 +94,7 @@ export default function Hero() {
               onClick={() => handleScrollTo("contact")}
               className="group rounded-full bg-red-500 px-8 py-6 text-base font-semibold text-white shadow-lg shadow-red-500/30 transition hover:bg-red-600"
             >
-              Schedule a strategy session
+              Book a Strategy Session
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button
@@ -100,11 +102,9 @@ export default function Hero() {
               onClick={() => handleScrollTo("services")}
               className="rounded-full border-white/40 bg-transparent px-8 py-6 text-base font-semibold text-white hover:border-white hover:bg-white/10"
             >
-              Explore solutions
+              View Services
             </Button>
           </motion.div>
-
-     
         </div>
 
         <motion.div
@@ -116,38 +116,39 @@ export default function Hero() {
           <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 text-white shadow-2xl backdrop-blur">
             <div className="mb-8 flex flex-col gap-4">
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/60">
-                Experience pillars
+                Outcomes We Engineer
               </span>
               <h3 className="text-2xl font-semibold leading-snug text-white">
-                Connected software, search, and social systems that convert.
+                Product, site & acquisition working as one.
               </h3>
               <p className="text-sm text-white/60">
-                Every engagement starts with a unified roadmap across product,
-                marketing, and automation to create compounding impact from day
-                one.
+                Unified build + growth so every release and every post compounds
+                into qualified demand.
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                {
-                  title: "Launch-ready platforms",
-                  metric: "90 days",
-                  description:
-                    "Average timeline to ship a custom SaaS or web app MVP.",
-                },
-                {
-                  title: "SEO visibility",
-                  metric: "+140%",
-                  description:
-                    "Traffic lift from our technical & content search programs.",
-                },
-                {
-                  title: "Social pipeline",
-                  metric: "4x",
-                  description:
-                    "Increase in qualified leads from multi-channel content systems.",
-                },
+{
+  title: "Launch Speed",
+  metric: "90 days",
+  description:
+    "Rapid delivery of custom web or software platforms—built to scale, not shortcut.",
+},
+{
+  title: "Organic Lift",
+  metric: "+140%",
+  description:
+    "Search gains driven by strong technical foundations and ongoing content momentum.",
+},
+{
+  title: "Social Impact",
+  metric: "4×",
+  description:
+    "Multi-channel content and social systems that multiply your qualified pipeline.",
+},
+
+
               ].map((card) => (
                 <div
                   key={card.title}
@@ -156,12 +157,12 @@ export default function Hero() {
                   <div className="text-xs font-semibold uppercase tracking-wide text-white/50">
                     {card.title}
                   </div>
-                  <div className="mt-3 text-3xl font-bold text-white">
+                  <div className="mt-3 text-2xl font-bold text-white">
                     {card.metric}
                   </div>
-                  <p className="mt-2 text-xs leading-relaxed text-white/60">
+                  {/* <p className="mt-2 text-xs leading-relaxed text-white/60">
                     {card.description}
-                  </p>
+                  </p> */}
                 </div>
               ))}
             </div>
