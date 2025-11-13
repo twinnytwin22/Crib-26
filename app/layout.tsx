@@ -3,6 +3,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+export const revalidate = 3600; // Revalidate every hour
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
