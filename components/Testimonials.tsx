@@ -9,7 +9,7 @@ const testimonials = [
     name: "Sarah Chen",
     role: "VP Growth",
     company: "NovaStack",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=75",
     text: "Crib reimagined our SaaS onboarding experience and rebuilt our marketing site in the same sprint cadence. Activation jumped 36% and our inbound pipeline now has clarity we've never had before.",
     rating: 5,
   },
@@ -17,7 +17,7 @@ const testimonials = [
     name: "Marcus Rodriguez",
     role: "Founder",
     company: "Orbit Commerce",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=75",
     text: "They think like engineers and storytellers simultaneously. The automation they stood up across CRM, paid, and social feeds us real-time data so we can scale the right moves, faster.",
     rating: 5,
   },
@@ -25,7 +25,7 @@ const testimonials = [
     name: "Emily Watson",
     role: "Head of Marketing",
     company: "Brightline Health",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&auto=format&fit=crop&q=75",
     text: "Our search authority program with Crib rewired how we plan content. Organic sessions are up 180% and our physicians have assets that actually convert consultations.",
     rating: 5,
   },
@@ -80,6 +80,8 @@ export default function Testimonials() {
                     width={48}
                     height={48}
                     className="h-12 w-12 rounded-full object-cover"
+                    loading="lazy"
+                    quality={75}
                   />
                   <div>
                     <div className="font-semibold text-slate-900">{testimonial.name}</div>
