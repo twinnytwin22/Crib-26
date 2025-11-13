@@ -1,5 +1,5 @@
+import PortableBlogText from "@/components/PortableBlogText";
 import { getSiteSettings } from "@/lib/providers/sanity/sanity";
-import { PortableBlogText } from "@/ui/Components/PortableBlogText/PortableBlogText";
 
 export const revalidate = 0;
 
