@@ -58,6 +58,14 @@ const nextConfig: NextConfig = {
             key: "Access-Control-Allow-Headers",
             value: "Content-Type, Authorization",
           },
+          {
+            key: "Accept-Encoding",
+            value: "gzip, deflate, br",
+          },
+          {
+            key: 'Content-Encoding',
+            value: 'gzip'
+          }
         ],
       },
     ];
