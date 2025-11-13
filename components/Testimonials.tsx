@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
-import unsplashLoader from "@/lib/unsplash-loader";
 
 const testimonials = [
   {
@@ -83,7 +82,6 @@ export default function Testimonials() {
                     className="h-12 w-12 rounded-full object-cover"
                     loading="lazy"
                     quality={75}
-                    loader={unsplashLoader}
                   />
                   <div>
                     <div className="font-semibold text-slate-900">{testimonial.name}</div>

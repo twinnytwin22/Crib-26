@@ -11,8 +11,6 @@ import { Suspense } from "react";
 
 // Metadata is now in layout.tsx to avoid duplication
 
-export const revalidate = 3600; // Revalidate every hour
-
 export default async function Home() {
   const blogPostsPromise = getBlogPosts();
 
@@ -46,16 +44,9 @@ function BlogPostsSkeleton() {
   return (
     <section className="bg-linear-to-b from-white to-[#F4F5F7] py-24 px-6">
       <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-16">
-          <div className="h-4 w-32 bg-slate-200 rounded animate-pulse mx-auto mb-4" />
-          <div className="h-12 w-96 bg-slate-200 rounded animate-pulse mx-auto mb-4" />
-          <div className="h-6 w-[600px] bg-slate-200 rounded animate-pulse mx-auto" />
-        </div>
         <div className="grid gap-6 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-2xl overflow-hidden shadow-xl">
-              <div className="aspect-4/3 bg-slate-200 animate-pulse" />
-            </div>
+            <div key={i} className="rounded-2xl bg-slate-200 aspect-4/3 animate-pulse" />
           ))}
         </div>
       </div>
