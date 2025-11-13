@@ -6,22 +6,34 @@ import Testimonials from "@/components/Testimonials";
 import WhyCrib from "@/components/WhyCrib";
 import NavBar from "@/components/nav/NavBar";
 import BlogPostsPreview from "@/components/BlogPreview";
-import { getBlogPosts } from "@/lib/providers/sanity/sanity"
+import { getBlogPosts } from "@/lib/providers/sanity/sanity";
+import { Suspense } from "react";
 
 export default async function Home() {
-    const response = await getBlogPosts();
-    const blogPosts = response.res || [];
+  const blogPostsPromise = getBlogPosts();
 
   return (
     <div>
       <NavBar />
-      <Hero/>
+      <Hero />
       <Services />
       <WhyCrib />
       <Results />
       <Testimonials />
-      <BlogPostsPreview blogPosts={blogPosts} />
+      <Suspense fallback={<div>Loading blog posts...</div>}>
+        <BlogPosts blogPostsPromise={blogPostsPromise} />
+      </Suspense>
       <ContactCTA />
     </div>
   );
+}
+
+async function BlogPosts({ 
+  blogPostsPromise 
+}: { 
+  blogPostsPromise: ReturnType<typeof getBlogPosts> 
+}) {
+  const response = await blogPostsPromise;
+  const blogPosts = response.res || [];
+  return <BlogPostsPreview blogPosts={blogPosts} />;
 }
