@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
-import unsplashLoader from "@/lib/unsplash-loader";
 
 const testimonials = [
   {
@@ -82,8 +81,7 @@ export default function Testimonials() {
                     height={48}
                     className="h-12 w-12 rounded-full object-cover"
                     loading="lazy"
-                    quality={75}
-                    loader={unsplashLoader}
+                    unoptimized
                   />
                   <div>
                     <div className="font-semibold text-slate-900">{testimonial.name}</div>
@@ -107,7 +105,7 @@ export default function Testimonials() {
         >
           <div className="inline-flex flex-col items-center gap-4 rounded-3xl bg-linear-to-r from-red-500 to-rose-500 p-8 text-white shadow-xl shadow-red-500/30 sm:flex-row sm:gap-6">
             <div className="text-left">
-              <h3 className="text-2xl font-semibold">Let’s map your next release.</h3>
+              <h3 className="text-2xl font-semibold">Let's map your next release.</h3>
               <p className="text-white/80">Co-build a roadmap for software, SEO, and social in one session.</p>
             </div>
             <button

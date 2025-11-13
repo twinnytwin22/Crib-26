@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { CircuitBoard, Globe, Layers3, TrendingUp } from "lucide-react";
-import unsplashLoader from "@/lib/unsplash-loader";
 
 const results = [
   {
@@ -166,8 +165,7 @@ export default function Results() {
                   sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
-                  quality={75}
-                  loader={unsplashLoader}
+                  unoptimized
                 />
               </div>
               <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-950 via-slate-950/70 to-transparent p-6 text-white">
