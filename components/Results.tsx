@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { CircuitBoard, Globe, Layers3, TrendingUp } from "lucide-react";
+import unsplashLoader from "@/lib/unsplash-loader";
 
 const results = [
   {
@@ -134,19 +135,19 @@ export default function Results() {
               brand: "NovaStack",
               industry: "B2B SaaS",
               result: "Rebuilt product onboarding & marketing site, increasing activation by 36%.",
-              image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&auto=format&fit=crop&q=75",
+              image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
             },
             {
               brand: "Brightline Health",
               industry: "Healthcare",
               result: "Technical SEO and authority content program delivering +180% organic sessions.",
-              image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop&q=75",
+              image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
             },
             {
               brand: "Orbit Commerce",
               industry: "E-commerce",
               result: "Automated social + CRM workflows generating 4.5x more qualified leads.",
-              image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&auto=format&fit=crop&q=75",
+              image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
             },
           ].map((study, index) => (
             <motion.div
@@ -166,6 +167,7 @@ export default function Results() {
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
                   quality={75}
+                  loader={unsplashLoader}
                 />
               </div>
               <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-950 via-slate-950/70 to-transparent p-6 text-white">
