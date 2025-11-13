@@ -1,61 +1,26 @@
+'use client';
 import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from '@next/third-parties/google'
+<<<<<<< HEAD
 import { WebVitals } from '@/components/WebVitals'
+=======
+
+>>>>>>> parent of 2206692 (update)
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-  display: 'swap',
-  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-  display: 'swap',
-  preload: true,
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://cribnetwork.io"),
-  title: {
-    default: "CRIB - Connect. Revolutionize. Innovate. Boost.",
-    template: "%s | CRIB"
-  },
-  description: "Full-stack digital growth partner specializing in custom software development, conversion-driven websites, SEO strategy, and social media acceleration.",
-  keywords: ["web development", "software development", "SEO", "social media marketing", "digital growth", "SaaS development"],
-  authors: [{ name: "Randal Herndon" }],
-  creator: "Randal Herndon",
-  publisher: "CRIB LLC",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://cribnetwork.io',
-    siteName: 'CRIB',
-    title: 'CRIB - Connect. Revolutionize. Innovate. Boost.',
-    description: 'Full-stack digital growth partner specializing in custom software development, conversion-driven websites, SEO strategy, and social media acceleration.',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'CRIB - Connect. Revolutionize. Innovate. Boost.',
-    description: 'Full-stack digital growth partner specializing in custom software development, conversion-driven websites, SEO strategy, and social media acceleration.',
-  },
-};
 
-const gaId: string = process.env.GA_TAG || process.env.NEXT_PUBLIC_GA_TAG || "";
+const gaId:string = process.env.GA_TAG || process.env.NEXT_PUBLIC_GA_TAG ||"";
 
 export default function RootLayout({
   children,
@@ -64,6 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+<<<<<<< HEAD
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
@@ -74,6 +40,13 @@ export default function RootLayout({
       >
         <WebVitals />
         {gaId && <GoogleAnalytics gaId={gaId} />}
+=======
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+              <GoogleAnalytics gaId={gaId} />
+
+>>>>>>> parent of 2206692 (update)
         {children}
       </body>
     </html>

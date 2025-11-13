@@ -8,9 +8,33 @@ import NavBar from "@/components/nav/NavBar";
 import BlogPostsPreview from "@/components/BlogPreview";
 import { getBlogPosts } from "@/lib/providers/sanity/sanity";
 import { Suspense } from "react";
+import allKeywords from "@/lib/seoKeywords";
 
-// Metadata is now in layout.tsx to avoid duplication
+export const metadata = {
+  metadataBase: new URL("https://cribnetwork.io"),
 
+  title: "CRIB",
+  description: "Connect. Revolutionize. Innovate. Boost.",
+
+  generator: "CRIB",
+  applicationName: "CRIB",
+  referrer: "origin-when-cross-origin",
+  keywords: allKeywords,
+  authors: [{ name: "Randal Herndon" }],
+  // colorScheme: "dark",
+  creator: "Randal Herndon",
+  publisher: "Randal Herndon",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+};
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 2206692 (update)
 export default async function Home() {
   const blogPostsPromise = getBlogPosts();
 
@@ -22,7 +46,7 @@ export default async function Home() {
       <WhyCrib />
       <Results />
       <Testimonials />
-      <Suspense fallback={<BlogPostsSkeleton />}>
+      <Suspense fallback={<div>Loading blog posts...</div>}>
         <BlogPosts blogPostsPromise={blogPostsPromise} />
       </Suspense>
       <ContactCTA />
@@ -38,6 +62,7 @@ async function BlogPosts({
   const response = await blogPostsPromise;
   const blogPosts = response.res || [];
   return <BlogPostsPreview blogPosts={blogPosts} />;
+<<<<<<< HEAD
 }
 
 function BlogPostsSkeleton() {
@@ -52,4 +77,6 @@ function BlogPostsSkeleton() {
       </div>
     </section>
   );
+=======
+>>>>>>> parent of 2206692 (update)
 }

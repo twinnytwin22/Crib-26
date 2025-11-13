@@ -61,7 +61,7 @@ export default function ContactCTA() {
   };
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 py-24 px-6">
+    <section id="contact" className="relative overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 py-24 px-6">
       <motion.div
         className="absolute inset-0"
         animate={{ opacity: [0.6, 0.8, 0.6] }}
@@ -101,7 +101,7 @@ export default function ContactCTA() {
                   transition={{ delay: index * 0.1, duration: 0.4 }}
                   className="flex items-center gap-3"
                 >
-                  <span className="h-2 w-2 rounded-full bg-gradient-to-r from-red-400 to-rose-400" />
+                  <span className="h-2 w-2 rounded-full bg-linear-to-r from-red-400 to-rose-400" />
                   <span className="text-lg text-white/80">{point}</span>
                 </motion.div>
               ))}
