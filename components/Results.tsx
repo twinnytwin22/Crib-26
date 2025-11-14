@@ -130,24 +130,28 @@ export default function Results() {
           className="mt-16 grid gap-6 md:grid-cols-3"
         >
           {[
-            {
-              brand: "NovaStack",
-              industry: "B2B SaaS",
-              result: "Rebuilt product onboarding & marketing site, increasing activation by 36%.",
-              image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-            },
-            {
-              brand: "Brightline Health",
-              industry: "Healthcare",
-              result: "Technical SEO and authority content program delivering +180% organic sessions.",
-              image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
-            },
-            {
-              brand: "Orbit Commerce",
-              industry: "E-commerce",
-              result: "Automated social + CRM workflows generating 4.5x more qualified leads.",
-              image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
-            },
+        {
+  brand: "Relyy",
+  industry: "AI Video & Social Automation",
+  result: "AI-powered clip generation and social automation platform that helps brands scale content output 5× while cutting editing time by 90%.",
+  image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+},
+{
+  brand: "CribOS",
+  industry: "Small Business Software",
+  result: "A streamlined, integration-first CRM that unifies clients, workflows, and invoicing to reduce tool-sprawl and improve team efficiency.",
+  image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
+},
+{
+  brand: "LiveHouse",
+  industry: "Event Ticketing & Streaming",
+  result: "A modern ticketing and livestream platform that centralizes sales, analytics, check-ins, and live show experiences in one system.",
+  image: "https://images.unsplash.com/photo-1662383729882-e03ce8e00887",
+},
+
+
+
+
           ].map((study, index) => (
             <motion.div
               key={study.brand}
