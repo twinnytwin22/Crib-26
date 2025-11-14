@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import PortableText from "../PortableText";
+import { useRef } from "react";
 
 const BlogPost = ({ _createdAt, title, content, author, slug, coverImage, index }: { _createdAt: string; title: string; content: any; author: string; slug: { current: string }; coverImage: any; index: number }) => {
   const image = imageBuilder(coverImage);
@@ -48,8 +49,9 @@ const BlogPost = ({ _createdAt, title, content, author, slug, coverImage, index 
     </motion.article>
   );
 };
-
 const BlogPostsPreview = ({ blogPosts }: { blogPosts: any[] }) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
   return (
     <section className="bg-linear-to-b from-white to-[#F4F5F7] py-24 px-6">
       <div className="mx-auto max-w-7xl">
@@ -72,10 +74,41 @@ const BlogPostsPreview = ({ blogPosts }: { blogPosts: any[] }) => {
           </p>
         </motion.div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-3">
-          {blogPosts.map((post, index) => (
-            <BlogPost key={index} {...post} index={index} />
-          ))}
+        <div className="mt-16 relative">
+            <div className="relative">
+            <motion.div 
+              ref={scrollContainerRef}
+              className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {blogPosts.map((post, index) => (
+              <div key={index} className="min-w-full md:min-w-[calc(33.333%-1rem)] snap-center">
+                <BlogPost {...post} index={index} />
+              </div>
+              ))}
+            </motion.div>
+            <div className="flex items-center mx-auto justify-center space-x-8">
+            <button
+              onClick={() => scrollContainerRef.current?.scrollBy({ left: -400, behavior: 'smooth' })}
+              className="relative  bg-white/90 hover:bg-white p-3 rounded-full shadow-lg z-10"
+              aria-label="Previous"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            
+            <button
+              onClick={() => scrollContainerRef.current?.scrollBy({ left: 400, behavior: 'smooth' })}
+              className="relative  bg-white/90 hover:bg-white p-3 rounded-full shadow-lg z-10"
+              aria-label="Next"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            </div>
+            </div>
         </div>
       </div>
     </section>
