@@ -53,7 +53,7 @@ const BlogPostsPreview = ({ blogPosts }: { blogPosts: any[] }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   return (
-    <section className="bg-linear-to-b from-white to-[#F4F5F7] py-24 px-6">
+    <section className="bg-linear-to-b from-white to-[#F4F5F7] py-24 px-6 border-t border-slate-200">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
