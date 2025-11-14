@@ -12,7 +12,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
           switch (style) {
             case "h2":
               return (
-                <h2 key={index} className="text-3xl font-bold text-slate-900 dark:text-white mt-12 mb-6">
+                <h2 key={index} className="text-3xl font-bold mt-12 mb-6">
                   {block?.children?.map((child, childIndex) => {
                     if (typeof child === "string") {
                       return <span key={childIndex}>{child}</span>;
@@ -24,7 +24,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
               );
             case "h3":
               return (
-                <h3 key={index} className="text-2xl font-bold text-slate-900 dark:text-white mt-8 mb-4">
+                <h3 key={index} className="text-2xl font-bold  mt-8 mb-4">
                   {block?.children?.map((child, childIndex) => {
                     if (typeof child === "string") {
                       return <span key={childIndex}>{child}</span>;
@@ -36,7 +36,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
               );
             case "h4":
               return (
-                <h4 key={index} className="text-xl font-semibold text-slate-900 dark:text-white mt-6 mb-3">
+                <h4 key={index} className="text-xl font-semibold mt-6 mb-3">
                   {block?.children?.map((child, childIndex) => {
                     if (typeof child === "string") {
                       return <span key={childIndex}>{child}</span>;
@@ -49,7 +49,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
             case "blockquote":
               return (
                 <blockquote key={index} className="border-l-4 border-red-500 bg-slate-50 dark:bg-slate-900 py-4 px-6 my-6 rounded-r-lg">
-                  <p className="text-lg text-slate-700 dark:text-slate-300 italic">
+                  <p className="text-lg  italic">
                     {block?.children?.map((child, childIndex) => {
                       if (typeof child === "string") {
                         return <span key={childIndex}>{child}</span>;
@@ -62,7 +62,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
               );
             default:
               return (
-                <p key={index} className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+                <p key={index} className="text-lg leading-relaxed mb-6">
                   {block?.children?.map((child, childIndex) => {
                     if (typeof child === "string") {
                       return <span key={childIndex}>{child}</span>;

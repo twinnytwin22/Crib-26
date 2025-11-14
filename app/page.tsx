@@ -12,6 +12,7 @@ import { Suspense } from "react";
 // Metadata is now in layout.tsx to avoid duplication
 
 export const revalidate = 0; // Revalidate every hour
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const blogPostsPromise = getBlogPosts();

@@ -266,10 +266,10 @@ export default function ContactCTA() {
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <span>© {new Date().getFullYear()} Crib Digital. All rights reserved.</span>
             <div className="flex gap-8">
-              <a href="#" className="transition hover:text-white">
+              <a href="/privacy-policy" className="transition hover:text-white">
                 Privacy Policy
               </a>
-              <a href="#" className="transition hover:text-white">
+              <a href="/terms" className="transition hover:text-white">
                 Terms of Service
               </a>
               <a href="#" className="transition hover:text-white">

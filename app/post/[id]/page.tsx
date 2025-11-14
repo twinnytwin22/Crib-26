@@ -66,7 +66,7 @@ async function Page({ params, searchParams }: Props) {
       return (
         <>
           <main className="min-h-screen bg-linear-to-b from-white to-[#F4F5F7] dark:from-slate-950 dark:to-slate-900 antialiased">
-            <div className="px-6 py-16 mx-auto max-w-7xl lg:py-24">
+            <div className="px-6 py-16 mx-auto max-w-7xl lg:py-24 text-slate-100">
               <ArticleComponent post={relatedPost} />
             </div>
           </main>
