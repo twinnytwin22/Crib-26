@@ -1,9 +1,34 @@
 import PortableBlogText from "@/components/PortableBlogText";
 import { getSiteSettings } from "@/lib/providers/sanity/sanity";
 import NavBar from "@/components/nav/NavBar";
-import Footer from "@/components/Footer";
+import type { Metadata } from "next";
 
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | CRIB Network",
+  description: "Learn how CRIB Network collects, uses, and protects your personal information. Your privacy is our priority.",
+  openGraph: {
+    title: "Privacy Policy | CRIB Network",
+    description: "Learn how CRIB Network collects, uses, and protects your personal information. Your privacy is our priority.",
+    url: "https://cribnetwork.io/privacy-policy",
+    siteName: "CRIB Network",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy | CRIB Network",
+    description: "Learn how CRIB Network collects, uses, and protects your personal information. Your privacy is our priority.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "https://cribnetwork.io/privacy-policy",
+  },
+};
 
 export default async function Page() {
   const settings = await getSiteSettings();
@@ -19,9 +44,28 @@ export default async function Page() {
     );
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Privacy Policy",
+    "description": "Privacy policy for CRIB Network services",
+    "url": "https://cribnetwork.io/privacy-policy",
+    "publisher": {
+      "@type": "Organization",
+      "name": "CRIB Network",
+      "url": "https://cribnetwork.io",
+    },
+    "dateModified": new Date().toISOString(),
+  };
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-50 to-white">
-      <NavBar />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="min-h-screen bg-linear-to-b from-slate-50 to-white">
+        <NavBar />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 py-24 px-6">
@@ -46,13 +90,13 @@ export default async function Page() {
       {/* Content Section */}
       <section className="py-16 px-6">
         <div className="mx-auto max-w-6xl">
-          <div className="rounded-3xl bg-white p-8 shadow-xl shadow-slate-200/50 md:p-12 lg:p-16">
+          <article className="rounded-3xl bg-white p-8 shadow-xl shadow-slate-200/50 md:p-12 lg:p-16">
             <div className="text-slate-900">
               {settings?.privacyPolicy && (
                 <PortableBlogText content={settings.privacyPolicy} />
               )}
             </div>
-          </div>
+          </article>
 
           {/* Last Updated */}
           <div className="mt-8 text-center text-sm text-slate-500">
@@ -60,8 +104,7 @@ export default async function Page() {
           </div>
         </div>
       </section>
-
-
-    </div>
+      </div>
+    </>
   );
 }
