@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { WebVitals } from '@/components/WebVitals'
 import Footer from "@/components/Footer";
+import { ChatBotProvider } from "@/components/ChatBotProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://cribnetwork.io'),
@@ -95,6 +96,7 @@ export default function RootLayout({
         <WebVitals />
         {gaId && <GoogleAnalytics gaId={gaId} />}
         {children}
+        <ChatBotProvider/>
         <Footer/>
       </body>
     </html>
