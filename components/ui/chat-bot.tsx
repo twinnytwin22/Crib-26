@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { X, Send, MessageCircle, Minimize2 } from "lucide-react";
+import type {
+  RealtimeChannel,
+  RealtimePostgresInsertPayload,
+} from "@supabase/supabase-js";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Card } from "./card";
 import { ScrollArea } from "./scroll-area";
 import { Avatar, AvatarFallback } from "./avatar";
+import { getSupabaseBrowserClient } from "@/lib/providers/supabase/browser-client";
 
 export interface ChatMessage {
   id: string;
@@ -14,6 +19,18 @@ export interface ChatMessage {
   sender: "user" | "bot";
   timestamp: Date;
 }
+
+export interface ChatSessionInfo {
+  id?: string;
+  key?: string;
+}
+
+export type ChatSendHandlerResult =
+  | string
+  | {
+      reply?: string;
+      session?: ChatSessionInfo | null;
+    };
 
 export interface ChatBotProps {
   /** Title displayed in the chat header */
@@ -29,9 +46,20 @@ export interface ChatBotProps {
   /** Position of the chat button */
   position?: "bottom-right" | "bottom-left";
   /** Custom function to handle sending messages - for backend integration */
-  onSendMessage?: (message: string) => Promise<string>;
+  onSendMessage?: (
+    message: string,
+    email?: string
+  ) => Promise<ChatSendHandlerResult>;
   /** Mock responses for demo purposes */
   mockResponses?: { trigger: string; response: string }[];
+  /** Whether to show an email capture field */
+  collectEmail?: boolean;
+  /** Require a valid email before sending messages */
+  requireEmail?: boolean;
+  /** Label for the email input */
+  emailLabel?: string;
+  /** Prefill the email input */
+  initialEmail?: string;
 }
 
 const defaultMockResponses = [
@@ -60,12 +88,16 @@ export function ChatBot({
   welcomeMessage = "Hello! How can I help you today?",
   primaryColor = "from-slate-950 via-slate-900 to-slate-800",
   position = "bottom-right",
+  collectEmail = false,
+  requireEmail = false,
+  emailLabel = "Where should we reply?",
+  initialEmail = "",
   onSendMessage,
   mockResponses = defaultMockResponses,
 }: ChatBotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: "welcome",
       content: welcomeMessage,
@@ -75,7 +107,20 @@ export function ChatBot({
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [contactEmail, setContactEmail] = useState(initialEmail);
+  const [emailTouched, setEmailTouched] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const knownMessageIds = useRef<Set<string>>(new Set(["welcome"]));
+  const supabaseClient = useMemo(() => getSupabaseBrowserClient(), []);
+  const realtimeChannelRef = useRef<RealtimeChannel | null>(null);
+  const [sessionInfo, setSessionInfo] = useState<ChatSessionInfo | null>(null);
+
+  const shouldCollectEmail = collectEmail || requireEmail;
+  const emailIsValid = contactEmail
+    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail.trim())
+    : false;
+  const canSend = inputValue.trim().length > 0 && (!requireEmail || emailIsValid);
+  const showEmailError = shouldCollectEmail && requireEmail && emailTouched && !emailIsValid;
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -83,44 +128,155 @@ export function ChatBot({
     }
   }, [messages]);
 
-  const generateBotResponse = async (userMessage: string): Promise<string> => {
+  const appendMessage = useCallback((message: ChatMessage) => {
+    knownMessageIds.current.add(message.id);
+    setMessages((prev) => [...prev, message]);
+  }, []);
+
+  const subscribeToRealtime = useCallback(
+    (sessionId: string) => {
+      if (!supabaseClient) return;
+
+      const channel = supabaseClient
+        .channel(`chat-session-${sessionId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "chat_messages",
+            filter: `session_id=eq.${sessionId}`,
+          },
+          (payload: RealtimePostgresInsertPayload<{
+            id: string;
+            role: "visitor" | "agent" | "system";
+            content: string;
+            created_at: string;
+            source: string;
+          }>) => {
+            const newRow = payload.new;
+            if (!newRow || newRow.role === "visitor") {
+              return;
+            }
+
+            if (knownMessageIds.current.has(newRow.id)) {
+              return;
+            }
+
+            const incomingMessage: ChatMessage = {
+              id: newRow.id,
+              content: newRow.content,
+              sender: "bot",
+              timestamp: new Date(newRow.created_at),
+            };
+
+            knownMessageIds.current.add(newRow.id);
+            setMessages((prev) => [...prev, incomingMessage]);
+          }
+        )
+        .subscribe();
+
+      realtimeChannelRef.current = channel;
+    },
+    [supabaseClient]
+  );
+
+  useEffect(() => {
+    if (!sessionInfo?.id || !supabaseClient) {
+      return;
+    }
+
+    subscribeToRealtime(sessionInfo.id);
+
+    return () => {
+      if (realtimeChannelRef.current && supabaseClient) {
+        supabaseClient.removeChannel(realtimeChannelRef.current);
+      }
+      realtimeChannelRef.current = null;
+    };
+  }, [sessionInfo?.id, subscribeToRealtime, supabaseClient]);
+
+  const ACKNOWLEDGEMENT_RESPONSE =
+    "Thanks for reaching out! Our team just received your message and will follow up shortly.";
+
+  const generateBotResponse = async (
+    userMessage: string
+  ): Promise<{ reply: string; session?: ChatSessionInfo | null }> => {
+    const trimmedMessage = userMessage.trim();
+
     // If custom onSendMessage handler is provided, use it
     if (onSendMessage) {
-      return await onSendMessage(userMessage);
+      const emailPayload = shouldCollectEmail ? contactEmail.trim() || undefined : undefined;
+      const result = await onSendMessage(trimmedMessage, emailPayload);
+
+      if (typeof result === "string") {
+        return { reply: result };
+      }
+
+      return {
+        reply: result?.reply || ACKNOWLEDGEMENT_RESPONSE,
+        session: result?.session,
+      };
     }
 
     // Otherwise, use mock responses
-    const lowerMessage = userMessage.toLowerCase();
+    const lowerMessage = trimmedMessage.toLowerCase();
     const matchedResponse = mockResponses.find((mock) =>
       lowerMessage.includes(mock.trigger.toLowerCase())
     );
 
     if (matchedResponse) {
-      return matchedResponse.response;
+      return { reply: matchedResponse.response };
     }
 
     // Default response
-    return "Thank you for your message. A team member will get back to you shortly. Is there anything else I can help you with?";
+    return {
+      reply:
+        "Thank you for your message. A team member will get back to you shortly. Is there anything else I can help you with?",
+    };
   };
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+    const currentInput = inputValue.trim();
+    if (!currentInput) return;
+
+    if (shouldCollectEmail && requireEmail && !emailIsValid) {
+      setEmailTouched(true);
+      return;
+    }
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      content: inputValue,
+      content: currentInput,
       sender: "user",
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    appendMessage(userMessage);
     setInputValue("");
     setIsTyping(true);
 
     // Simulate typing delay
     await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
 
-    const botResponseContent = await generateBotResponse(inputValue);
+    let botResponseContent: string;
+    let sessionUpdate: ChatSessionInfo | null | undefined;
+    try {
+      const botResponse = await generateBotResponse(currentInput);
+      botResponseContent = botResponse.reply || ACKNOWLEDGEMENT_RESPONSE;
+      sessionUpdate = botResponse.session;
+    } catch (error) {
+      console.error("Chat bot failed to send message", error);
+      botResponseContent = "We couldn't deliver that message. Please try again or email us directly.";
+    }
+
+    if (sessionUpdate && (sessionUpdate.id || sessionUpdate.key)) {
+      setSessionInfo((prev) => ({
+        id: sessionUpdate?.id ?? prev?.id,
+        key: sessionUpdate?.key ?? prev?.key,
+      }));
+    }
+
     const botMessage: ChatMessage = {
       id: (Date.now() + 1).toString(),
       content: botResponseContent,
@@ -129,7 +285,7 @@ export function ChatBot({
     };
 
     setIsTyping(false);
-    setMessages((prev) => [...prev, botMessage]);
+    appendMessage(botMessage);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -195,6 +351,24 @@ export function ChatBot({
           {/* Messages Area */}
           {!isMinimized && (
             <>
+              {shouldCollectEmail && (
+                <div className="border-b border-slate-100 bg-white/80 px-4 py-3 backdrop-blur">
+                  <p className="text-xs font-medium text-slate-700 mb-2">{emailLabel}</p>
+                  <Input
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    onBlur={() => setEmailTouched(true)}
+                    placeholder="you@example.com"
+                    className="rounded-lg border-slate-300 focus-visible:ring-2 focus-visible:ring-slate-400"
+                  />
+                  {showEmailError && (
+                    <p className="mt-1 text-xs text-rose-500">
+                      Please enter a valid email so we can reply.
+                    </p>
+                  )}
+                </div>
+              )}
               <ScrollArea className="flex-1 p-4 bg-linear-to-b from-slate-100 to-white" ref={scrollRef}>
                 <div className="space-y-4">
                   {messages.map((message) => (
@@ -248,7 +422,7 @@ export function ChatBot({
                   <Button
                     onClick={handleSendMessage}
                     size="icon"
-                    disabled={!inputValue.trim()}
+                    disabled={!canSend}
                     className="rounded-xl bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 hover:opacity-90 transition-all duration-200 hover:scale-105 disabled:opacity-50 text-white"
                   >
                     <Send className="h-4 w-4" />

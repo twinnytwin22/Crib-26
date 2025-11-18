@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { ChatBot, ChatBotProps } from "./ui/chat-bot";
+import React, { useCallback } from "react";
+import { ChatBot, ChatBotProps, type ChatSessionInfo } from "./ui/chat-bot";
 
 /**
  * ChatBotProvider - A wrapper component to easily add a chat bot to any page
@@ -17,10 +17,63 @@ interface ChatBotProviderProps extends ChatBotProps {
   enabled?: boolean;
 }
 
-export function ChatBotProvider({ enabled = true, ...props }: ChatBotProviderProps) {
+export function ChatBotProvider({
+  enabled = true,
+  onSendMessage,
+  collectEmail,
+  requireEmail,
+  emailLabel,
+  ...props
+}: ChatBotProviderProps) {
+  const sendToSupport = useCallback(async (message: string, email?: string) => {
+    const trimmedMessage = message.trim();
+    if (!trimmedMessage) {
+      return "Please enter a message so we can help.";
+    }
+
+    const normalizedEmail = email?.trim();
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: trimmedMessage, email }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Chat request failed");
+      }
+
+      const data = await response.json();
+
+      const defaultReply = normalizedEmail
+        ? `Thanks! We just sent your note to the team. We'll reach out at ${normalizedEmail}.`
+        : "Thanks for reaching out! Our team just received your message and will follow up shortly.";
+
+      return {
+        reply: data.reply || defaultReply,
+        session: data.session as ChatSessionInfo | undefined,
+      };
+    } catch (error) {
+      console.error("Chat relay failed", error);
+      return "We couldn't deliver that message. Please try again or email hello@cribnetwork.io.";
+    }
+  }, []);
+
   if (!enabled) return null;
 
-  return <ChatBot {...props} />;
+  return (
+    <ChatBot
+      {...props}
+      collectEmail={collectEmail ?? true}
+      requireEmail={requireEmail ?? true}
+      emailLabel={emailLabel ?? "Where can we reach you?"}
+      onSendMessage={onSendMessage ?? sendToSupport}
+    />
+  );
 }
 
 // Example configuration presets for different use cases
@@ -37,7 +90,7 @@ export const chatBotPresets = {
       },
       {
         trigger: "contact",
-        response: "You can reach us at support@logical-pharma.com or call (555) 123-4567.",
+        response: "You can reach us at support@cribnetwork.io or call (555) 123-4567.",
       },
     ],
   },

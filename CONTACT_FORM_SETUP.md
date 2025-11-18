@@ -15,7 +15,13 @@ SMTP_PASS=your-app-password
 SMTP_FROM_EMAIL=your-email@gmail.com
 SMTP_FROM_NAME=Crib Network
 CONTACT_EMAIL=info@cribnetwork.io
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-secret
+GOOGLE_CHAT_INBOUND_SECRET=shared-secret-between-chat-and-api
 ```
+
+> The Supabase service role key is only needed for the new chat persistence layer. Keep it server-side only; never expose it to browsers.
+
+> `GOOGLE_CHAT_INBOUND_SECRET` secures the `/api/chat/inbound` webhook that accepts Google Chat replies. Use any long random string and configure the same value in your Google Chat app so only trusted events are accepted.
 
 ## Gmail Setup (Recommended for Development)
 
