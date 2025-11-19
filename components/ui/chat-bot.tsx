@@ -133,9 +133,44 @@ export function ChatBot({
     setMessages((prev) => [...prev, message]);
   }, []);
 
+  const fetchMessages = useCallback(async (sessionKey: string) => {
+    try {
+      const response = await fetch(`/api/chat/messages?sessionKey=${encodeURIComponent(sessionKey)}`);
+      if (!response.ok) {
+        console.warn("Failed to fetch chat messages", response.status);
+        return;
+      }
+
+      const data = await response.json();
+      if (!data.messages || data.messages.length === 0) {
+        return;
+      }
+
+      const newMessages = data.messages.filter(
+        (msg: ChatMessage) => !knownMessageIds.current.has(msg.id)
+      );
+
+      if (newMessages.length > 0) {
+        newMessages.forEach((msg: ChatMessage) => {
+          knownMessageIds.current.add(msg.id);
+        });
+        setMessages((prev) => {
+          const existingIds = new Set(prev.map((m) => m.id));
+          const toAdd = newMessages.filter((m: ChatMessage) => !existingIds.has(m.id));
+          return [...prev, ...toAdd];
+        });
+      }
+    } catch (error) {
+      console.error("Failed to poll chat messages", error);
+    }
+  }, []);
+
   const subscribeToRealtime = useCallback(
     (sessionId: string) => {
-      if (!supabaseClient) return;
+      if (!supabaseClient) {
+        console.warn("Supabase client not available for real-time subscription");
+        return;
+      }
 
       const channel = supabaseClient
         .channel(`chat-session-${sessionId}`)
@@ -174,13 +209,16 @@ export function ChatBot({
             setMessages((prev) => [...prev, incomingMessage]);
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log("Realtime subscription status:", status);
+        });
 
       realtimeChannelRef.current = channel;
     },
     [supabaseClient]
   );
 
+  // Set up real-time subscription
   useEffect(() => {
     if (!sessionInfo?.id || !supabaseClient) {
       return;
@@ -195,6 +233,22 @@ export function ChatBot({
       realtimeChannelRef.current = null;
     };
   }, [sessionInfo?.id, subscribeToRealtime, supabaseClient]);
+
+  // Poll for messages as backup if real-time fails
+  useEffect(() => {
+    if (!sessionInfo?.key) {
+      return;
+    }
+
+    const pollInterval = setInterval(() => {
+      fetchMessages(sessionInfo.key!);
+    }, 5000); // Poll every 5 seconds
+
+    // Initial fetch
+    fetchMessages(sessionInfo.key);
+
+    return () => clearInterval(pollInterval);
+  }, [sessionInfo?.key, fetchMessages]);
 
   const ACKNOWLEDGEMENT_RESPONSE =
     "Thanks for reaching out! Our team just received your message and will follow up shortly.";
