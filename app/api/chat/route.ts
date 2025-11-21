@@ -4,8 +4,13 @@ import {
   recordVisitorMessage,
   type RecordVisitorMessageResult,
 } from "@/lib/providers/supabase/chat-storage";
+import { GoogleAuth } from "google-auth-library";
 
+const GOOGLE_CHAT_SPACE = process.env.GOOGLE_CHAT_SPACE;
 const GOOGLE_CHAT_WEBHOOK_URL = process.env.GOOGLE_CHAT_WEBHOOK_URL;
+const GOOGLE_CHAT_BOT_TOKEN = process.env.GOOGLE_CHAT_BOT_TOKEN;
+const GOOGLE_CHAT_SERVICE_ACCOUNT_JSON =
+  process.env.GOOGLE_CHAT_SERVICE_ACCOUNT_JSON;
 const CHAT_FORWARD_EMAIL =
   process.env.CHAT_FORWARD_EMAIL ||
   process.env.CONTACT_EMAIL ||
@@ -17,6 +22,7 @@ const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const SMTP_FROM_EMAIL = process.env.SMTP_FROM_EMAIL || SMTP_USER;
 const SMTP_FROM_NAME = process.env.SMTP_FROM_NAME || "Crib Network";
+const CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
 
 let transporter: nodemailer.Transporter | null = null;
 
@@ -38,6 +44,33 @@ function getTransporter() {
 function isValidEmail(value?: string) {
   if (!value) return false;
   return /[^\s@]+@[^\s@]+\.[^\s@]+/.test(value.trim());
+}
+
+async function getChatAccessToken(): Promise<string | null> {
+  // Automatic minting via service account JSON (preferred)
+  try {
+    const auth = new GoogleAuth({
+      scopes: [CHAT_SCOPE],
+      ...(GOOGLE_CHAT_SERVICE_ACCOUNT_JSON
+        ? { credentials: JSON.parse(GOOGLE_CHAT_SERVICE_ACCOUNT_JSON) }
+        : {}),
+    });
+
+    const client = await auth.getClient();
+    const token = await client.getAccessToken();
+    if (token.token) {
+      return token.token;
+    }
+  } catch (error) {
+    console.error("Failed to mint Chat access token via GoogleAuth", error);
+  }
+
+  // Fallback to manually provided bearer token (short-lived)
+  if (GOOGLE_CHAT_BOT_TOKEN) {
+    return GOOGLE_CHAT_BOT_TOKEN;
+  }
+
+  return null;
 }
 
 export async function POST(req: NextRequest) {
@@ -67,10 +100,63 @@ export async function POST(req: NextRequest) {
       console.error("Failed to persist chat message", storageError);
     }
 
-    if (GOOGLE_CHAT_WEBHOOK_URL) {
+    if (GOOGLE_CHAT_SPACE) {
+      try {
+        const accessToken = await getChatAccessToken();
+
+        if (!accessToken) {
+          throw new Error(
+            "Google Chat access token unavailable. Verify service account access or GOOGLE_CHAT_BOT_TOKEN."
+          );
+        }
+
+        const details = [
+          "?? *New Website Chat*",
+          `*From:* ${previewEmail}`,
+          `*Time:* ${timestamp}`,
+        ];
+
+        if (sessionRecord?.sessionKey) {
+          details.push(`*Session Key:* ${sessionRecord.sessionKey}`);
+        }
+
+        details.push("", `*Message:* ${message}`);
+
+        const chatPayload: Record<string, unknown> = {
+          text: details.join("\n"),
+        };
+
+        if (sessionRecord?.sessionKey) {
+          chatPayload.threadKey = sessionRecord.sessionKey;
+          chatPayload.requestId = sessionRecord.sessionKey;
+        }
+
+        const apiUrl = `https://chat.googleapis.com/v1/spaces/${encodeURIComponent(
+          GOOGLE_CHAT_SPACE
+        )}/messages`;
+
+        const chatResponse = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(chatPayload),
+        });
+
+        if (!chatResponse.ok) {
+          console.error(
+            "Google Chat API send failed",
+            await chatResponse.text()
+          );
+        }
+      } catch (chatError) {
+        console.error("Google Chat API error", chatError);
+      }
+    } else if (GOOGLE_CHAT_WEBHOOK_URL) {
       try {
         const details = [
-          "💬 *New Website Chat*",
+          "?? *New Website Chat*",
           `*From:* ${previewEmail}`,
           `*Time:* ${timestamp}`,
         ];
