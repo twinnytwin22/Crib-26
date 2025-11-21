@@ -3,6 +3,14 @@ import { recordAgentMessage } from "@/lib/providers/supabase/chat-storage";
 
 const INBOUND_SECRET = process.env.GOOGLE_CHAT_INBOUND_SECRET;
 
+function logInbound(label: string, payload: Record<string, unknown>) {
+  try {
+    console.log(`[chat inbound] ${label}`, JSON.stringify(payload, null, 2));
+  } catch {
+    // no-op if logging fails
+  }
+}
+
 function isAuthorized(req: NextRequest) {
   if (!INBOUND_SECRET) {
     console.warn(
@@ -36,12 +44,26 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
+    logInbound("unauthorized", {
+      hasSecret: Boolean(INBOUND_SECRET),
+      receivedAuth:
+        req.headers.get("authorization") || req.headers.get("x-goog-chat-secret"),
+    });
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: any;
   try {
     body = await req.json();
+    logInbound("received", {
+      type: body?.type,
+      threadName: body?.message?.thread?.name,
+      threadKey: body?.message?.thread?.threadKey ?? body?.message?.threadKey,
+      senderType: body?.message?.sender?.type,
+      senderDisplayName: body?.message?.sender?.displayName,
+      space: body?.space?.name,
+      rawKeys: Object.keys(body || {}),
+    });
   } catch (error) {
     console.error("Invalid inbound chat payload", error);
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
@@ -55,6 +77,10 @@ export async function POST(req: NextRequest) {
   const senderType = body?.message?.sender?.type;
 
   if (!messageText || senderType === "BOT") {
+    logInbound("ignored", {
+      reason: !messageText ? "no-text" : "bot-sender",
+      senderType,
+    });
     return NextResponse.json({ success: true });
   }
 
@@ -65,6 +91,13 @@ export async function POST(req: NextRequest) {
   const senderEmail = body?.message?.sender?.email ?? null;
 
   try {
+    logInbound("persisting", {
+      messageText,
+      threadName,
+      threadKey,
+      senderDisplayName,
+      senderEmail,
+    });
     await recordAgentMessage({
       message: messageText,
       threadName,
@@ -75,6 +108,11 @@ export async function POST(req: NextRequest) {
         space: body?.space?.name ?? null,
         raw_event_type: body?.type ?? null,
       },
+    });
+    logInbound("persisted", {
+      threadName,
+      threadKey,
+      senderEmail,
     });
   } catch (error) {
     console.error("Failed to persist Google Chat reply", error);
