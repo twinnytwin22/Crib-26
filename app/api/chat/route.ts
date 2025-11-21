@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import {
   recordVisitorMessage,
   type RecordVisitorMessageResult,
+  updateSessionThreadName,
 } from "@/lib/providers/supabase/chat-storage";
 import { GoogleAuth } from "google-auth-library";
 
@@ -149,6 +150,16 @@ export async function POST(req: NextRequest) {
             "Google Chat API send failed",
             await chatResponse.text()
           );
+        } else {
+          try {
+            const chatJson = await chatResponse.json();
+            const threadName = chatJson?.thread?.name;
+            if (threadName && sessionRecord?.sessionKey) {
+              await updateSessionThreadName(sessionRecord.sessionKey, threadName);
+            }
+          } catch (parseError) {
+            console.warn("Unable to parse Google Chat API response", parseError);
+          }
         }
       } catch (chatError) {
         console.error("Google Chat API error", chatError);

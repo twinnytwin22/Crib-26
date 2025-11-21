@@ -51,6 +51,22 @@ export interface ChatSessionWithMessages {
   messages: ChatMessageRecord[];
 }
 
+export async function updateSessionThreadName(
+  sessionKey: string,
+  threadName: string
+) {
+  const supabase = getSupabaseServerClient();
+  if (!supabase) return;
+
+  await supabase
+    .from("chat_sessions")
+    .update({
+      google_thread_name: threadName,
+      updated_at: nowISO(),
+    })
+    .eq("session_key", sessionKey);
+}
+
 function normalizeEmail(value?: string | null) {
   return value?.trim().toLowerCase() || undefined;
 }
