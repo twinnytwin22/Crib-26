@@ -20,6 +20,10 @@ export interface ChatMessage {
   timestamp: Date;
 }
 
+type IncomingChatMessage = Omit<ChatMessage, "timestamp"> & {
+  timestamp: Date | string;
+};
+
 export interface ChatSessionInfo {
   id?: string;
   key?: string;
@@ -128,42 +132,63 @@ export function ChatBot({
     }
   }, [messages]);
 
+  const normalizeMessage = useCallback(
+    (message: IncomingChatMessage): ChatMessage => ({
+      ...message,
+      timestamp:
+        message.timestamp instanceof Date
+          ? message.timestamp
+          : new Date(message.timestamp),
+    }),
+    []
+  );
+
   const appendMessage = useCallback((message: ChatMessage) => {
     knownMessageIds.current.add(message.id);
     setMessages((prev) => [...prev, message]);
   }, []);
 
-  const fetchMessages = useCallback(async (sessionKey: string) => {
-    try {
-      const response = await fetch(`/api/chat/messages?sessionKey=${encodeURIComponent(sessionKey)}`);
-      if (!response.ok) {
-        console.warn("Failed to fetch chat messages", response.status);
-        return;
-      }
+  const fetchMessages = useCallback(
+    async (sessionKey: string) => {
+      try {
+        const response = await fetch(`/api/chat/messages?sessionKey=${encodeURIComponent(sessionKey)}`);
+        if (!response.ok) {
+          console.warn("Failed to fetch chat messages", response.status);
+          return;
+        }
 
-      const data = await response.json();
-      if (!data.messages || data.messages.length === 0) {
-        return;
-      }
+        const data = await response.json();
+        const rawMessages: IncomingChatMessage[] = Array.isArray(data.messages)
+          ? data.messages
+          : [];
 
-      const newMessages = data.messages.filter(
-        (msg: ChatMessage) => !knownMessageIds.current.has(msg.id)
-      );
+        if (rawMessages.length === 0) {
+          return;
+        }
 
-      if (newMessages.length > 0) {
-        newMessages.forEach((msg: ChatMessage) => {
-          knownMessageIds.current.add(msg.id);
+        const normalizedMessages = rawMessages.map(normalizeMessage);
+
+        const newMessages = normalizedMessages.filter((msg: ChatMessage) => {
+          if (!msg.timestamp) return false;
+          return !knownMessageIds.current.has(msg.id);
         });
-        setMessages((prev) => {
-          const existingIds = new Set(prev.map((m) => m.id));
-          const toAdd = newMessages.filter((m: ChatMessage) => !existingIds.has(m.id));
-          return [...prev, ...toAdd];
-        });
+
+        if (newMessages.length > 0) {
+          newMessages.forEach((msg: ChatMessage) => {
+            knownMessageIds.current.add(msg.id);
+          });
+          setMessages((prev) => {
+            const existingIds = new Set(prev.map((m) => m.id));
+            const toAdd = newMessages.filter((m: ChatMessage) => !existingIds.has(m.id));
+            return [...prev, ...toAdd];
+          });
+        }
+      } catch (error) {
+        console.error("Failed to poll chat messages", error);
       }
-    } catch (error) {
-      console.error("Failed to poll chat messages", error);
-    }
-  }, []);
+    },
+    [normalizeMessage]
+  );
 
   const subscribeToRealtime = useCallback(
     (sessionId: string) => {
