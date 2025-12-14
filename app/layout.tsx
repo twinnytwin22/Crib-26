@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { WebVitals } from '@/components/WebVitals'
 import Footer from "@/components/Footer";
 import { ChatBotProvider } from "@/components/ChatBotProvider";
@@ -78,7 +78,7 @@ const geistMono = Geist_Mono({
 
 
 const gaId:string = process.env.GA_TAG || process.env.NEXT_PUBLIC_GA_TAG ||"";
-
+const gtmId:string = process.env.GTM_ID || process.env.NEXT_PUBLIC_GTM_ID ||"";
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -95,6 +95,7 @@ export default function RootLayout({
       >
         <WebVitals />
         {gaId && <GoogleAnalytics gaId={gaId} />}
+        {gtmId && <GoogleTagManager gtmId={gtmId} />}
         {children}
         <ChatBotProvider/>
         <Footer/>
