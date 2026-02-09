@@ -44,9 +44,11 @@ const mapMarkToComponent = (mark: string) => {
     case "em":
       return <em />;
     case "strong":
-      return <strong />;
+      return <strong className="font-bold" />;
     case "highlight":
       return <span className="highlight" />;
+    case "b":
+      return <b className="font-bold" />;
     // Add more cases for other mark definitions as needed
     default:
       return null;

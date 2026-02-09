@@ -26,14 +26,30 @@ export async function generateMetadata(
       (post: { slug: { current: string } }) => post.slug.current === id,
     );
 
-    // Optionally access and extend (rather than replace) parent metadata
-    const previousImages = (await parent).openGraph?.images || [];
     const image = imageBuilder(relatedPost?.coverImage);
+    const description = relatedPost?.excerpt || relatedPost?.description || `Read ${relatedPost?.title} on our blog`;
 
     return {
       title: relatedPost?.title,
+      description: description,
       openGraph: {
-        images: [image!], //, ...previousImages],
+        title: relatedPost?.title,
+        description: description,
+        images: [
+          {
+            url: image!,
+            width: 1200,
+            height: 630,
+            alt: relatedPost?.title,
+          }
+        ],
+        type: 'article',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: relatedPost?.title,
+        description: description,
+        images: [image!],
       },
     };
   }

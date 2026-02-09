@@ -84,7 +84,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
                 <h2 key={index} className="text-3xl font-bold mt-12 mb-6">
                   {block?.children?.map((child: Child | string, childIndex: number) => {
                     if (typeof child === "string") {
-                      return <span key={childIndex}>{child}</span>;
+                      return <span className="font-bold" key={childIndex}>{child}</span>;
                     } else {
                       return applyMarksToText(child);
                     }
@@ -96,7 +96,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
                 <h3 key={index} className="text-2xl font-bold  mt-8 mb-4">
                   {block?.children?.map((child: Child | string, childIndex: number) => {
                     if (typeof child === "string") {
-                      return <span key={childIndex}>{child}</span>;
+                      return <span className="font-bold" key={childIndex}>{child}</span>;
                     } else {
                       return applyMarksToText(child);
                     }
@@ -105,14 +105,16 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
               );
             case "h4":
               return (
-                <h4 key={index} className="text-xl font-semibold mt-6 mb-3">
+                <h4 key={index} className="text-xl font-bold mt-6 mb-3">
+                  <b>
                   {block?.children?.map((child: Child | string, childIndex: number) => {
                     if (typeof child === "string") {
-                      return <span key={childIndex}>{child}</span>;
+                      return <span className="font-bold" key={childIndex}>{child}</span>;
                     } else {
                       return applyMarksToText(child);
                     }
                   })}
+                  </b>
                 </h4>
               );
             case "blockquote":
