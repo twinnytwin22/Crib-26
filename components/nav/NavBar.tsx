@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,20 @@ export default function NavBar() {
     }
   };
 
+  // Handle hash navigation after page load
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      // Small delay to ensure page is loaded
+      setTimeout(() => {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, []);
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -12 }}
@@ -49,13 +63,7 @@ export default function NavBar() {
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
-          <Link
-            href="#contact"
-            onClick={(event) => {
-              event.preventDefault();
-              handleNavClick("#contact");
-            }}
-          >
+          <Link href="/#contact">
             <Button className="rounded-full bg-red-600 px-6 text-white shadow-lg shadow-red-500/20 hover:bg-red-700">
               Book a Strategy Call
             </Button>
@@ -89,12 +97,11 @@ export default function NavBar() {
                   {link.label}
                 </button>
               ))}
-              <Button
-                onClick={() => handleNavClick("#contact")}
-                className="mt-2 w-full rounded-full bg-red-600 text-white shadow-lg shadow-red-500/20 hover:bg-red-700"
-              >
-                Book a Strategy Call
-              </Button>
+              <Link href="/#contact" onClick={() => setIsOpen(false)} className="mt-2">
+                <Button className="w-full rounded-full bg-red-600 text-white shadow-lg shadow-red-500/20 hover:bg-red-700">
+                  Book a Strategy Call
+                </Button>
+              </Link>
             </div>
           </motion.div>
         )}
