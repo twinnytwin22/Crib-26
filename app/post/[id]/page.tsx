@@ -1,4 +1,5 @@
 import ArticleComponent from "@/components/ArticleComponent";
+import NavBar from "@/components/nav/NavBar";
 import { getBlogPosts, imageBuilder } from "@/lib/providers/sanity/sanity";
 import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
@@ -64,8 +65,9 @@ async function Page({ params, searchParams }: Props) {
         (post: { slug: { current: string } }) => post.slug.current === slug,
       );
       return (
-        <>
-          <main className="min-h-screen bg-linear-to-b from-white to-[#F4F5F7] dark:from-slate-950 dark:to-slate-900 antialiased">
+        <>      <NavBar />
+        
+          <main className="min-h-screen bg-linear-to-b from-white to-[#F4F5F7] dark:from-slate-950 dark:to-slate-900 antialiased pt-8 relative">
             <div className="px-6 py-16 mx-auto max-w-7xl lg:py-24 text-slate-100">
               <ArticleComponent post={relatedPost} />
             </div>
