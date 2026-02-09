@@ -28,13 +28,19 @@ export async function generateMetadata(
 
     const image = imageBuilder(relatedPost?.coverImage);
     const description = relatedPost?.excerpt || relatedPost?.description || `Read ${relatedPost?.title} on our blog`;
+    const url = `/post/${id}`;
 
     return {
       title: relatedPost?.title,
       description: description,
+      alternates: {
+        canonical: url,
+      },
       openGraph: {
         title: relatedPost?.title,
         description: description,
+        url: url,
+        siteName: 'CRIB Network',
         images: [
           {
             url: image!,
@@ -44,12 +50,15 @@ export async function generateMetadata(
           }
         ],
         type: 'article',
+        publishedTime: relatedPost?.publishedAt,
+        locale: 'en_US',
       },
       twitter: {
         card: 'summary_large_image',
         title: relatedPost?.title,
         description: description,
         images: [image!],
+        creator: '@cribnetwork',
       },
     };
   }
@@ -81,7 +90,8 @@ async function Page({ params, searchParams }: Props) {
         (post: { slug: { current: string } }) => post.slug.current === slug,
       );
       return (
-        <>      <NavBar />
+        <>      
+        <NavBar />
         
           <main className="min-h-screen bg-linear-to-b from-white to-[#F4F5F7] dark:from-slate-950 dark:to-slate-900 antialiased pt-8 relative">
             <div className="px-6 py-16 mx-auto max-w-7xl lg:py-24 text-slate-100">
