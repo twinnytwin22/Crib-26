@@ -1,9 +1,10 @@
 "use client";
 import { useEffect } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 export function useHandleOutsideClick(
   isOpen: boolean,
-  setIsOpen: any,
+  setIsOpen: Dispatch<SetStateAction<boolean>>,
   id: string,
 ) {
   useEffect(() => {

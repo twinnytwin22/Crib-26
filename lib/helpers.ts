@@ -15,10 +15,8 @@ export const postData = async ({
   data,
 }: {
   url: string;
-  data?: { price: any };
+  data?: unknown;
 }) => {
-  console.log("posting,", url, data);
-
   const res = await fetch(url, {
     method: "POST",
     headers: new Headers({ "Content-Type": "application/json" }),
@@ -36,7 +34,7 @@ export const postData = async ({
 };
 
 export const toDateTime = (secs: number) => {
-  var t = new Date("1970-01-01T00:30:00Z"); // Unix epoch start.
+  const t = new Date("1970-01-01T00:30:00Z"); // Unix epoch start.
   t.setSeconds(secs);
   return t;
 };

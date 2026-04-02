@@ -19,7 +19,6 @@ export default async function Home() {
 
   return (
     <div>
-      <Suspense>
       <NavBar />
       <Hero />
       <Services />
@@ -27,10 +26,9 @@ export default async function Home() {
       <Results />
       <Testimonials />
       <Suspense fallback={<BlogPostsSkeleton />}>
-      <BlogPosts blogPostsPromise={blogPostsPromise} />
+        <BlogPosts blogPostsPromise={blogPostsPromise} />
       </Suspense>
       <ContactCTA />
-      </Suspense>
     </div>
   );
 }
