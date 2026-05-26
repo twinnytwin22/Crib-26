@@ -15,6 +15,16 @@ const GOOGLE_CHAT_SERVICE_ACCOUNT_JSON =
 const GOOGLE_CHAT_CLIENT_EMAIL = process.env.GOOGLE_CHAT_CLIENT_EMAIL;
 const GOOGLE_CHAT_PRIVATE_KEY = process.env.GOOGLE_CHAT_PRIVATE_KEY;
 
+export function getGoogleChatAuthMode() {
+  if (GOOGLE_CHAT_SERVICE_ACCOUNT_JSON) return "service_account_json";
+  if (GOOGLE_CHAT_CLIENT_EMAIL && GOOGLE_CHAT_PRIVATE_KEY) {
+    return "split_service_account";
+  }
+  if (GOOGLE_CHAT_BOT_TOKEN?.startsWith("ya29.")) return "oauth_access_token";
+  if (GOOGLE_CHAT_BOT_TOKEN) return "unsupported_bot_token";
+  return "missing";
+}
+
 export function getGoogleChatSpaceName(space = GOOGLE_CHAT_SPACE) {
   if (!space) return null;
   return space.startsWith("spaces/") ? space : `spaces/${space}`;

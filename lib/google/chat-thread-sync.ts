@@ -6,6 +6,8 @@ import {
 import {
   buildGoogleChatMessagesUrl,
   getChatAccessToken,
+  getGoogleChatAuthMode,
+  getGoogleChatSpaceName,
   GOOGLE_CHAT_SPACE,
 } from "@/lib/google/chat-api";
 
@@ -27,6 +29,27 @@ type GoogleChatMessage = {
 type GoogleChatListResponse = {
   messages?: GoogleChatMessage[];
 };
+
+const syncFailureLogCache = new Map<string, number>();
+const SYNC_FAILURE_LOG_INTERVAL_MS = 60_000;
+
+async function logSyncFailure(response: Response) {
+  const body = await response.text();
+  const cacheKey = `${response.status}:${body.slice(0, 200)}`;
+  const now = Date.now();
+  const lastLoggedAt = syncFailureLogCache.get(cacheKey) ?? 0;
+  if (now - lastLoggedAt < SYNC_FAILURE_LOG_INTERVAL_MS) {
+    return;
+  }
+
+  syncFailureLogCache.set(cacheKey, now);
+  console.error("Google Chat message sync failed", {
+    status: response.status,
+    authMode: getGoogleChatAuthMode(),
+    space: getGoogleChatSpaceName(),
+    body,
+  });
+}
 
 function isAgentReply(message: GoogleChatMessage, sessionKey: string) {
   const text = message.text?.trim();
@@ -70,7 +93,7 @@ export async function syncGoogleChatThreadReplies(sessionKey: string) {
     });
 
     if (!response.ok) {
-      console.error("Google Chat message sync failed", await response.text());
+      await logSyncFailure(response);
       return;
     }
 

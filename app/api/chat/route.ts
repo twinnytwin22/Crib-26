@@ -13,6 +13,8 @@ import {
 import {
   buildGoogleChatMessagesUrl,
   getChatAccessToken,
+  getGoogleChatAuthMode,
+  getGoogleChatSpaceName,
   GOOGLE_CHAT_SPACE,
   GOOGLE_CHAT_WEBHOOK_URL,
 } from "@/lib/google/chat-api";
@@ -137,7 +139,12 @@ export async function POST(req: NextRequest) {
         if (!chatResponse.ok) {
           console.error(
             "Google Chat API send failed",
-            await chatResponse.text()
+            {
+              status: chatResponse.status,
+              authMode: getGoogleChatAuthMode(),
+              space: getGoogleChatSpaceName(),
+              body: await chatResponse.text(),
+            }
           );
         } else {
           sentToGoogleChat = true;
