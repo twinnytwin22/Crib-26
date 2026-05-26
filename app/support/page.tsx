@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import NavBar from "@/components/nav/NavBar";
 
 export const metadata: Metadata = {
@@ -93,9 +94,9 @@ export default function SupportPage() {
                 </p>
                 <p>
                   <span className="font-medium text-foreground">Website:</span>{" "}
-                  <a className="text-primary hover:underline" href="/">
+                  <Link className="text-primary hover:underline" href="/">
                     cribnetwork.io
-                  </a>
+                  </Link>
                 </p>
               </div>
             </article>
