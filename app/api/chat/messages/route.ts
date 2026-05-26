@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionWithMessages } from "@/lib/providers/supabase/chat-storage";
 import { getChatSessionToken } from "@/lib/chat/session-cookie";
+import { syncGoogleChatThreadReplies } from "@/lib/google/chat-thread-sync";
 
 /**
  * GET /api/chat/messages
@@ -13,6 +14,8 @@ export async function GET(req: NextRequest) {
     if (!sessionKey) {
       return NextResponse.json({ success: true, session: null, messages: [] });
     }
+
+    await syncGoogleChatThreadReplies(sessionKey);
 
     const sessionData = await getSessionWithMessages(sessionKey);
 

@@ -10,14 +10,12 @@ import {
   getChatSessionToken,
   setChatSessionCookie,
 } from "@/lib/chat/session-cookie";
-import { GoogleAuth } from "google-auth-library";
-
-const GOOGLE_CHAT_SPACE =
-  process.env.GOOGLE_CHAT_SPACE || process.env.CHAT_SPACE_ID;
-const GOOGLE_CHAT_WEBHOOK_URL = process.env.GOOGLE_CHAT_WEBHOOK_URL;
-const GOOGLE_CHAT_BOT_TOKEN = process.env.GOOGLE_CHAT_BOT_TOKEN;
-const GOOGLE_CHAT_SERVICE_ACCOUNT_JSON =
-  process.env.GOOGLE_CHAT_SERVICE_ACCOUNT_JSON;
+import {
+  buildGoogleChatMessagesUrl,
+  getChatAccessToken,
+  GOOGLE_CHAT_SPACE,
+  GOOGLE_CHAT_WEBHOOK_URL,
+} from "@/lib/google/chat-api";
 const CHAT_FORWARD_EMAIL =
   process.env.CHAT_FORWARD_EMAIL ||
   process.env.CONTACT_EMAIL ||
@@ -29,7 +27,6 @@ const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const SMTP_FROM_EMAIL = process.env.SMTP_FROM_EMAIL || SMTP_USER;
 const SMTP_FROM_NAME = process.env.SMTP_FROM_NAME || "Crib Network";
-const CHAT_SCOPE = "https://www.googleapis.com/auth/chat.bot";
 
 let transporter: nodemailer.Transporter | null = null;
 
@@ -51,38 +48,6 @@ function getTransporter() {
 function isValidEmail(value?: string) {
   if (!value) return false;
   return /[^\s@]+@[^\s@]+\.[^\s@]+/.test(value.trim());
-}
-
-function buildGoogleChatMessagesUrl(space: string) {
-  const spaceName = space.startsWith("spaces/") ? space : `spaces/${space}`;
-  return new URL(`https://chat.googleapis.com/v1/${spaceName}/messages`);
-}
-
-async function getChatAccessToken(): Promise<string | null> {
-  // Automatic minting via service account JSON (preferred)
-  try {
-    const auth = new GoogleAuth({
-      scopes: [CHAT_SCOPE],
-      ...(GOOGLE_CHAT_SERVICE_ACCOUNT_JSON
-        ? { credentials: JSON.parse(GOOGLE_CHAT_SERVICE_ACCOUNT_JSON) }
-        : {}),
-    });
-
-    const client = await auth.getClient();
-    const token = await client.getAccessToken();
-    if (token.token) {
-      return token.token;
-    }
-  } catch (error) {
-    console.error("Failed to mint Chat access token via GoogleAuth", error);
-  }
-
-  // Fallback to manually provided bearer token (short-lived)
-  if (GOOGLE_CHAT_BOT_TOKEN) {
-    return GOOGLE_CHAT_BOT_TOKEN;
-  }
-
-  return null;
 }
 
 export async function POST(req: NextRequest) {
@@ -149,6 +114,9 @@ export async function POST(req: NextRequest) {
         }
 
         const apiUrl = buildGoogleChatMessagesUrl(GOOGLE_CHAT_SPACE);
+        if (!apiUrl) {
+          throw new Error("Google Chat space unavailable");
+        }
         if (sessionRecord?.sessionKey) {
           apiUrl.searchParams.set("requestId", sessionRecord.sessionKey);
           apiUrl.searchParams.set(
@@ -205,8 +173,20 @@ export async function POST(req: NextRequest) {
         const chatPayload: Record<string, unknown> = {
           text: details.join("\n"),
         };
+        if (sessionRecord?.sessionKey) {
+          chatPayload.thread = { threadKey: sessionRecord.sessionKey };
+        }
 
-        const chatResponse = await fetch(GOOGLE_CHAT_WEBHOOK_URL, {
+        const webhookUrl = new URL(GOOGLE_CHAT_WEBHOOK_URL);
+        if (sessionRecord?.sessionKey) {
+          webhookUrl.searchParams.set("threadKey", sessionRecord.sessionKey);
+          webhookUrl.searchParams.set(
+            "messageReplyOption",
+            "REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD"
+          );
+        }
+
+        const chatResponse = await fetch(webhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(chatPayload),

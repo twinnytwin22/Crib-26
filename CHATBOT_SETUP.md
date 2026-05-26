@@ -112,6 +112,10 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 # Google Chat Outbound (website → Google Chat)
 GOOGLE_CHAT_SPACE=AAAA... # or CHAT_SPACE_ID=AAAA...
 GOOGLE_CHAT_WEBHOOK_URL=https://chat.googleapis.com/v1/spaces/YOUR_SPACE/messages?key=XXX
+GOOGLE_CHAT_SERVICE_ACCOUNT_JSON={"type":"service_account",...}
+# Or split credentials:
+GOOGLE_CHAT_CLIENT_EMAIL=your-service-account@project.iam.gserviceaccount.com
+GOOGLE_CHAT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 
 # Google Chat Inbound (Google Chat → website)
 GOOGLE_CHAT_INBOUND_SECRET=your-secret-token

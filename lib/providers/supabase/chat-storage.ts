@@ -19,6 +19,7 @@ interface ChatMessageRecord {
   content: string;
   created_at: string;
   source: ChatMessageSource;
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface RecordVisitorMessageOptions {
@@ -167,6 +168,29 @@ async function insertMessage(
     .single();
 }
 
+async function googleMessageAlreadyStored(
+  supabase: SupabaseClient,
+  sessionId: string,
+  googleMessageName?: string | null
+) {
+  if (!googleMessageName) return false;
+
+  const { data, error } = await supabase
+    .from("chat_messages")
+    .select("id")
+    .eq("session_id", sessionId)
+    .eq("source", "google_chat")
+    .contains("metadata", { google_message_name: googleMessageName })
+    .maybeSingle();
+
+  if (error) {
+    console.error("Failed to check existing Google Chat message", error);
+    return false;
+  }
+
+  return Boolean(data);
+}
+
 /**
  * Persists a visitor message so future Google Chat replies can be stitched
  * back into the same Supabase session.
@@ -275,11 +299,19 @@ export async function recordAgentMessage(
     })
     .eq("id", session.id);
 
-  const metadata = {
+  const metadata: Record<string, unknown> = {
     sender_display_name: options.senderDisplayName ?? null,
     sender_email: options.senderEmail ?? null,
     ...(options.messageMetadata ?? {}),
   };
+
+  const googleMessageName =
+    typeof metadata.google_message_name === "string"
+      ? metadata.google_message_name
+      : null;
+  if (await googleMessageAlreadyStored(supabase, session.id, googleMessageName)) {
+    return null;
+  }
 
   return insertMessage(
     supabase,
@@ -302,7 +334,7 @@ export async function getSessionWithMessages(
 
   const { data: messages, error } = await supabase
     .from("chat_messages")
-    .select("id, role, content, created_at, source")
+    .select("id, role, content, created_at, source, metadata")
     .eq("session_id", session.id)
     .order("created_at", { ascending: true });
 
