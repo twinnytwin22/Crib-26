@@ -15,6 +15,26 @@ const GOOGLE_CHAT_SERVICE_ACCOUNT_JSON =
 const GOOGLE_CHAT_CLIENT_EMAIL = process.env.GOOGLE_CHAT_CLIENT_EMAIL;
 const GOOGLE_CHAT_PRIVATE_KEY = process.env.GOOGLE_CHAT_PRIVATE_KEY;
 
+function parseServiceAccountJson(value: string) {
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    const normalized = value.replace(
+      /"private_key"\s*:\s*"([\s\S]*?)"\s*,\s*"client_email"/,
+      (_match, privateKey: string) =>
+        `"private_key":"${privateKey
+          .replace(/\r?\n/g, "\\n")
+          .replace(/"/g, '\\"')}","client_email"`
+    );
+
+    try {
+      return JSON.parse(normalized);
+    } catch {
+      throw error;
+    }
+  }
+}
+
 export function getGoogleChatAuthMode() {
   if (GOOGLE_CHAT_SERVICE_ACCOUNT_JSON) return "service_account_json";
   if (GOOGLE_CHAT_CLIENT_EMAIL && GOOGLE_CHAT_PRIVATE_KEY) {
@@ -41,7 +61,7 @@ export async function getChatAccessToken(): Promise<string | null> {
     try {
       const auth = new GoogleAuth({
         scopes: CHAT_SCOPES,
-        credentials: JSON.parse(GOOGLE_CHAT_SERVICE_ACCOUNT_JSON),
+        credentials: parseServiceAccountJson(GOOGLE_CHAT_SERVICE_ACCOUNT_JSON),
       });
 
       const client = await auth.getClient();
