@@ -11,17 +11,17 @@ export default function Footer() {
   }
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-slate-950 py-24 px-6 ">
+    <section id="contact" className="border-t border-border bg-[var(--neutral-900)] py-14 text-white">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className=" border-t border-white/10 pt-10 text-sm text-white/50 max-w-7xl mx-auto"
+          className="crib-container text-sm text-white/55"
         >
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <span>© {new Date().getFullYear()} Crib Digital. All rights reserved.</span>
-            <div className="flex gap-8">
+            <div className="flex flex-wrap gap-6">
               <a href="/privacy-policy" className="transition hover:text-white">
                 Privacy Policy
               </a>

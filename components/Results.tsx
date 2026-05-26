@@ -12,7 +12,6 @@ const results = [
     suffix: "%",
     label: "Faster go-lives",
     description: "Average reduction in time-to-launch for new software and web products.",
-    gradient: "from-red-500 to-rose-500",
   },
   {
     icon: Globe,
@@ -20,7 +19,6 @@ const results = [
     suffix: "%",
     label: "Organic growth",
     description: "SEO visibility lift in the first six months for growth-stage teams.",
-    gradient: "from-red-500 to-rose-500",
   },
   {
     icon: TrendingUp,
@@ -28,7 +26,6 @@ const results = [
     suffix: "x",
     label: "Social-sourced pipeline",
     description: "Increase in qualified demos attributed to multi-channel content systems.",
-    gradient: "from-red-500 to-rose-500",
   },
   {
     icon: CircuitBoard,
@@ -36,7 +33,6 @@ const results = [
     suffix: "%",
     label: "Partner retention",
     description: "Clients who renew for ongoing optimization after the first engagement.",
-    gradient: "from-red-500 to-rose-500",
   },
 ];
 
@@ -77,27 +73,25 @@ function AnimatedCounter({ end, duration = 2, suffix = "" }: { end: number; dura
 
 export default function Results() {
   return (
-    <section id="results" className="bg-linear-to-b from-white to-[#F4F5F7] py-24 px-6">
-      <div className="mx-auto max-w-7xl">
+    <section id="results" className="crib-section border-b border-border bg-[var(--surface)]">
+      <div className="crib-container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center"
+          className="max-w-3xl"
         >
-          <div className="mb-4 text-sm font-semibold uppercase tracking-widest text-red-600">
-            Impact by the numbers
-          </div>
-          <h2 className="mb-6 text-4xl font-bold text-slate-900 md:text-5xl lg:text-6xl">
+          <div className="crib-eyebrow mb-4">Impact by the numbers</div>
+          <h2 className="text-3xl font-semibold leading-tight text-foreground md:text-5xl">
             Outcome-focused engagements, not vanity metrics.
           </h2>
-          <p className="mx-auto max-w-3xl text-xl text-slate-600">
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
             From platform launches to omnichannel growth programs, we build measurable momentum that keeps compounding long after the first release.
           </p>
         </motion.div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {results.map((result, index) => (
             <motion.div
               key={result.label}
@@ -105,19 +99,16 @@ export default function Results() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.08, duration: 0.5 }}
-              className="group relative h-full overflow-hidden rounded-2xl border border-slate-200/70 bg-white p-8 shadow-lg shadow-slate-200/60"
+              className="crib-card h-full p-6"
             >
-              <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br ${result.gradient} text-white shadow-lg shadow-red-500/30 transition-transform duration-300 group-hover:scale-110`}>
-                <result.icon className="h-7 w-7" />
+              <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-md border border-[var(--brand-100)] bg-[var(--brand-50)] text-primary">
+                <result.icon className="h-5 w-5" />
               </div>
-              <div className={`text-5xl font-bold text-slate-900 md:text-6xl`}>
-                <span className="bg-linear-to-br from-red-500 to-rose-500 bg-clip-text text-transparent">
-                  <AnimatedCounter end={parseInt(result.metric, 10)} suffix={result.suffix} />
-                </span>
+              <div className="text-4xl font-semibold text-primary md:text-5xl">
+                <AnimatedCounter end={parseInt(result.metric, 10)} suffix={result.suffix} />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-slate-900">{result.label}</h3>
-              <p className="mt-2 text-sm text-slate-600">{result.description}</p>
-              <div className={`pointer-events-none absolute -inset-0.5 rounded-2xl bg-linear-to-br ${result.gradient} opacity-0 blur-lg transition-opacity duration-300 group-hover:opacity-20`} />
+              <h3 className="mt-4 text-base font-semibold text-foreground">{result.label}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{result.description}</p>
             </motion.div>
           ))}
         </div>
@@ -127,7 +118,7 @@ export default function Results() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-16 grid gap-6 md:grid-cols-3"
+          className="mt-14 grid gap-4 md:grid-cols-3"
         >
           {[
         {
@@ -159,7 +150,7 @@ export default function Results() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
-              className="group relative overflow-hidden rounded-2xl shadow-xl"
+              className="group relative overflow-hidden rounded-lg border border-border bg-card shadow-sm"
             >
               <div className="relative aspect-4/3 overflow-hidden">
                 <Image
@@ -172,12 +163,12 @@ export default function Results() {
                   unoptimized
                 />
               </div>
-              <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-950 via-slate-950/70 to-transparent p-6 text-white">
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-red-200">
+              <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-black/90 via-black/70 to-transparent p-5 text-white">
+                <span className="text-xs font-semibold uppercase text-[var(--brand-200)]">
                   {study.industry}
                 </span>
-                <h3 className="mt-2 text-2xl font-semibold">{study.brand}</h3>
-                <p className="mt-2 text-sm text-white/80">{study.result}</p>
+                <h3 className="mt-2 text-xl font-semibold">{study.brand}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/78">{study.result}</p>
               </div>
             </motion.div>
           ))}

@@ -40,26 +40,27 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden pt-28 sm:pt-32">
-      <motion.div
-        className="absolute inset-0 bg-linear-to-b from-[#08111e] via-[#0b1a2d] to-[#0f2741]"
-        initial={{ opacity: 0.85 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+    <section className="relative min-h-[92svh] overflow-hidden pt-28 text-white sm:pt-32">
+      <video
+        className="absolute inset-0 h-full w-full object-cover"
+        src="/AZ SHOTS.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_16%,rgba(239,68,68,0.32),transparent_38%),radial-gradient(circle_at_85%_30%,rgba(56,189,248,0.24),transparent_40%),linear-gradient(120deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0)_35%)]" />
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(110deg,rgba(255,255,255,0.05)_0px,rgba(255,255,255,0.05)_1px,transparent_1px,transparent_24px)] opacity-30" />
-      <div className="absolute -top-16 right-10 h-64 w-64 rounded-full bg-red-400/30 blur-3xl" />
-      <div className="absolute bottom-4 left-10 h-72 w-72 rounded-full bg-red-500/20 blur-3xl" />
+      <div className="absolute inset-0 bg-[var(--neutral-1000)]/75" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/10 to-black/55" />
 
-      <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-12 px-6 pb-20 sm:gap-16 sm:pb-24 lg:grid lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
-        <div className="space-y-10 text-white">
+      <div className="relative z-10 crib-container flex min-h-[calc(92svh-7rem)] flex-col justify-between gap-14 pb-10">
+        <div className="max-w-4xl space-y-8 pt-6">
           <motion.div
             variants={reveal}
             initial="initial"
             animate="animate"
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-white/85 backdrop-blur sm:px-5 sm:text-sm"
+            className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-3 py-2 text-xs font-semibold uppercase text-white/80 backdrop-blur"
           >
             <Sparkles className="h-4 w-4" />
             Full-stack digital growth partner
@@ -70,9 +71,9 @@ export default function Hero() {
             initial="initial"
             animate="animate"
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="max-w-4xl text-4xl leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl"
+            className="max-w-4xl text-5xl font-semibold leading-[1.04] text-white sm:text-6xl lg:text-7xl"
           >
-            Build Revenue Engines, Not Just Pretty Websites
+            Build revenue engines, not just pretty websites.
           </motion.h1>
 
           <motion.p
@@ -80,7 +81,7 @@ export default function Hero() {
             initial="initial"
             animate="animate"
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg lg:text-xl"
+            className="max-w-2xl text-base leading-relaxed text-white/76 sm:text-lg"
           >
             Crib combines product strategy, high-performing web experiences, and
             growth systems into one execution lane so every launch drives
@@ -92,12 +93,12 @@ export default function Hero() {
             initial="initial"
             animate="animate"
             transition={{ duration: 0.6, delay: 0.35 }}
-            className="grid max-w-2xl gap-3 sm:grid-cols-3"
+            className="flex max-w-3xl flex-wrap gap-2"
           >
             {capabilityPill.map((item) => (
               <span
                 key={item.label}
-                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-xs font-medium text-white/80 backdrop-blur sm:text-sm"
+                className="inline-flex min-h-9 items-center gap-2 rounded-md border border-white/18 bg-white/10 px-3 text-xs font-medium text-white/80 backdrop-blur sm:text-sm"
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
@@ -110,11 +111,12 @@ export default function Hero() {
             initial="initial"
             animate="animate"
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5"
+            className="flex flex-col gap-3 sm:flex-row sm:items-center"
           >
             <Button
               onClick={() => handleScrollTo("contact")}
-              className="group rounded-full bg-red-500 px-8 py-6 text-base font-semibold text-white shadow-lg shadow-red-500/35 transition hover:bg-red-600"
+              size="lg"
+              className="group"
             >
               Book a Strategy Session
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -122,7 +124,8 @@ export default function Hero() {
             <Button
               variant="outline"
               onClick={() => handleScrollTo("services")}
-              className="rounded-full border-white/55 bg-transparent px-8 py-6 text-base font-semibold text-white hover:border-white hover:bg-white/10"
+              size="lg"
+              className="border-white/35 bg-white/10 text-white hover:bg-white/15 hover:text-white"
             >
               View Services
             </Button>
@@ -134,51 +137,26 @@ export default function Hero() {
           initial="initial"
           animate="animate"
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="relative lg:pl-6"
+          className="grid gap-2 border-t border-white/12 pt-5 sm:grid-cols-3"
         >
-          <div className="overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-7 text-white shadow-2xl backdrop-blur sm:p-8">
-            <div className="mb-7 flex flex-col gap-3 sm:mb-8 sm:gap-4">
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
-                Outcomes We Engineer
-              </span>
-              <h3 className="text-2xl leading-snug text-white sm:text-3xl">
-                Product, marketing, and automation in one operating system.
-              </h3>
-              <p className="text-sm leading-relaxed text-white/75 sm:text-base">
-                We align build velocity and go-to-market execution so each week
-                creates momentum, not isolated deliverables.
+          {outcomeCards.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-lg border border-white/15 bg-white/10 p-4 backdrop-blur"
+            >
+              <div className="text-xs font-semibold uppercase text-white/55">
+                {card.title}
+              </div>
+              <div className="mt-2 text-2xl font-semibold text-white">
+                {card.metric}
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-white/66">
+                {card.description}
               </p>
             </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              {outcomeCards.map((card) => (
-                <div
-                  key={card.title}
-                  className="rounded-2xl border border-white/20 bg-slate-950/25 p-4"
-                >
-                  <div className="text-xs font-semibold uppercase tracking-wide text-white/65">
-                    {card.title}
-                  </div>
-                  <div className="mt-3 text-2xl font-bold text-red-200">
-                    {card.metric}
-                  </div>
-                  <p className="mt-2 text-xs leading-relaxed text-white/75">
-                    {card.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </motion.div>
       </div>
-
-      <motion.div
-        className="absolute bottom-6 left-1/2 hidden h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full border border-white/40 text-white/75 md:flex"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="text-xs uppercase tracking-[0.3em]">Scroll</div>
-      </motion.div>
     </section>
   );
 }

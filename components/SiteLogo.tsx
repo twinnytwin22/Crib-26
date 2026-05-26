@@ -12,18 +12,17 @@ export default function SiteLogo() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Link href="/" className="flex items-center gap-3">
-        <div className="relative h-10 w-32 md:w-40 [&_svg]:text-red-600 [&_path]:fill-red-600">
+      <Link href="/" className="flex items-center gap-3" aria-label="CRIB home">
+        <div className="relative h-8 w-28 md:w-32">
           <Image
             src="/CRIB_LOGO_RED.svg"
             alt="Crib logo"
             fill
             priority
-            sizes="(min-width: 768px) 160px, 128px"
-            className="object-contain brightness-125"
+            sizes="(min-width: 768px) 128px, 112px"
+            className="object-contain"
           />
         </div>
-  
       </Link>
     </motion.div>
   );

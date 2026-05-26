@@ -1,0 +1,12 @@
+{
+    "editor.inlineSuggest.enabled": false,
+    "editor.quickSuggestions": {
+        "other": "off",
+        "comments": "off",
+        "strings": "off"
+    },
+    "editor.wordBasedSuggestions": "off",
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.suggestOnTriggerCharacters": false
+}

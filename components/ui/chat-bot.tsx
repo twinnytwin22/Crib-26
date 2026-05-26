@@ -90,7 +90,7 @@ export function ChatBot({
   subtitle = "We're here to help",
   placeholder = "Type your message...",
   welcomeMessage = "Hello! How can I help you today?",
-  primaryColor = "from-slate-950 via-slate-900 to-slate-800",
+  primaryColor: _primaryColor = "from-slate-950 via-slate-900 to-slate-800",
   position = "bottom-right",
   collectEmail = false,
   requireEmail = false,
@@ -380,38 +380,32 @@ export function ChatBot({
   };
 
   return (
-    <div className={`fixed ${positionClasses[position]} z-50`}>
+    <div className={`fixed ${positionClasses[position]} z-50`} data-theme-source={_primaryColor}>
       {/* Chat Window */}
       {isOpen && (
         <Card
-          className={`mb-4 w-[380px] shadow-2xl transition-all duration-300 overflow-hidden ${
+          className={`mb-4 w-[min(380px,calc(100vw-32px))] overflow-hidden shadow-lg transition-all duration-300 ${
             isMinimized ? "h-16" : "h-[600px]"
-          } flex flex-col border-none`}
+          } flex flex-col`}
         >
           {/* Header */}
-          <div
-            className={`flex items-center justify-between p-4 bg-linear-to-br ${primaryColor} relative overflow-hidden`}
-          >
-            {/* Decorative gradient orbs matching homepage */}
-            <div className="absolute top-0 right-0 h-24 w-24 rounded-full bg-pink-500/30 blur-3xl" />
-            <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-purple-500/20 blur-3xl" />
-            
-            <div className="flex items-center gap-3 relative z-10">
-              <Avatar className="h-10 w-10 border border-white/20">
-                <AvatarFallback className="bg-white/5 text-white backdrop-blur">
+          <div className="flex items-center justify-between border-b border-white/10 bg-[var(--neutral-900)] p-4">
+            <div className="relative z-10 flex items-center gap-3">
+              <Avatar className="h-10 w-10 rounded-md border border-white/15">
+                <AvatarFallback className="rounded-md bg-white/10 text-white">
                   <MessageCircle className="h-5 w-5" />
                 </AvatarFallback>
               </Avatar>
               <div className="text-white">
-                <h3 className="font-bold text-sm tracking-tight">{title}</h3>
+                <h3 className="text-sm font-semibold">{title}</h3>
                 <p className="text-xs text-white/70">{subtitle}</p>
               </div>
             </div>
-            <div className="flex gap-1 relative z-10">
+            <div className="relative z-10 flex gap-1">
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-white hover:bg-white/20 transition-all duration-200 hover:scale-110"
+                className="h-8 w-8 text-white hover:bg-white/15 hover:text-white"
                 onClick={() => setIsMinimized(!isMinimized)}
               >
                 <Minimize2 className="h-4 w-4" />
@@ -419,7 +413,7 @@ export function ChatBot({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-white hover:bg-white/20 transition-all duration-200 hover:scale-110"
+                className="h-8 w-8 text-white hover:bg-white/15 hover:text-white"
                 onClick={() => setIsOpen(false)}
               >
                 <X className="h-4 w-4" />
@@ -431,24 +425,23 @@ export function ChatBot({
           {!isMinimized && (
             <>
               {shouldCollectEmail && (
-                <div className="border-b border-slate-100 bg-white/80 px-4 py-3 backdrop-blur">
-                  <p className="text-xs font-medium text-slate-700 mb-2">{emailLabel}</p>
+                <div className="border-b border-border bg-card px-4 py-3">
+                  <p className="mb-2 text-xs font-medium text-foreground">{emailLabel}</p>
                   <Input
                     type="email"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     onBlur={() => setEmailTouched(true)}
                     placeholder="you@example.com"
-                    className="rounded-lg border-slate-300 focus-visible:ring-2 focus-visible:ring-slate-400"
                   />
                   {showEmailError && (
-                    <p className="mt-1 text-xs text-rose-500">
+                    <p className="mt-1 text-xs text-destructive">
                       Please enter a valid email so we can reply.
                     </p>
                   )}
                 </div>
               )}
-              <ScrollArea className="flex-1 p-4 bg-linear-to-b from-slate-100 to-white" ref={scrollRef}>
+              <ScrollArea className="flex-1 bg-background p-4" ref={scrollRef}>
                 <div className="space-y-4">
                   {messages.map((message) => (
                     <div
@@ -458,10 +451,10 @@ export function ChatBot({
                       }`}
                     >
                       <div
-                        className={`max-w-[80%] rounded-2xl p-3 shadow-sm ${
+                        className={`max-w-[80%] rounded-lg p-3 shadow-sm ${
                           message.sender === "user"
-                            ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 text-white border border-white/10"
-                            : "bg-white border border-slate-200"
+                            ? "border border-white/10 bg-[var(--neutral-900)] text-white"
+                            : "border border-border bg-card text-foreground"
                         }`}
                       >
                         <p className="text-sm leading-relaxed">{message.content}</p>
@@ -476,11 +469,11 @@ export function ChatBot({
                   ))}
                   {isTyping && (
                     <div className="flex justify-start animate-in fade-in duration-300">
-                      <div className="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+                      <div className="rounded-lg border border-border bg-card p-3 shadow-sm">
                         <div className="flex gap-1">
-                          <div className="w-2 h-2 bg-linear-to-r from-purple-500 to-pink-500 rounded-full animate-bounce" />
-                          <div className="w-2 h-2 bg-linear-to-r from-pink-500 to-purple-500 rounded-full animate-bounce [animation-delay:0.2s]" />
-                          <div className="w-2 h-2 bg-linear-to-r from-purple-500 to-pink-500 rounded-full animate-bounce [animation-delay:0.4s]" />
+                          <div className="h-2 w-2 animate-bounce rounded-full bg-primary" />
+                          <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:0.2s]" />
+                          <div className="h-2 w-2 animate-bounce rounded-full bg-primary [animation-delay:0.4s]" />
                         </div>
                       </div>
                     </div>
@@ -489,20 +482,20 @@ export function ChatBot({
               </ScrollArea>
 
               {/* Input Area */}
-              <div className="p-4 border-t bg-white">
+              <div className="border-t border-border bg-card p-4">
                 <div className="flex gap-2">
                   <Input
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={placeholder}
-                    className="flex-1 rounded-xl border-slate-300 focus-visible:ring-2 focus-visible:ring-slate-400"
+                    className="flex-1"
                   />
                   <Button
                     onClick={handleSendMessage}
                     size="icon"
                     disabled={!canSend}
-                    className="rounded-xl bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 hover:opacity-90 transition-all duration-200 hover:scale-105 disabled:opacity-50 text-white"
+                    className="text-white"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
@@ -516,11 +509,10 @@ export function ChatBot({
       {/* Floating Action Button */}
       {!isOpen && (
         <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-pink-500/20 blur-xl animate-pulse" />
           <Button
             onClick={() => setIsOpen(true)}
             size="lg"
-            className={`relative h-14 w-14 rounded-full shadow-2xl bg-linear-to-br ${primaryColor} hover:scale-110 transition-all duration-300 animate-in zoom-in border border-white/10`}
+            className="relative h-12 w-12 rounded-lg shadow-lg animate-in zoom-in"
           >
             <MessageCircle className="h-6 w-6 text-white" />
           </Button>

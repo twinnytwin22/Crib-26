@@ -45,17 +45,17 @@ export default function NavBar() {
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="fixed inset-x-0 top-0 z-50 backdrop-blur"
+      className="fixed inset-x-0 top-0 z-50 border-b border-border bg-white/90 backdrop-blur"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 shadow-sm  backdrop-blur md:mt-6">
+      <div className="crib-container flex h-14 items-center justify-between gap-6">
         <SiteLogo />
 
-        <nav className="hidden items-center gap-10 text-sm font-medium text-slate-100 md:flex">
+        <nav className="hidden items-center gap-1 text-sm font-medium text-[var(--text-2)] md:flex">
           {navLinks.map((link) => (
             <button
               key={link.href}
               onClick={() => handleNavClick(link.href)}
-              className="transition-colors hover:text-slate-900"
+              className="rounded-md px-3 py-2 transition-colors hover:bg-secondary hover:text-foreground"
             >
               {link.label}
             </button>
@@ -64,7 +64,7 @@ export default function NavBar() {
 
         <div className="hidden items-center gap-4 md:flex">
           <Link href="/#contact">
-            <Button className="rounded-full bg-red-600 px-6 text-white shadow-lg shadow-red-500/20 hover:bg-red-700">
+            <Button size="sm">
               Book a Strategy Call
             </Button>
           </Link>
@@ -73,7 +73,8 @@ export default function NavBar() {
         <button
           type="button"
           onClick={toggleMenu}
-          className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition md:hidden"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-foreground shadow-sm transition md:hidden"
+          aria-label="Toggle navigation menu"
         >
           {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -85,20 +86,20 @@ export default function NavBar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mx-auto mt-2 w-[90%] max-w-2xl overflow-hidden rounded-3xl bg-white/90 p-6 shadow-xl ring-1 ring-slate-200 backdrop-blur md:hidden"
+            className="mx-auto mt-2 w-[calc(100%-24px)] max-w-2xl overflow-hidden rounded-lg border border-border bg-card p-3 shadow-lg md:hidden"
           >
-            <div className="flex flex-col gap-4 text-base font-medium text-slate-700">
+            <div className="flex flex-col gap-1 text-sm font-medium text-[var(--text-2)]">
               {navLinks.map((link) => (
                 <button
                   key={link.href}
                   onClick={() => handleNavClick(link.href)}
-                  className="rounded-xl px-4 py-3 text-left transition-colors hover:bg-slate-100/80"
+                  className="rounded-md px-3 py-3 text-left transition-colors hover:bg-secondary hover:text-foreground"
                 >
                   {link.label}
                 </button>
               ))}
               <Link href="/#contact" onClick={() => setIsOpen(false)} className="mt-2">
-                <Button className="w-full rounded-full bg-red-600 text-white shadow-lg shadow-red-500/20 hover:bg-red-700">
+                <Button className="w-full">
                   Book a Strategy Call
                 </Button>
               </Link>

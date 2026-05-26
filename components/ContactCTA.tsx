@@ -61,17 +61,8 @@ export default function ContactCTA() {
   };
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 py-24 px-6">
-      <motion.div
-        className="absolute inset-0"
-        animate={{ opacity: [0.6, 0.8, 0.6] }}
-        transition={{ duration: 10, repeat: Infinity }}
-        style={{
-          backgroundImage: "radial-gradient(circle at 20% 20%, rgba(244,114,182,0.2), transparent 45%), radial-gradient(circle at 80% 10%, rgba(79,70,229,0.25), transparent 45%)",
-        }}
-      />
-
-      <div className="relative z-10 mx-auto max-w-7xl">
+    <section id="contact" className="bg-[var(--neutral-900)] py-24 text-white">
+      <div className="crib-container">
         <div className="grid items-center gap-16 lg:grid-cols-[1.05fr_0.95fr]">
           <motion.div
             initial={{ opacity: 0, x: -24 }}
@@ -80,18 +71,18 @@ export default function ContactCTA() {
             transition={{ duration: 0.6 }}
             className="text-white"
           >
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/80 backdrop-blur">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/76">
               <Rocket className="h-4 w-4" />
               Launch your next digital release
             </div>
-            <h2 className="mb-6 text-4xl font-bold leading-tight md:text-5xl">
+            <h2 className="mb-6 text-3xl font-semibold leading-tight md:text-5xl">
               Ready to ship software, websites, SEO, and social that actually work together?
             </h2>
-            <p className="mb-10 text-xl text-white/70">
+            <p className="mb-10 max-w-2xl text-base leading-relaxed text-white/68 md:text-lg">
               Book a strategy session and we’ll audit your current stack, surface the biggest opportunities, and co-create a plan that blends product innovation with measurable growth.
             </p>
 
-            <div className="mb-12 space-y-4">
+            <div className="mb-12 grid gap-3">
               {["Full digital roadmaps across product, SEO, and social", "Sprint-based execution with weekly visibility", "In-house enablement so your team can run with it"].map((point, index) => (
                 <motion.div
                   key={point}
@@ -99,15 +90,15 @@ export default function ContactCTA() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.4 }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-3 text-sm text-white/76"
                 >
-                  <span className="h-2 w-2 rounded-full bg-linear-to-r from-red-400 to-rose-400" />
-                  <span className="text-lg text-white/80">{point}</span>
+                  <span className="h-2 w-2 rounded-full bg-primary" />
+                  <span>{point}</span>
                 </motion.div>
               ))}
             </div>
 
-            <div className="space-y-4 text-white/70">
+            <div className="space-y-4 text-sm text-white/62">
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5" />
                 <span>hello@cribnetwork.io</span>
@@ -125,13 +116,13 @@ export default function ContactCTA() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur">
-              <h3 className="text-2xl font-semibold text-white">Book your strategy session</h3>
-              <p className="mt-2 text-sm text-white/60">Tell us a bit about your goals—we’ll follow up to schedule a working session.</p>
+            <div className="rounded-lg border border-white/10 bg-white p-6 text-foreground shadow-lg">
+              <h3 className="text-xl font-semibold">Book your strategy session</h3>
+              <p className="mt-2 text-sm text-muted-foreground">Tell us a bit about your goals. We’ll follow up to schedule a working session.</p>
 
-              <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+              <form onSubmit={handleSubmit} className="mt-7 space-y-5">
                 <div>
-                  <Label htmlFor="name" className="mb-2 block text-white/90">
+                  <Label htmlFor="name" className="mb-2 block">
                     Full name *
                   </Label>
                   <Input
@@ -140,13 +131,12 @@ export default function ContactCTA() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="border-white/20 bg-white/10 text-white placeholder:text-white/40 focus:border-rose-200"
                     placeholder="Alex Morgan"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="email" className="mb-2 block text-white/90">
+                  <Label htmlFor="email" className="mb-2 block">
                     Email *
                   </Label>
                   <Input
@@ -156,13 +146,12 @@ export default function ContactCTA() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="border-white/20 bg-white/10 text-white placeholder:text-white/40 focus:border-rose-200"
                     placeholder="alex@company.com"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="company" className="mb-2 block text-white/90">
+                  <Label htmlFor="company" className="mb-2 block">
                     Company
                   </Label>
                   <Input
@@ -170,14 +159,13 @@ export default function ContactCTA() {
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    className="border-white/20 bg-white/10 text-white placeholder:text-white/40 focus:border-rose-200"
                     placeholder="Company name"
                   />
                 </div>
 
                 <div className="flex flex-col gap-4 sm:flex-row">
                   <div className="flex-1">
-                    <Label htmlFor="companySize" className="mb-2 block text-white/90">
+                    <Label htmlFor="companySize" className="mb-2 block">
                       Company size
                     </Label>
                     <Select
@@ -185,10 +173,10 @@ export default function ContactCTA() {
                       value={formData.companySize}
                       onValueChange={(value) => setFormData({ ...formData, companySize: value })}
                     >
-                      <SelectTrigger className="border-white/20 bg-white/10 text-white [&>span]:text-white">
+                      <SelectTrigger>
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white text-slate-900">
+                      <SelectContent>
                         <SelectItem value="1-10">1-10 employees</SelectItem>
                         <SelectItem value="11-50">11-50 employees</SelectItem>
                         <SelectItem value="51-200">51-200 employees</SelectItem>
@@ -200,7 +188,7 @@ export default function ContactCTA() {
                   </div>
 
                   <div className="flex-1">
-                    <Label htmlFor="budget" className="mb-2 block text-white/90">
+                    <Label htmlFor="budget" className="mb-2 block">
                       Monthly budget
                     </Label>
                     <Select
@@ -208,10 +196,10 @@ export default function ContactCTA() {
                       value={formData.budget}
                       onValueChange={(value) => setFormData({ ...formData, budget: value })}
                     >
-                      <SelectTrigger className="border-white/20 bg-white/10 text-white [&>span]:text-white">
+                      <SelectTrigger>
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white text-slate-900">
+                      <SelectContent>
                         <SelectItem value="<5k">Less than $5,000</SelectItem>
                         <SelectItem value="5k-10k">$5,000 - $10,000</SelectItem>
                         <SelectItem value="10k-25k">$10,000 - $25,000</SelectItem>
@@ -223,7 +211,7 @@ export default function ContactCTA() {
                 </div>
 
                 <div>
-                  <Label htmlFor="message" className="mb-2 block text-white/90">
+                  <Label htmlFor="message" className="mb-2 block">
                     What should we focus on?
                   </Label>
                   <Textarea
@@ -232,7 +220,7 @@ export default function ContactCTA() {
                     value={formData.message}
                     onChange={handleChange}
                     rows={4}
-                    className="resize-none border-white/20 bg-white/10 text-white placeholder:text-white/40 focus:border-rose-200"
+                    className="resize-none"
                     placeholder="Tell us about your product, website, SEO, or social goals."
                   />
                 </div>
@@ -240,7 +228,7 @@ export default function ContactCTA() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="group w-full rounded-full border border-rose-200/60 bg-white/10 py-6 text-base font-semibold text-white shadow-lg shadow-red-500/20 transition hover:bg-white/20"
+                  className="group w-full"
                 >
                   {isSubmitting ? (
                     "Sending..."
@@ -261,7 +249,7 @@ export default function ContactCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className="mt-20 border-t border-white/10 pt-10 text-sm text-white/50"
+          className="mt-16 border-t border-white/10 pt-8 text-sm text-white/50"
         >
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <span>© {new Date().getFullYear()} Crib Digital. All rights reserved.</span>

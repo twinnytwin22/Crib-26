@@ -45,17 +45,17 @@ async function BlogPosts({
 
 function BlogPostsSkeleton() {
   return (
-    <section className="bg-linear-to-b from-white to-[#F4F5F7] py-24 px-6">
-      <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-16">
-          <div className="h-4 w-32 bg-slate-200 rounded animate-pulse mx-auto mb-4" />
-          <div className="h-12 w-96 bg-slate-200 rounded animate-pulse mx-auto mb-4" />
-          <div className="h-6 w-[600px] bg-slate-200 rounded animate-pulse mx-auto" />
+    <section className="crib-section border-t border-border bg-[var(--surface)]">
+      <div className="crib-container">
+        <div className="mb-12 max-w-3xl">
+          <div className="mb-4 h-4 w-32 animate-pulse rounded bg-[var(--neutral-200)]" />
+          <div className="mb-4 h-11 w-full max-w-xl animate-pulse rounded bg-[var(--neutral-200)]" />
+          <div className="h-5 w-full max-w-2xl animate-pulse rounded bg-[var(--neutral-200)]" />
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-2xl overflow-hidden shadow-xl">
-              <div className="aspect-4/3 bg-slate-200 animate-pulse" />
+            <div key={i} className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+              <div className="aspect-4/3 animate-pulse bg-[var(--neutral-200)]" />
             </div>
           ))}
         </div>

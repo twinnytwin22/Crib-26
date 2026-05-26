@@ -28,18 +28,18 @@ const benefits = [
 
 export default function WhyCrib() {
   return (
-    <section id="why" className="relative overflow-hidden bg-slate-950 py-24 px-6">
-      <div className="absolute inset-0 opacity-40">
+    <section id="why" className="relative overflow-hidden bg-[var(--neutral-900)] py-24 text-white">
+      <div className="absolute inset-0 opacity-35">
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.18) 1px, transparent 0)",
-            backgroundSize: "36px 36px",
+            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.11) 1px, transparent 0)",
+            backgroundSize: "24px 24px",
           }}
         />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl">
+      <div className="relative z-10 crib-container">
         <div className="grid items-center gap-16 lg:grid-cols-[1.05fr_0.95fr]">
           <motion.div
             initial={{ opacity: 0, x: -24 }}
@@ -48,17 +48,15 @@ export default function WhyCrib() {
             transition={{ duration: 0.6 }}
             className="text-white"
           >
-            <div className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-red-200">
-              Why teams choose Crib
-            </div>
-            <h2 className="mb-6 text-4xl font-bold leading-tight md:text-5xl">
+            <div className="crib-eyebrow mb-4 text-white/55">Why teams choose Crib</div>
+            <h2 className="mb-6 text-3xl font-semibold leading-tight md:text-5xl">
               Engineered for the pace of modern digital companies.
             </h2>
-            <p className="mb-8 text-xl text-white/70">
-              Most partners deliver either code or campaigns. We deliver connected digital ecosystems—software experiences that convert, search strategies that scale, and social storytelling that keeps your brand top of feed.
+            <p className="mb-8 max-w-2xl text-base leading-relaxed text-white/68 md:text-lg">
+              Most partners deliver either code or campaigns. We deliver connected digital ecosystems: software experiences that convert, search strategies that scale, and social storytelling that keeps your brand visible.
             </p>
 
-            <div className="space-y-4">
+            <div className="grid gap-3">
               {["Dedicated pod of engineers, designers, and strategists", "Search, site, and social plans built on one insights stack", "Automation across CRMs, analytics, and marketing ops", "On-demand workshops and enablement for your internal team"].map((item, index) => (
                 <motion.div
                   key={item}
@@ -66,12 +64,12 @@ export default function WhyCrib() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08, duration: 0.4 }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-3 text-sm text-white/78"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br from-red-500 to-rose-500">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary">
                     <Check className="h-4 w-4 text-white" />
                   </span>
-                  <span className="text-base text-white/80">{item}</span>
+                  <span>{item}</span>
                 </motion.div>
               ))}
             </div>
@@ -82,7 +80,7 @@ export default function WhyCrib() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="grid gap-6 sm:grid-cols-2"
+            className="grid gap-4 sm:grid-cols-2"
           >
             {benefits.map((benefit, index) => (
               <motion.div
@@ -91,13 +89,13 @@ export default function WhyCrib() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.45 }}
-                className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white shadow-lg shadow-red-500/10 backdrop-blur"
+                className="rounded-lg border border-white/10 bg-white/5 p-5 text-white backdrop-blur"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-red-500 to-rose-500">
-                  <benefit.icon className="h-6 w-6 text-white" />
+                <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/10 text-white">
+                  <benefit.icon className="h-5 w-5" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold">{benefit.title}</h3>
-                <p className="text-sm text-white/70">{benefit.description}</p>
+                <h3 className="mb-2 text-base font-semibold">{benefit.title}</h3>
+                <p className="text-sm leading-relaxed text-white/62">{benefit.description}</p>
               </motion.div>
             ))}
           </motion.div>
