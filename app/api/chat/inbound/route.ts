@@ -3,6 +3,26 @@ import { recordAgentMessage } from "@/lib/providers/supabase/chat-storage";
 
 const INBOUND_SECRET = process.env.GOOGLE_CHAT_INBOUND_SECRET;
 
+type GoogleChatEvent = {
+  type?: string;
+  message?: {
+    text?: string;
+    thread?: {
+      name?: string;
+      threadKey?: string;
+    };
+    threadKey?: string;
+    sender?: {
+      type?: string;
+      displayName?: string;
+      email?: string;
+    };
+  };
+  space?: {
+    name?: string;
+  };
+};
+
 function logInbound(label: string, payload: Record<string, unknown>) {
   try {
     console.log(`[chat inbound] ${label}`, JSON.stringify(payload, null, 2));
@@ -14,26 +34,29 @@ function logInbound(label: string, payload: Record<string, unknown>) {
 function isAuthorized(req: NextRequest) {
   if (!INBOUND_SECRET) {
     console.warn(
-      "GOOGLE_CHAT_INBOUND_SECRET is not configured; inbound route is unsecured."
+      "GOOGLE_CHAT_INBOUND_SECRET is not configured; inbound route is disabled."
     );
-    return true;
+    return false;
   }
 
   const headerToken =
     req.headers.get("x-goog-chat-secret") || req.headers.get("authorization");
+  const urlToken =
+    req.nextUrl.searchParams.get("secret") ||
+    req.nextUrl.searchParams.get("token");
 
-  if (!headerToken) {
+  if (!headerToken && !urlToken) {
     return false;
   }
 
-  if (headerToken.startsWith("Bearer ")) {
+  if (headerToken?.startsWith("Bearer ")) {
     return headerToken.slice(7) === INBOUND_SECRET;
   }
 
-  return headerToken === INBOUND_SECRET;
+  return headerToken === INBOUND_SECRET || urlToken === INBOUND_SECRET;
 }
 
-function isPingEvent(body: any) {
+function isPingEvent(body: GoogleChatEvent) {
   const type = body?.type;
   return type && type !== "MESSAGE";
 }
@@ -52,7 +75,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: any;
+  let body: GoogleChatEvent;
   try {
     body = await req.json();
     logInbound("received", {

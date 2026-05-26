@@ -1,15 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card } from "./card";
 import { Button } from "./button";
 import { Badge } from "./badge";
 
 interface ChatDebugPanelProps {
-  sessionInfo: { id?: string; key?: string } | null;
+  sessionInfo: { id?: string } | null;
   isRealtimeConnected: boolean;
   lastPolledAt?: Date;
 }
+
+type DebugMessage = {
+  id: string;
+  sender: "user" | "bot";
+  source?: string;
+  content: string;
+};
 
 export function ChatDebugPanel({
   sessionInfo,
@@ -17,17 +24,15 @@ export function ChatDebugPanel({
   lastPolledAt,
 }: ChatDebugPanelProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<DebugMessage[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchMessages = async () => {
-    if (!sessionInfo?.key) return;
+  const fetchMessages = useCallback(async () => {
+    if (!sessionInfo?.id) return;
     
     setLoading(true);
     try {
-      const response = await fetch(
-        `/api/chat/messages?sessionKey=${encodeURIComponent(sessionInfo.key)}`
-      );
+      const response = await fetch("/api/chat/messages");
       const data = await response.json();
       setMessages(data.messages || []);
     } catch (error) {
@@ -35,15 +40,17 @@ export function ChatDebugPanel({
     } finally {
       setLoading(false);
     }
-  };
+  }, [sessionInfo?.id]);
 
   useEffect(() => {
-    if (isVisible && sessionInfo?.key) {
-      fetchMessages();
-      const interval = setInterval(fetchMessages, 5000);
+    if (isVisible && sessionInfo?.id) {
+      void fetchMessages();
+      const interval = setInterval(() => {
+        void fetchMessages();
+      }, 5000);
       return () => clearInterval(interval);
     }
-  }, [isVisible, sessionInfo?.key]);
+  }, [fetchMessages, isVisible, sessionInfo?.id]);
 
   if (!isVisible) {
     return (
@@ -78,9 +85,9 @@ export function ChatDebugPanel({
         </div>
 
         <div>
-          <div className="font-medium text-slate-600">Session Key:</div>
+          <div className="font-medium text-slate-600">Session Cookie:</div>
           <code className="block rounded bg-slate-100 p-2 text-xs">
-            {sessionInfo?.key || "Not created yet"}
+            {sessionInfo?.id ? "HttpOnly browser cookie" : "Not created yet"}
           </code>
         </div>
 
@@ -112,7 +119,7 @@ export function ChatDebugPanel({
             </Button>
           </div>
           <div className="max-h-48 space-y-1 overflow-y-auto">
-            {messages.map((msg, i) => (
+            {messages.map((msg) => (
               <div
                 key={msg.id}
                 className="rounded border border-slate-200 bg-slate-50 p-2"

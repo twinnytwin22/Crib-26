@@ -1,17 +1,12 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { X, Send, MessageCircle, Minimize2 } from "lucide-react";
-import type {
-  RealtimeChannel,
-  RealtimePostgresInsertPayload,
-} from "@supabase/supabase-js";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Card } from "./card";
 import { ScrollArea } from "./scroll-area";
 import { Avatar, AvatarFallback } from "./avatar";
-import { getSupabaseBrowserClient } from "@/lib/providers/supabase/browser-client";
 
 export interface ChatMessage {
   id: string;
@@ -26,7 +21,6 @@ type IncomingChatMessage = Omit<ChatMessage, "timestamp"> & {
 
 export interface ChatSessionInfo {
   id?: string;
-  key?: string;
 }
 
 export type ChatSendHandlerResult =
@@ -115,8 +109,6 @@ export function ChatBot({
   const [emailTouched, setEmailTouched] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const knownMessageIds = useRef<Set<string>>(new Set(["welcome"]));
-  const supabaseClient = useMemo(() => getSupabaseBrowserClient(), []);
-  const realtimeChannelRef = useRef<RealtimeChannel | null>(null);
   const [sessionInfo, setSessionInfo] = useState<ChatSessionInfo | null>(null);
 
   const shouldCollectEmail = collectEmail || requireEmail;
@@ -149,15 +141,21 @@ export function ChatBot({
   }, []);
 
   const fetchMessages = useCallback(
-    async (sessionKey: string) => {
+    async () => {
       try {
-        const response = await fetch(`/api/chat/messages?sessionKey=${encodeURIComponent(sessionKey)}`);
+        const response = await fetch("/api/chat/messages");
         if (!response.ok) {
           console.warn("Failed to fetch chat messages", response.status);
           return;
         }
 
         const data = await response.json();
+        if (data.session?.id) {
+          setSessionInfo((prev) => ({
+            id: data.session.id ?? prev?.id,
+          }));
+        }
+
         const rawMessages: IncomingChatMessage[] = Array.isArray(data.messages)
           ? data.messages
           : [];
@@ -167,113 +165,52 @@ export function ChatBot({
         }
 
         const normalizedMessages = rawMessages.map(normalizeMessage);
-
-        const newMessages = normalizedMessages.filter((msg: ChatMessage) => {
-          if (!msg.timestamp) return false;
-          return !knownMessageIds.current.has(msg.id);
+        knownMessageIds.current = new Set([
+          "welcome",
+          ...normalizedMessages.map((msg) => msg.id),
+        ]);
+        setMessages((prev) => {
+          const welcome =
+            prev.find((message) => message.id === "welcome") ?? {
+              id: "welcome",
+              content: welcomeMessage,
+              sender: "bot" as const,
+              timestamp: new Date(),
+            };
+          return [welcome, ...normalizedMessages];
         });
-
-        if (newMessages.length > 0) {
-          newMessages.forEach((msg: ChatMessage) => {
-            knownMessageIds.current.add(msg.id);
-          });
-          setMessages((prev) => {
-            const existingIds = new Set(prev.map((m) => m.id));
-            const toAdd = newMessages.filter((m: ChatMessage) => !existingIds.has(m.id));
-            return [...prev, ...toAdd];
-          });
-        }
       } catch (error) {
         console.error("Failed to poll chat messages", error);
       }
     },
-    [normalizeMessage]
+    [normalizeMessage, welcomeMessage]
   );
 
-  const subscribeToRealtime = useCallback(
-    (sessionId: string) => {
-      if (!supabaseClient) {
-        console.warn("Supabase client not available for real-time subscription");
-        return;
-      }
-
-      const channel = supabaseClient
-        .channel(`chat-session-${sessionId}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "chat_messages",
-            filter: `session_id=eq.${sessionId}`,
-          },
-          (payload: RealtimePostgresInsertPayload<{
-            id: string;
-            role: "visitor" | "agent" | "system";
-            content: string;
-            created_at: string;
-            source: string;
-          }>) => {
-            const newRow = payload.new;
-            if (!newRow || newRow.role === "visitor") {
-              return;
-            }
-
-            if (knownMessageIds.current.has(newRow.id)) {
-              return;
-            }
-
-            const incomingMessage: ChatMessage = {
-              id: newRow.id,
-              content: newRow.content,
-              sender: "bot",
-              timestamp: new Date(newRow.created_at),
-            };
-
-            knownMessageIds.current.add(newRow.id);
-            setMessages((prev) => [...prev, incomingMessage]);
-          }
-        )
-        .subscribe((status) => {
-          console.log("Realtime subscription status:", status);
-        });
-
-      realtimeChannelRef.current = channel;
-    },
-    [supabaseClient]
-  );
-
-  // Set up real-time subscription
+  // Poll for Google Chat replies after the server creates a session.
   useEffect(() => {
-    if (!sessionInfo?.id || !supabaseClient) {
+    if (!sessionInfo?.id) {
       return;
     }
 
-    subscribeToRealtime(sessionInfo.id);
-
-    return () => {
-      if (realtimeChannelRef.current && supabaseClient) {
-        supabaseClient.removeChannel(realtimeChannelRef.current);
-      }
-      realtimeChannelRef.current = null;
-    };
-  }, [sessionInfo?.id, subscribeToRealtime, supabaseClient]);
-
-  // Poll for messages as backup if real-time fails
-  useEffect(() => {
-    if (!sessionInfo?.key) {
-      return;
-    }
-
+    const initialPoll = window.setTimeout(() => {
+      void fetchMessages();
+    }, 0);
     const pollInterval = setInterval(() => {
-      fetchMessages(sessionInfo.key!);
+      void fetchMessages();
     }, 5000); // Poll every 5 seconds
 
-    // Initial fetch
-    fetchMessages(sessionInfo.key);
+    return () => {
+      window.clearTimeout(initialPoll);
+      clearInterval(pollInterval);
+    };
+  }, [sessionInfo?.id, fetchMessages]);
 
-    return () => clearInterval(pollInterval);
-  }, [sessionInfo?.key, fetchMessages]);
+  useEffect(() => {
+    const initialFetch = window.setTimeout(() => {
+      void fetchMessages();
+    }, 0);
+    return () => window.clearTimeout(initialFetch);
+  }, [fetchMessages]);
 
   const ACKNOWLEDGEMENT_RESPONSE =
     "Thanks for reaching out! Our team just received your message and will follow up shortly.";
@@ -349,10 +286,9 @@ export function ChatBot({
       botResponseContent = "We couldn't deliver that message. Please try again or email us directly.";
     }
 
-    if (sessionUpdate && (sessionUpdate.id || sessionUpdate.key)) {
+    if (sessionUpdate?.id) {
       setSessionInfo((prev) => ({
         id: sessionUpdate?.id ?? prev?.id,
-        key: sessionUpdate?.key ?? prev?.key,
       }));
     }
 

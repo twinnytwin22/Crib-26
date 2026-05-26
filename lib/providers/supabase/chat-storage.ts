@@ -71,12 +71,9 @@ function normalizeEmail(value?: string | null) {
   return value?.trim().toLowerCase() || undefined;
 }
 
-function buildSessionKey(visitorIdentifier?: string, email?: string) {
+function buildSessionKey(visitorIdentifier?: string) {
   if (visitorIdentifier?.trim()) {
     return visitorIdentifier.trim();
-  }
-  if (email) {
-    return email;
   }
   return undefined;
 }
@@ -179,7 +176,7 @@ export async function recordVisitorMessage(
 ): Promise<RecordVisitorMessageResult | undefined> {
   const normalizedEmail = normalizeEmail(options.email);
   const sessionKey =
-    buildSessionKey(options.visitorIdentifier, normalizedEmail) ?? randomUUID();
+    buildSessionKey(options.visitorIdentifier) ?? randomUUID();
 
   const { supabase } = await findSessionByKey(sessionKey);
   if (!supabase) {

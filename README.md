@@ -37,11 +37,11 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Chat persistence setup
 
-Two-way chat logging relies on Supabase. Before enabling the chat widget storage helpers, run the migration in `supabase/migrations/0001_chat_sessions.sql` inside your Supabase project (SQL Editor or `supabase db push`). After the tables exist, set `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (server-only) so the API route can insert sessions and messages.
+Two-way chat logging relies on Supabase. Before enabling the chat widget storage helpers, run the migrations in `supabase/migrations/` inside your Supabase project (SQL Editor or `supabase db push`). After the tables exist, set `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (server-only) so the API route can insert sessions and messages.
 
 ### Google Chat inbound replies
 
-1. Create a Google Chat app/webhook that points to `POST /api/chat/inbound`.
+1. Create a Google Chat app HTTP endpoint that points to `POST /api/chat/inbound`.
 2. Set `GOOGLE_CHAT_INBOUND_SECRET` in `.env.local` and configure the same shared secret in Google Chat so only trusted events can call the endpoint.
-3. Ensure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are populated so the chat widget can subscribe to Supabase Realtime updates in the browser.
-4. When Google Chat users reply in the matching thread, the webhook stores the agent message in Supabase, and the widget receives it over Realtime.
+3. Set `GOOGLE_CHAT_SPACE` or `CHAT_SPACE_ID` for outbound Google Chat delivery.
+4. When Google Chat users reply in the matching thread, the inbound route stores the agent message in Supabase, and the widget reads it through the current browser's HttpOnly chat session cookie.

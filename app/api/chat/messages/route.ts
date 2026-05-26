@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionWithMessages } from "@/lib/providers/supabase/chat-storage";
+import { getChatSessionToken } from "@/lib/chat/session-cookie";
 
 /**
- * GET /api/chat/messages?sessionKey=xxx
- * Fetches all messages for a given chat session, including agent replies from Google Chat
+ * GET /api/chat/messages
+ * Fetches messages for the chat session owned by the current browser cookie.
  */
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const sessionKey = searchParams.get("sessionKey");
+    const sessionKey = getChatSessionToken(req);
 
     if (!sessionKey) {
-      return NextResponse.json(
-        { error: "sessionKey is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: true, session: null, messages: [] });
     }
 
     const sessionData = await getSessionWithMessages(sessionKey);
@@ -38,7 +35,6 @@ export async function GET(req: NextRequest) {
       success: true,
       session: {
         id: sessionData.session.id,
-        key: sessionData.session.session_key,
         threadName: sessionData.session.google_thread_name,
       },
       messages: formattedMessages,

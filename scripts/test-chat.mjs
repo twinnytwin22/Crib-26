@@ -32,30 +32,35 @@ async function testOutbound() {
     console.log('📋 Session info:', data.session);
     console.log('💬 Reply:', data.reply);
     
-    return data.session;
+    return {
+      session: data.session,
+      cookie: response.headers.get('set-cookie'),
+    };
   } catch (error) {
     console.error('❌ Outbound test error:', error.message);
     return null;
   }
 }
 
-async function testInbound(sessionKey) {
-  if (!sessionKey) {
-    console.log('\n⏭️  Skipping inbound test (no session key)\n');
+async function testInbound(outboundResult) {
+  if (!outboundResult?.cookie) {
+    console.log('\n⏭️  Skipping inbound test (no session cookie)\n');
     return;
   }
 
   console.log('\n🧪 Testing Inbound (Fetch Messages)...\n');
-  console.log(`📌 Session Key: ${sessionKey}`);
+  console.log(`📌 Session ID: ${outboundResult.session?.id || 'unknown'}`);
   console.log('⏸️  Now reply to this message in Google Chat...');
   console.log('⏸️  Waiting 15 seconds for reply...\n');
   
   await new Promise(resolve => setTimeout(resolve, 15000));
   
   try {
-    const response = await fetch(
-      `${SITE_URL}/api/chat/messages?sessionKey=${encodeURIComponent(sessionKey)}`
-    );
+    const response = await fetch(`${SITE_URL}/api/chat/messages`, {
+      headers: {
+        Cookie: outboundResult.cookie.split(';')[0],
+      },
+    });
 
     const data = await response.json();
     
@@ -87,10 +92,10 @@ async function main() {
   console.log(`🌐 Site URL: ${SITE_URL}`);
   console.log(`📧 Test Email: ${TEST_EMAIL}`);
   
-  const session = await testOutbound();
+  const outboundResult = await testOutbound();
   
-  if (session?.key) {
-    await testInbound(session.key);
+  if (outboundResult?.session?.id) {
+    await testInbound(outboundResult);
   }
   
   console.log('\n✨ Test complete!\n');

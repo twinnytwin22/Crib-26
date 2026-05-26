@@ -5,9 +5,15 @@ import {
   type RecordVisitorMessageResult,
   updateSessionThreadName,
 } from "@/lib/providers/supabase/chat-storage";
+import {
+  createChatSessionToken,
+  getChatSessionToken,
+  setChatSessionCookie,
+} from "@/lib/chat/session-cookie";
 import { GoogleAuth } from "google-auth-library";
 
-const GOOGLE_CHAT_SPACE = process.env.GOOGLE_CHAT_SPACE;
+const GOOGLE_CHAT_SPACE =
+  process.env.GOOGLE_CHAT_SPACE || process.env.CHAT_SPACE_ID;
 const GOOGLE_CHAT_WEBHOOK_URL = process.env.GOOGLE_CHAT_WEBHOOK_URL;
 const GOOGLE_CHAT_BOT_TOKEN = process.env.GOOGLE_CHAT_BOT_TOKEN;
 const GOOGLE_CHAT_SERVICE_ACCOUNT_JSON =
@@ -45,6 +51,11 @@ function getTransporter() {
 function isValidEmail(value?: string) {
   if (!value) return false;
   return /[^\s@]+@[^\s@]+\.[^\s@]+/.test(value.trim());
+}
+
+function buildGoogleChatMessagesUrl(space: string) {
+  const spaceName = space.startsWith("spaces/") ? space : `spaces/${space}`;
+  return new URL(`https://chat.googleapis.com/v1/${spaceName}/messages`);
 }
 
 async function getChatAccessToken(): Promise<string | null> {
@@ -89,17 +100,23 @@ export async function POST(req: NextRequest) {
 
     const previewEmail = isValidEmail(email) ? email : "Anonymous visitor";
     const timestamp = new Date().toISOString();
+    const existingSessionToken = getChatSessionToken(req);
+    const visitorIdentifier = existingSessionToken ?? createChatSessionToken();
+    const shouldSetSessionCookie = !existingSessionToken;
 
     let sessionRecord: RecordVisitorMessageResult | null | undefined = null;
     try {
       sessionRecord = await recordVisitorMessage({
         email,
         message,
+        visitorIdentifier,
         source: "web",
       });
     } catch (storageError) {
       console.error("Failed to persist chat message", storageError);
     }
+
+    let sentToGoogleChat = false;
 
     if (GOOGLE_CHAT_SPACE) {
       try {
@@ -128,13 +145,17 @@ export async function POST(req: NextRequest) {
         };
 
         if (sessionRecord?.sessionKey) {
-          chatPayload.threadKey = sessionRecord.sessionKey;
-          chatPayload.requestId = sessionRecord.sessionKey;
+          chatPayload.thread = { threadKey: sessionRecord.sessionKey };
         }
 
-        const apiUrl = `https://chat.googleapis.com/v1/spaces/${encodeURIComponent(
-          GOOGLE_CHAT_SPACE
-        )}/messages`;
+        const apiUrl = buildGoogleChatMessagesUrl(GOOGLE_CHAT_SPACE);
+        if (sessionRecord?.sessionKey) {
+          apiUrl.searchParams.set("requestId", sessionRecord.sessionKey);
+          apiUrl.searchParams.set(
+            "messageReplyOption",
+            "REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD"
+          );
+        }
 
         const chatResponse = await fetch(apiUrl, {
           method: "POST",
@@ -151,6 +172,7 @@ export async function POST(req: NextRequest) {
             await chatResponse.text()
           );
         } else {
+          sentToGoogleChat = true;
           try {
             const chatJson = await chatResponse.json();
             const threadName = chatJson?.thread?.name;
@@ -164,7 +186,9 @@ export async function POST(req: NextRequest) {
       } catch (chatError) {
         console.error("Google Chat API error", chatError);
       }
-    } else if (GOOGLE_CHAT_WEBHOOK_URL) {
+    }
+
+    if (!sentToGoogleChat && GOOGLE_CHAT_WEBHOOK_URL) {
       try {
         const details = [
           "?? *New Website Chat*",
@@ -190,12 +214,16 @@ export async function POST(req: NextRequest) {
 
         if (!chatResponse.ok) {
           console.error("Google Chat webhook failed", await chatResponse.text());
+        } else {
+          sentToGoogleChat = true;
         }
       } catch (chatError) {
         console.error("Google Chat webhook error", chatError);
       }
-    } else {
-      console.warn("GOOGLE_CHAT_WEBHOOK_URL is not configured.");
+    }
+
+    if (!sentToGoogleChat) {
+      console.warn("Google Chat delivery is not configured or failed.");
     }
 
     if (SMTP_USER && SMTP_PASS && CHAT_FORWARD_EMAIL) {
@@ -239,16 +267,19 @@ export async function POST(req: NextRequest) {
       ? `Thanks! We just sent your note to the team. We'll reach out at ${email}.`
       : "Thanks! Our team just received your message and will follow up shortly.";
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       reply,
       session: sessionRecord
         ? {
             id: sessionRecord.sessionId,
-            key: sessionRecord.sessionKey,
           }
         : undefined,
     });
+    if (shouldSetSessionCookie && sessionRecord?.sessionKey) {
+      setChatSessionCookie(response, sessionRecord.sessionKey);
+    }
+    return response;
   } catch (error) {
     console.error("Chat API error", error);
     return NextResponse.json(
