@@ -18,6 +18,10 @@ import {
   GOOGLE_CHAT_SPACE,
   GOOGLE_CHAT_WEBHOOK_URL,
 } from "@/lib/google/chat-api";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const CHAT_FORWARD_EMAIL =
   process.env.CHAT_FORWARD_EMAIL ||
   process.env.CONTACT_EMAIL ||
@@ -31,6 +35,13 @@ const SMTP_FROM_EMAIL = process.env.SMTP_FROM_EMAIL || SMTP_USER;
 const SMTP_FROM_NAME = process.env.SMTP_FROM_NAME || "Crib Network";
 
 let transporter: nodemailer.Transporter | null = null;
+
+function privateJson(body: unknown, init?: ResponseInit) {
+  const response = NextResponse.json(body, init);
+  response.headers.set("Cache-Control", "private, no-store, max-age=0");
+  response.headers.set("Vary", "Cookie");
+  return response;
+}
 
 function getTransporter() {
   if (!transporter && SMTP_USER && SMTP_PASS) {
@@ -59,7 +70,7 @@ export async function POST(req: NextRequest) {
     const email = typeof body.email === "string" ? body.email.trim() : "";
 
     if (!message) {
-      return NextResponse.json(
+      return privateJson(
         { error: "Message is required" },
         { status: 400 }
       );
@@ -254,7 +265,7 @@ export async function POST(req: NextRequest) {
       ? `Thanks! We just sent your note to the team. We'll reach out at ${email}.`
       : "Thanks! Our team just received your message and will follow up shortly.";
 
-    const response = NextResponse.json({
+    const response = privateJson({
       success: true,
       reply,
       session: sessionRecord
@@ -269,7 +280,7 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error) {
     console.error("Chat API error", error);
-    return NextResponse.json(
+    return privateJson(
       { error: "Unable to send your message right now. Please try again." },
       { status: 500 }
     );

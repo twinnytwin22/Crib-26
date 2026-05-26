@@ -3,6 +3,16 @@ import { getSessionWithMessages } from "@/lib/providers/supabase/chat-storage";
 import { getChatSessionToken } from "@/lib/chat/session-cookie";
 import { syncGoogleChatThreadReplies } from "@/lib/google/chat-thread-sync";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+function privateJson(body: unknown, init?: ResponseInit) {
+  const response = NextResponse.json(body, init);
+  response.headers.set("Cache-Control", "private, no-store, max-age=0");
+  response.headers.set("Vary", "Cookie");
+  return response;
+}
+
 /**
  * GET /api/chat/messages
  * Fetches messages for the chat session owned by the current browser cookie.
@@ -12,7 +22,7 @@ export async function GET(req: NextRequest) {
     const sessionKey = getChatSessionToken(req);
 
     if (!sessionKey) {
-      return NextResponse.json({ success: true, session: null, messages: [] });
+      return privateJson({ success: true, session: null, messages: [] });
     }
 
     await syncGoogleChatThreadReplies(sessionKey);
@@ -20,7 +30,7 @@ export async function GET(req: NextRequest) {
     const sessionData = await getSessionWithMessages(sessionKey);
 
     if (!sessionData) {
-      return NextResponse.json(
+      return privateJson(
         { error: "Session not found" },
         { status: 404 }
       );
@@ -34,7 +44,7 @@ export async function GET(req: NextRequest) {
       source: msg.source,
     }));
 
-    return NextResponse.json({
+    return privateJson({
       success: true,
       session: {
         id: sessionData.session.id,
@@ -44,7 +54,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error("Failed to fetch chat messages", error);
-    return NextResponse.json(
+    return privateJson(
       { error: "Unable to fetch messages" },
       { status: 500 }
     );
