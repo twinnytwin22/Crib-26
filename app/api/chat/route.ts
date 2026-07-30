@@ -12,7 +12,7 @@ import {
 } from "@/lib/chat/session-cookie";
 import {
   buildGoogleChatMessagesUrl,
-  getChatAccessToken,
+  getChatWriteAccessToken,
   getGoogleChatAuthMode,
   getGoogleChatSpaceName,
   GOOGLE_CHAT_SPACE,
@@ -22,6 +22,9 @@ import {
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+// POST-REVIEW: Keep Workspace presence separate from message delivery. It
+// requires user OAuth with chat.users.availability.readonly and must degrade
+// gracefully when the owner has not connected or Google is unavailable.
 const CHAT_FORWARD_EMAIL =
   process.env.CHAT_FORWARD_EMAIL ||
   process.env.CONTACT_EMAIL ||
@@ -98,7 +101,7 @@ export async function POST(req: NextRequest) {
 
     if (GOOGLE_CHAT_SPACE) {
       try {
-        const accessToken = await getChatAccessToken();
+        const accessToken = await getChatWriteAccessToken();
 
         if (!accessToken) {
           throw new Error(
@@ -131,7 +134,9 @@ export async function POST(req: NextRequest) {
           throw new Error("Google Chat space unavailable");
         }
         if (sessionRecord?.sessionKey) {
-          apiUrl.searchParams.set("requestId", sessionRecord.sessionKey);
+          if (sessionRecord.messageId) {
+            apiUrl.searchParams.set("requestId", sessionRecord.messageId);
+          }
           apiUrl.searchParams.set(
             "messageReplyOption",
             "REPLY_MESSAGE_FALLBACK_TO_NEW_THREAD"
@@ -214,6 +219,18 @@ export async function POST(req: NextRequest) {
           console.error("Google Chat webhook failed", await chatResponse.text());
         } else {
           sentToGoogleChat = true;
+          try {
+            const chatJson = await chatResponse.json();
+            const threadName = chatJson?.thread?.name;
+            if (threadName && sessionRecord?.sessionKey) {
+              await updateSessionThreadName(sessionRecord.sessionKey, threadName);
+            }
+          } catch (parseError) {
+            console.warn(
+              "Unable to parse Google Chat webhook response",
+              parseError
+            );
+          }
         }
       } catch (chatError) {
         console.error("Google Chat webhook error", chatError);

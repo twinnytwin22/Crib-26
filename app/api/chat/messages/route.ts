@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionWithMessages } from "@/lib/providers/supabase/chat-storage";
-import { getChatSessionToken } from "@/lib/chat/session-cookie";
+import {
+  getChatSessionToken,
+  setChatSessionCookie,
+} from "@/lib/chat/session-cookie";
 import { syncGoogleChatThreadReplies } from "@/lib/google/chat-thread-sync";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+// POST-REVIEW: Availability should be served by a dedicated, short-cached
+// user-OAuth route; do not couple presence failures to durable message sync.
 function privateJson(body: unknown, init?: ResponseInit) {
   const response = NextResponse.json(body, init);
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
@@ -44,7 +49,7 @@ export async function GET(req: NextRequest) {
       source: msg.source,
     }));
 
-    return privateJson({
+    const response = privateJson({
       success: true,
       session: {
         id: sessionData.session.id,
@@ -52,6 +57,8 @@ export async function GET(req: NextRequest) {
       },
       messages: formattedMessages,
     });
+    setChatSessionCookie(response, sessionKey);
+    return response;
   } catch (error) {
     console.error("Failed to fetch chat messages", error);
     return privateJson(

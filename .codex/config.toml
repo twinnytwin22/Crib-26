@@ -1,0 +1,9 @@
+[mcp_servers.google_cloud_run]
+command = "npx"
+args = ["-y", "@google-cloud/cloud-run-mcp"]
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+default_tools_approval_mode = "writes"
+
+[mcp_servers.google_cloud_run.env]
+GOOGLE_CLOUD_PROJECT = "crib-478309"

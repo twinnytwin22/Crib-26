@@ -1,9 +1,9 @@
 import { GoogleAuth, JWT } from "google-auth-library";
 
-const CHAT_SCOPES = [
-  "https://www.googleapis.com/auth/chat.bot",
-  "https://www.googleapis.com/auth/chat.app.messages.readonly",
-];
+export const GOOGLE_CHAT_WRITE_SCOPE =
+  "https://www.googleapis.com/auth/chat.bot";
+export const GOOGLE_CHAT_READ_SCOPE =
+  "https://www.googleapis.com/auth/chat.app.messages.readonly";
 
 export const GOOGLE_CHAT_SPACE =
   process.env.GOOGLE_CHAT_SPACE || process.env.CHAT_SPACE_ID;
@@ -14,6 +14,14 @@ const GOOGLE_CHAT_SERVICE_ACCOUNT_JSON =
   process.env.GOOGLE_CHAT_SERVICE_ACCOUNT_JSON;
 const GOOGLE_CHAT_CLIENT_EMAIL = process.env.GOOGLE_CHAT_CLIENT_EMAIL;
 const GOOGLE_CHAT_PRIVATE_KEY = process.env.GOOGLE_CHAT_PRIVATE_KEY;
+const TOKEN_CACHE_TTL_MS = 50 * 60 * 1000;
+
+type CachedToken = {
+  token: string;
+  expiresAt: number;
+};
+
+const tokenCache = new Map<string, CachedToken>();
 
 function parseServiceAccountJson(value: string) {
   try {
@@ -56,23 +64,34 @@ export function buildGoogleChatMessagesUrl(space = GOOGLE_CHAT_SPACE) {
   return new URL(`https://chat.googleapis.com/v1/${spaceName}/messages`);
 }
 
-export async function getChatAccessToken(): Promise<string | null> {
+async function mintServiceAccountToken(
+  scope: string
+): Promise<string | null> {
+  const cached = tokenCache.get(scope);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.token;
+  }
+
   if (GOOGLE_CHAT_SERVICE_ACCOUNT_JSON) {
     try {
       const auth = new GoogleAuth({
-        scopes: CHAT_SCOPES,
+        scopes: [scope],
         credentials: parseServiceAccountJson(GOOGLE_CHAT_SERVICE_ACCOUNT_JSON),
       });
 
       const client = await auth.getClient();
       const token = await client.getAccessToken();
       if (token.token) {
+        tokenCache.set(scope, {
+          token: token.token,
+          expiresAt: Date.now() + TOKEN_CACHE_TTL_MS,
+        });
         return token.token;
       }
     } catch (error) {
       console.error(
-        "Failed to mint Chat access token from GOOGLE_CHAT_SERVICE_ACCOUNT_JSON",
-        error
+        "Failed to mint Google Chat service-account token",
+        { scope, error }
       );
     }
   }
@@ -82,17 +101,21 @@ export async function getChatAccessToken(): Promise<string | null> {
       const client = new JWT({
         email: GOOGLE_CHAT_CLIENT_EMAIL,
         key: GOOGLE_CHAT_PRIVATE_KEY.replace(/\\n/g, "\n"),
-        scopes: CHAT_SCOPES,
+        scopes: [scope],
       });
 
       const token = await client.getAccessToken();
       if (token.token) {
+        tokenCache.set(scope, {
+          token: token.token,
+          expiresAt: Date.now() + TOKEN_CACHE_TTL_MS,
+        });
         return token.token;
       }
     } catch (error) {
       console.error(
-        "Failed to mint Chat access token from GOOGLE_CHAT_CLIENT_EMAIL/GOOGLE_CHAT_PRIVATE_KEY",
-        error
+        "Failed to mint Google Chat split service-account token",
+        { scope, error }
       );
     }
   }
@@ -102,7 +125,23 @@ export async function getChatAccessToken(): Promise<string | null> {
   }
 
   console.warn(
-    "Google Chat API sync is disabled: configure GOOGLE_CHAT_SERVICE_ACCOUNT_JSON or GOOGLE_CHAT_CLIENT_EMAIL plus GOOGLE_CHAT_PRIVATE_KEY."
+    "Google Chat API access is disabled: configure GOOGLE_CHAT_SERVICE_ACCOUNT_JSON or GOOGLE_CHAT_CLIENT_EMAIL plus GOOGLE_CHAT_PRIVATE_KEY."
   );
   return null;
+}
+
+/**
+ * Uses the self-authorized chat.bot scope. Read-side approval failures must
+ * never prevent the website from delivering new messages to Google Chat.
+ */
+export function getChatWriteAccessToken() {
+  return mintServiceAccountToken(GOOGLE_CHAT_WRITE_SCOPE);
+}
+
+/**
+ * Uses the admin-approved app scope that can list public human messages in a
+ * space. The chat.bot scope alone only sees messages that invoke the app.
+ */
+export function getChatReadAccessToken() {
+  return mintServiceAccountToken(GOOGLE_CHAT_READ_SCOPE);
 }

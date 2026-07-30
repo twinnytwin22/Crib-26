@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   buildGoogleChatMessagesUrl,
-  getChatAccessToken,
+  getChatReadAccessToken,
+  getChatWriteAccessToken,
   getGoogleChatAuthMode,
   getGoogleChatSpaceName,
 } from "@/lib/google/chat-api";
@@ -30,16 +31,28 @@ async function callGoogleChat(url: URL, token: string, init?: RequestInit) {
     });
 
     const body = await response.text();
+    let errorMessage: string | null = null;
+    if (!response.ok) {
+      try {
+        const parsed = JSON.parse(body);
+        errorMessage =
+          typeof parsed?.error?.message === "string"
+            ? parsed.error.message
+            : "Google Chat API request failed";
+      } catch {
+        errorMessage = body.slice(0, 500);
+      }
+    }
     return {
       ok: response.ok,
       status: response.status,
-      body: body.slice(0, 2000),
+      error: errorMessage,
     };
   } catch (error) {
     return {
       ok: false,
       status: 0,
-      body: error instanceof Error ? error.message : String(error),
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }
@@ -49,15 +62,19 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const token = await getChatAccessToken();
+  const [writeToken, readToken] = await Promise.all([
+    getChatWriteAccessToken(),
+    getChatReadAccessToken(),
+  ]);
   const spaceName = getGoogleChatSpaceName();
 
-  if (!token || !spaceName) {
+  if (!spaceName) {
     return NextResponse.json({
       authMode: getGoogleChatAuthMode(),
       space: spaceName,
-      tokenAvailable: Boolean(token),
-      error: "Google Chat token or space is unavailable",
+      writeTokenAvailable: Boolean(writeToken),
+      readTokenAvailable: Boolean(readToken),
+      error: "Google Chat space is unavailable",
     });
   }
 
@@ -68,12 +85,16 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     authMode: getGoogleChatAuthMode(),
     space: spaceName,
-    tokenAvailable: true,
+    writeTokenAvailable: Boolean(writeToken),
+    readTokenAvailable: Boolean(readToken),
     checks: {
-      spaceGet: await callGoogleChat(spaceUrl, token),
-      messagesList: messagesUrl
-        ? await callGoogleChat(messagesUrl, token)
-        : { ok: false, status: 0, body: "Messages URL unavailable" },
+      outboundAppAccess: writeToken
+        ? await callGoogleChat(spaceUrl, writeToken)
+        : { ok: false, status: 0, error: "Write token unavailable" },
+      publicReplyReadAccess:
+        messagesUrl && readToken
+          ? await callGoogleChat(messagesUrl, readToken)
+          : { ok: false, status: 0, error: "Read token unavailable" },
     },
   });
 }

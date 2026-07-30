@@ -45,3 +45,7 @@ Two-way chat logging relies on Supabase. Before enabling the chat widget storage
 2. Set `GOOGLE_CHAT_INBOUND_SECRET` in `.env.local` and configure the same shared secret in Google Chat so only trusted events can call the endpoint.
 3. Set `GOOGLE_CHAT_SPACE` or `CHAT_SPACE_ID` for outbound Google Chat delivery.
 4. When Google Chat users reply in the matching thread, the inbound route stores the agent message in Supabase, and the widget reads it through the current browser's HttpOnly chat session cookie.
+
+For the production service-account scopes, one-time Workspace administrator
+approval, secret rotation, and end-to-end verification steps, use
+[Google Chat and business email production setup](docs/google-chat-production-setup.md).

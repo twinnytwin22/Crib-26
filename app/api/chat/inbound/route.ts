@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordAgentMessage } from "@/lib/providers/supabase/chat-storage";
 
+// PRE-ROLLOUT: Rotate this value in both the deployed environment and the
+// Google Chat endpoint configuration. Never log it or expose it to the client.
 const INBOUND_SECRET = process.env.GOOGLE_CHAT_INBOUND_SECRET;
 
 type GoogleChatEvent = {
@@ -21,7 +23,31 @@ type GoogleChatEvent = {
   space?: {
     name?: string;
   };
+  chat?: {
+    messagePayload?: {
+      message?: GoogleChatEvent["message"];
+      space?: {
+        name?: string;
+      };
+    };
+    space?: {
+      name?: string;
+    };
+  };
 };
+
+function getEventMessage(body: GoogleChatEvent) {
+  return body?.message ?? body?.chat?.messagePayload?.message;
+}
+
+function getEventSpaceName(body: GoogleChatEvent) {
+  return (
+    body?.space?.name ??
+    body?.chat?.messagePayload?.space?.name ??
+    body?.chat?.space?.name ??
+    null
+  );
+}
 
 function logInbound(label: string, payload: Record<string, unknown>) {
   try {
@@ -57,6 +83,9 @@ function isAuthorized(req: NextRequest) {
 }
 
 function isPingEvent(body: GoogleChatEvent) {
+  if (body?.chat?.messagePayload?.message) {
+    return false;
+  }
   const type = body?.type;
   return type && type !== "MESSAGE";
 }
@@ -69,8 +98,14 @@ export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
     logInbound("unauthorized", {
       hasSecret: Boolean(INBOUND_SECRET),
-      receivedAuth:
-        req.headers.get("authorization") || req.headers.get("x-goog-chat-secret"),
+      hasAuthorizationHeader: Boolean(req.headers.get("authorization")),
+      hasGoogleChatSecretHeader: Boolean(
+        req.headers.get("x-goog-chat-secret")
+      ),
+      hasUrlToken: Boolean(
+        req.nextUrl.searchParams.get("secret") ||
+          req.nextUrl.searchParams.get("token")
+      ),
     });
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -78,13 +113,17 @@ export async function POST(req: NextRequest) {
   let body: GoogleChatEvent;
   try {
     body = await req.json();
+    const eventMessage = getEventMessage(body);
     logInbound("received", {
       type: body?.type,
-      threadName: body?.message?.thread?.name,
-      threadKey: body?.message?.thread?.threadKey ?? body?.message?.threadKey,
-      senderType: body?.message?.sender?.type,
-      senderDisplayName: body?.message?.sender?.displayName,
-      space: body?.space?.name,
+      payloadFormat: body?.chat?.messagePayload
+        ? "workspace_add_on"
+        : "chat_interaction",
+      threadName: eventMessage?.thread?.name,
+      threadKey: eventMessage?.thread?.threadKey ?? eventMessage?.threadKey,
+      senderType: eventMessage?.sender?.type,
+      senderDisplayName: eventMessage?.sender?.displayName,
+      space: getEventSpaceName(body),
       rawKeys: Object.keys(body || {}),
     });
   } catch (error) {
@@ -96,8 +135,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   }
 
-  const messageText = body?.message?.text?.trim();
-  const senderType = body?.message?.sender?.type;
+  const eventMessage = getEventMessage(body);
+  const messageText = eventMessage?.text?.trim();
+  const senderType = eventMessage?.sender?.type;
 
   if (!messageText || senderType === "BOT") {
     logInbound("ignored", {
@@ -107,11 +147,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   }
 
-  const threadName = body?.message?.thread?.name ?? null;
+  const threadName = eventMessage?.thread?.name ?? null;
   const threadKey =
-    body?.message?.thread?.threadKey || body?.message?.threadKey || null;
-  const senderDisplayName = body?.message?.sender?.displayName ?? null;
-  const senderEmail = body?.message?.sender?.email ?? null;
+    eventMessage?.thread?.threadKey || eventMessage?.threadKey || null;
+  const senderDisplayName = eventMessage?.sender?.displayName ?? null;
+  const senderEmail = eventMessage?.sender?.email ?? null;
 
   try {
     logInbound("persisting", {
@@ -128,8 +168,10 @@ export async function POST(req: NextRequest) {
       senderDisplayName,
       senderEmail,
       messageMetadata: {
-        space: body?.space?.name ?? null,
-        raw_event_type: body?.type ?? null,
+        space: getEventSpaceName(body),
+        raw_event_type:
+          body?.type ??
+          (body?.chat?.messagePayload ? "WORKSPACE_ADD_ON_MESSAGE" : null),
       },
     });
     logInbound("persisted", {

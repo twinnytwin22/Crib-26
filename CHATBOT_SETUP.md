@@ -1,5 +1,10 @@
 # Chat Bot Two-Way Communication Setup
 
+> For the current production Google service-account scopes, Workspace
+> administrator approval, key rotation, and email setup, follow
+> [`docs/google-chat-production-setup.md`](docs/google-chat-production-setup.md).
+> That guide supersedes the older credential notes below.
+
 ## Overview
 Your chat bot now supports **two-way communication** with Google Chat. When someone replies in Google Chat, those messages automatically appear in your website chat UI.
 

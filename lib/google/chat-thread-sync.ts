@@ -5,7 +5,7 @@ import {
 } from "@/lib/providers/supabase/chat-storage";
 import {
   buildGoogleChatMessagesUrl,
-  getChatAccessToken,
+  getChatReadAccessToken,
   getGoogleChatAuthMode,
   getGoogleChatSpaceName,
   GOOGLE_CHAT_SPACE,
@@ -77,11 +77,17 @@ export async function syncGoogleChatThreadReplies(sessionKey: string) {
   const sessionData = await getSessionWithMessages(sessionKey);
   if (!sessionData) return;
 
-  const token = await getChatAccessToken();
+  const token = await getChatReadAccessToken();
   const url = buildGoogleChatMessagesUrl();
   if (!token || !url) return;
 
   url.searchParams.set("pageSize", "100");
+  url.searchParams.set("orderBy", "createTime DESC");
+
+  const savedThreadName = sessionData.session.google_thread_name ?? null;
+  if (savedThreadName) {
+    url.searchParams.set("filter", `thread.name = "${savedThreadName}"`);
+  }
 
   let messages: GoogleChatMessage[] = [];
   try {
@@ -104,7 +110,7 @@ export async function syncGoogleChatThreadReplies(sessionKey: string) {
     return;
   }
 
-  let threadName = sessionData.session.google_thread_name ?? null;
+  let threadName = savedThreadName;
   if (!threadName) {
     const anchor = messages.find((message) =>
       message.text?.includes(`Session Key: ${sessionKey}`)
