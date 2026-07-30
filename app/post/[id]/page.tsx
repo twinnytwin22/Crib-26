@@ -1,9 +1,10 @@
 import ArticleComponent from "@/components/ArticleComponent";
-import NavBar from "@/components/nav/NavBar";
+import JsonLd from "@/components/JsonLd";
 import { getBlogPosts, imageBuilder } from "@/lib/providers/sanity/sanity";
+import { articleStructuredData } from "@/lib/structured-data";
+import { SHARE_IMAGE, SHARE_IMAGE_URL } from "@/lib/share-image";
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -40,23 +41,26 @@ export async function generateMetadata(
         description: description,
         url: url,
         siteName: 'CRIB Network',
-        images: [
-          {
-            url: image!,
-            width: 1200,
-            height: 630,
-            alt: relatedPost?.title,
-          }
-        ],
+        images: image
+          ? [
+              {
+                url: image,
+                width: 1200,
+                height: 630,
+                alt: relatedPost?.title,
+              },
+            ]
+          : [SHARE_IMAGE],
         type: 'article',
         publishedTime: relatedPost?.publishedAt,
+        modifiedTime: relatedPost?._updatedAt,
         locale: 'en_US',
       },
       twitter: {
         card: 'summary_large_image',
         title: relatedPost?.title,
         description: description,
-        images: [image!],
+        images: [image || SHARE_IMAGE_URL],
         creator: '@cribnetwork',
       },
     };
@@ -64,10 +68,8 @@ export async function generateMetadata(
 
   // Handle the case where 'id' is not found in 'slugs'
   return {
-    title: "Not Found", // You can customize this error title
-    openGraph: {
-      //  images: ['/default-error-image.jpg'], // You can customize this error image
-    },
+    title: "Not Found",
+    robots: { index: false, follow: false },
   };
 }
 
@@ -81,17 +83,36 @@ export async function generateStaticParams() {
 
 async function Page({ params }: Props) {
   const { success, slugs, res } = await getBlogPosts();
+  const { id: slug } = await params;
 
   if (success) {
-    const { id: slug } = await params;
     if (slugs.includes(slug)) {
       const relatedPost = res?.find(
         (post: { slug: { current: string } }) => post.slug.current === slug,
       );
+
+      if (!relatedPost) {
+        notFound();
+      }
+
+      const image = imageBuilder(relatedPost.coverImage) || undefined;
+      const description =
+        relatedPost.excerpt ||
+        relatedPost.description ||
+        `Read ${relatedPost.title} on our blog`;
+
       return (
-        <>      
-        <NavBar />
-        
+        <>
+          <JsonLd
+            data={articleStructuredData({
+              title: relatedPost.title,
+              description,
+              slug,
+              image,
+              publishedAt: relatedPost.publishedAt || relatedPost._createdAt,
+              updatedAt: relatedPost._updatedAt,
+            })}
+          />
           <main className="relative min-h-screen bg-background pt-16 antialiased">
             <div className="crib-container py-16 lg:py-24">
               <ArticleComponent post={relatedPost} />
@@ -102,31 +123,7 @@ async function Page({ params }: Props) {
     }
   }
 
-  return (
-    <section className="h-screen bg-background">
-      <div className="crib-container flex h-full items-center py-16">
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="mb-6 text-7xl font-normal text-primary lg:text-9xl">
-            404
-          </h1>
-          <p className="mb-4 text-3xl font-semibold text-foreground md:text-4xl">
-            Something&apos;s missing.
-          </p>
-          <p className="mb-8 text-xl text-muted-foreground">
-            Sorry, we can&apos;t find that page. You&apos;ll find lots to
-            explore on the home page.
-          </p>
-          <Link
-            href="/"
-            className="crib-button-primary"
-          >
-            Back to Homepage
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
+  notFound();
 }
 
 export default Page;

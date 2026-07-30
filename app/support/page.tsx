@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import NavBar from "@/components/nav/NavBar";
+import { SHARE_IMAGE } from "@/lib/share-image";
 
 export const metadata: Metadata = {
   title: "Support | CRIB Network",
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     siteName: "CRIB Network",
     locale: "en_US",
     type: "website",
+    images: [SHARE_IMAGE],
   },
   robots: {
     index: true,
@@ -46,8 +47,6 @@ const supportItems = [
 export default function SupportPage() {
   return (
     <div className="min-h-screen bg-background">
-      <NavBar />
-
       <section className="border-b border-border bg-[var(--neutral-900)] pt-28 pb-16 text-white">
         <div className="crib-container max-w-4xl">
           <div className="mb-6 inline-flex rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm font-medium text-white/72">

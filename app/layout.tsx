@@ -7,6 +7,12 @@ import Footer from "@/components/Footer";
 import { ChatBotProvider } from "@/components/ChatBotProvider";
 import { Toaster } from "@/components/ui/sonner";
 import NavBar from "@/components/nav/NavBar";
+import JsonLd from "@/components/JsonLd";
+import {
+  organizationStructuredData,
+  websiteStructuredData,
+} from "@/lib/structured-data";
+import { SHARE_IMAGE, SHARE_IMAGE_URL } from "@/lib/share-image";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://cribnetwork.io'),
@@ -41,12 +47,14 @@ export const metadata: Metadata = {
     siteName: "CRIB Network",
     title: "CRIB Network | Systems, made clear.",
     description: "CRIB maps and connects the websites, customer data, reporting, and everyday tools beneath your business—then makes them work as one.",
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "CRIB Network | Systems, made clear.",
     description: "CRIB maps and connects the websites, customer data, reporting, and everyday tools beneath your business—then makes them work as one.",
     creator: "@cribnetwork",
+    images: [SHARE_IMAGE_URL],
   },
   robots: {
     index: true,
@@ -107,6 +115,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
       <body className="antialiased">
+        <JsonLd data={[organizationStructuredData, websiteStructuredData]} />
         <WebVitals />
         {gaId && <GoogleAnalytics gaId={gaId} />}
         {gtmId && <GoogleTagManager gtmId={gtmId} />}

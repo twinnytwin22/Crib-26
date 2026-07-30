@@ -14,46 +14,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Static pages
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/services`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/how-it-works`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/privacy-policy`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
+  const staticPaths = [
+    '',
+    '/services',
+    '/how-it-works',
+    '/blog',
+    '/support',
+    '/privacy-policy',
+    '/terms',
   ]
 
-  // Dynamic blog post pages
-  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
-    url: `${baseUrl}/post/${post.slug.current}`,
-    lastModified: post._updatedAt ? new Date(post._updatedAt) : new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
+  const staticPages: MetadataRoute.Sitemap = staticPaths.map((path) => ({
+    url: `${baseUrl}${path}`,
   }))
+
+  // Dynamic blog post pages
+  const blogPages: MetadataRoute.Sitemap = blogPosts
+    .filter((post) => post.slug?.current)
+    .map((post) => ({
+      url: `${baseUrl}/post/${post.slug.current}`,
+      ...(post._updatedAt
+        ? { lastModified: new Date(post._updatedAt) }
+        : {}),
+    }))
 
   return [...staticPages, ...blogPages]
 }

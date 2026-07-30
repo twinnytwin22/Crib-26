@@ -28,9 +28,6 @@ export default function Footer() {
               <a href="/terms" className="transition hover:text-white">
                 Terms of Service
               </a>
-              <a href="#" className="transition hover:text-white">
-                Careers
-              </a>
             </div>
           </div>
         </motion.div>

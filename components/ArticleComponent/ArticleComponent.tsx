@@ -6,16 +6,32 @@ import React, { useState } from "react";
 import { Share2, User } from "lucide-react";
 import BlogSocialShare from "../BlogSocialShare";
 import PortableBlogText from "../PortableBlogText";
+import type { Content } from "../PortableText/PortableText";
 
 interface Post {
   title: string;
-  coverImage: any;
-  content: any;
+  coverImage?: {
+    asset?: {
+      _ref?: string;
+    };
+  };
+  content: Content[];
+  publishedAt?: string;
+  _createdAt?: string;
+  _updatedAt?: string;
 }
 
 function ArticleComponent({ post }: { post: Post }) {
   const [showShare, setShowShare] = useState(false);
   const image = imageBuilder(post?.coverImage);
+  const publishedAt = post.publishedAt || post._createdAt;
+  const updatedAt = post._updatedAt;
+  const formatDate = (date: string) =>
+    new Intl.DateTimeFormat("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(date));
 
   useHandleOutsideClick(showShare, setShowShare, "blog-button");
   return (
@@ -36,16 +52,29 @@ function ArticleComponent({ post }: { post: Post }) {
               <User className="h-6 w-6" />
             </div>
             <div>
-              <a
-                href="#"
-                rel="author"
-                className="text-base font-semibold text-foreground transition-colors hover:text-primary"
+              <span
+                className="text-base font-semibold text-foreground"
               >
                 Randal Herndon
-              </a>
+              </span>
               <p className="text-sm text-muted-foreground">
                 Full stack developer, educator & CEO CRIB, LLC
               </p>
+              {(publishedAt || updatedAt) && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {publishedAt && (
+                    <time dateTime={publishedAt}>
+                      Published {formatDate(publishedAt)}
+                    </time>
+                  )}
+                  {publishedAt && updatedAt && " · "}
+                  {updatedAt && (
+                    <time dateTime={updatedAt}>
+                      Updated {formatDate(updatedAt)}
+                    </time>
+                  )}
+                </p>
+              )}
             </div>
           </div>
           <button
@@ -62,16 +91,18 @@ function ArticleComponent({ post }: { post: Post }) {
         </h1>
       </header>
 
-      <div className="relative mb-12 overflow-hidden rounded-lg border border-border shadow-sm">
-        <Image
-          src={image}
-          alt={post.title}
-          width={1200}
-          height={675}
-          className="aspect-video w-full object-cover"
-          priority
-        />
-      </div>
+      {image && (
+        <div className="relative mb-12 overflow-hidden rounded-lg border border-border shadow-sm">
+          <Image
+            src={image}
+            alt={post.title}
+            width={1200}
+            height={675}
+            className="aspect-video w-full object-cover"
+            priority
+          />
+        </div>
+      )}
 
       <div className="prose prose-lg prose-slate max-w-none
         prose-headings:font-semibold prose-headings:text-foreground

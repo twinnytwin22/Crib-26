@@ -46,17 +46,12 @@ export const getCoursesPageSettings = async () => {
 
 export async function getBlogPosts() {
   const query: string = "*%5B_type%20%3D%3D%20%22blogPosts%22%5D";
-  const res = await fetchSanity(query);
-  //  console.log(res)
-  const image = res[0].coverImage;
-  const imageRes = imageBuilder(image);
-  console.log(imageRes, "IMAGE");
-  const slugs = res.map(({ slug }: { slug: { current: string } }) => slug.current);
-  if (res) {
-    return { res: res, slugs, images: imageRes, success: true };
-  } else {
-    throw new Error();
-  }
+  const res = (await fetchSanity(query)) || [];
+  const slugs = res
+    .map(({ slug }: { slug?: { current?: string } }) => slug?.current)
+    .filter((slug: string | undefined): slug is string => Boolean(slug));
+
+  return { res, slugs, success: true };
 }
 
 export const getAllCourses = async () => {
@@ -107,8 +102,17 @@ export const queryCourseId = async (id: string) => {
 
 // imageUtils.js
 
-export function imageBuilder(inputString: any) {
-  const imageRef = inputString?.asset._ref;
+type SanityImage = {
+  asset?: {
+    _ref?: string;
+  };
+};
+
+export function imageBuilder(inputString?: SanityImage | null) {
+  const imageRef = inputString?.asset?._ref;
+  if (!imageRef) {
+    return null;
+  }
   const parts = imageRef.split("-");
   const imageId = parts.slice(1, -2).join("-"); // Extract the image ID
   const dimensions = parts[parts.length - 2]; // Extract the dimensions

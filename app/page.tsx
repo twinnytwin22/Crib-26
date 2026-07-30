@@ -8,6 +8,7 @@ import InPractice from "@/components/home/InPractice";
 import WhyCribSection from "@/components/home/WhyCribSection";
 import CtaSection from "@/components/home/CtaSection";
 import HomeFooter from "@/components/home/HomeFooter";
+import { SHARE_IMAGE, SHARE_IMAGE_URL } from "@/lib/share-image";
 
 export const metadata: Metadata = {
   title: "CRIB Network — Systems, made clear.",
@@ -17,11 +18,13 @@ export const metadata: Metadata = {
     title: "CRIB Network — Systems, made clear.",
     description:
       "CRIB connects the customer journeys, data, and digital systems behind growth—then fixes the constraint that matters most.",
+    images: [SHARE_IMAGE],
   },
   twitter: {
     title: "CRIB Network — Systems, made clear.",
     description:
       "CRIB connects the customer journeys, data, and digital systems behind growth—then fixes the constraint that matters most.",
+    images: [SHARE_IMAGE_URL],
   },
 };
 

@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays } from "lucide-react";
-import NavBar from "@/components/nav/NavBar";
 import CtaSection from "@/components/home/CtaSection";
 import HomeFooter from "@/components/home/HomeFooter";
 import { getBlogPosts, imageBuilder } from "@/lib/providers/sanity/sanity";
+import { SHARE_IMAGE, SHARE_IMAGE_URL } from "@/lib/share-image";
 
 export const revalidate = 0;
 
@@ -23,12 +23,14 @@ export const metadata: Metadata = {
     url: "/blog",
     siteName: "CRIB Network",
     type: "website",
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "CRIB Blog - Systems, websites, and growth clarity",
     description:
       "Read CRIB Network insights on websites, customer systems, automation, and practical growth operations.",
+    images: [SHARE_IMAGE_URL],
   },
 };
 
@@ -162,7 +164,6 @@ export default async function BlogPage() {
 
   return (
     <>
-      <NavBar />
       <main className="min-h-screen bg-background pt-14 antialiased">
         <section className="border-b border-border bg-[var(--surface)]">
           <div className="crib-container grid gap-10 py-20 lg:grid-cols-[0.82fr_1fr] lg:items-end lg:py-24">

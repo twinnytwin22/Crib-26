@@ -2,6 +2,7 @@ import PortableBlogText from "@/components/PortableBlogText";
 import { getSiteSettings } from "@/lib/providers/sanity/sanity";
 import NavBar from "@/components/nav/NavBar";
 import type { Metadata } from "next";
+import { SHARE_IMAGE, SHARE_IMAGE_URL } from "@/lib/share-image";
 
 export const revalidate = 0;
 
@@ -15,11 +16,13 @@ export const metadata: Metadata = {
     siteName: "CRIB Network",
     locale: "en_US",
     type: "website",
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "Privacy Policy | CRIB Network",
     description: "Learn how CRIB Network collects, uses, and protects your personal information. Your privacy is our priority.",
+    images: [SHARE_IMAGE_URL],
   },
   robots: {
     index: true,
