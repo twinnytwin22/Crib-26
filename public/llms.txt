@@ -85,7 +85,7 @@ Email: Available via contact form on website
 ## Key Pages
 
 - Homepage: / - Overview of services and capabilities
-- Blog: /post/[slug] - Industry insights and updates
+- Blog: /blog - Industry insights and updates
 - Privacy Policy: /privacy-policy
 - Terms of Service: /terms
 

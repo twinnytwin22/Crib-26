@@ -5,6 +5,8 @@ import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { WebVitals } from '@/components/WebVitals'
 import Footer from "@/components/Footer";
 import { ChatBotProvider } from "@/components/ChatBotProvider";
+import { Toaster } from "@/components/ui/sonner";
+import NavBar from "@/components/nav/NavBar";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://cribnetwork.io'),
@@ -96,9 +98,12 @@ export default function RootLayout({
         <WebVitals />
         {gaId && <GoogleAnalytics gaId={gaId} />}
         {gtmId && <GoogleTagManager gtmId={gtmId} />}
+              <NavBar />
+
         {children}
         <ChatBotProvider/>
         <Footer/>
+        <Toaster />
       </body>
     </html>
   );

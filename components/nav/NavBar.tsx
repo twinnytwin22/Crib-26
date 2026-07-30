@@ -8,10 +8,9 @@ import { Menu, X } from "lucide-react";
 import SiteLogo from "../SiteLogo";
 
 const navLinks = [
-  { label: "Solutions", href: "#services" },
-  { label: "Approach", href: "#why" },
-  { label: "Results", href: "#results" },
-  { label: "Testimonials", href: "#testimonials" },
+  { label: "Services", href: "/services" },
+  { label: "How it works", href: "/how-it-works" },
+  { label: "Blog", href: "/blog" },
 ];
 
 export default function NavBar() {
@@ -19,11 +18,8 @@ export default function NavBar() {
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = () => {
     setIsOpen(false);
-    if (href.startsWith("#")) {
-      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
-    }
   };
 
   // Handle hash navigation after page load
@@ -52,20 +48,20 @@ export default function NavBar() {
 
         <nav className="hidden items-center gap-1 text-sm font-medium text-[var(--text-2)] md:flex">
           {navLinks.map((link) => (
-            <button
+            <Link
               key={link.href}
-              onClick={() => handleNavClick(link.href)}
+              href={link.href}
               className="rounded-md px-3 py-2 transition-colors hover:bg-secondary hover:text-foreground"
             >
               {link.label}
-            </button>
+            </Link>
           ))}
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
-          <Link href="/#contact">
+          <Link href="/how-it-works">
             <Button size="sm">
-              Book a Strategy Call
+              Book an intro call
             </Button>
           </Link>
         </div>
@@ -90,17 +86,18 @@ export default function NavBar() {
           >
             <div className="flex flex-col gap-1 text-sm font-medium text-[var(--text-2)]">
               {navLinks.map((link) => (
-                <button
+                <Link
                   key={link.href}
-                  onClick={() => handleNavClick(link.href)}
+                  href={link.href}
+                  onClick={handleNavClick}
                   className="rounded-md px-3 py-3 text-left transition-colors hover:bg-secondary hover:text-foreground"
                 >
                   {link.label}
-                </button>
+                </Link>
               ))}
-              <Link href="/#contact" onClick={() => setIsOpen(false)} className="mt-2">
+              <Link href="/how-it-works" onClick={() => setIsOpen(false)} className="mt-2">
                 <Button className="w-full">
-                  Book a Strategy Call
+                  Book an intro call
                 </Button>
               </Link>
             </div>

@@ -4,9 +4,9 @@ import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const pathname = usePathname();
-  
-  // Hide footer on homepage
-  if (pathname === "/") {
+
+  // These pages render their own footer matching their design
+  if (pathname === "/" || pathname === "/services" || pathname === "/how-it-works") {
     return null;
   }
 
