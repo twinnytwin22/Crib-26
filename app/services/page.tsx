@@ -17,7 +17,7 @@ export default function ServicesPage() {
   return (
     <div>
       <header className="border-b border-foreground bg-background pt-16">
-        <div className="crib-container grid gap-10 py-[96px] lg:grid-cols-[0.7fr_1.3fr] lg:py-[120px]">
+        <div className="crib-container grid gap-10 py-24 lg:grid-cols-[0.7fr_1.3fr] lg:py-[120px]">
           <div className="crib-eyebrow">Services</div>
           <div className="flex flex-col gap-7">
             <h1 className="crib-display max-w-[11em] text-[clamp(50px,7vw,104px)] text-foreground">

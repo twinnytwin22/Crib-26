@@ -70,7 +70,7 @@ export default function InPractice() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className={`relative min-h-[320px] overflow-hidden lg:min-h-[440px] ${row.reverse ? "lg:order-1" : ""}`}
+                className={`relative min-h-80 overflow-hidden lg:min-h-[440px] ${row.reverse ? "lg:order-1" : ""}`}
               >
                 <Image
                   src={row.image}

@@ -110,7 +110,7 @@ function PostCard({ post, featured = false }: { post: BlogPost; featured?: boole
           : "group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
       }
     >
-      <Link href={href} className={featured ? "relative block min-h-[320px]" : "relative block aspect-4/3"}>
+      <Link href={href} className={featured ? "relative block min-h-80" : "relative block aspect-4/3"}>
         {imageUrl ? (
           <Image
             src={imageUrl}
