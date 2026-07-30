@@ -4,7 +4,7 @@ import { Archivo, Bebas_Neue, IBM_Plex_Mono } from "next/font/google";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { WebVitals } from '@/components/WebVitals'
 import Footer from "@/components/Footer";
-import { ChatBotProvider } from "@/components/ChatBotProvider";
+import { LazyChatBotProvider } from "@/components/LazyChatBotProvider";
 import { Toaster } from "@/components/ui/sonner";
 import NavBar from "@/components/nav/NavBar";
 import JsonLd from "@/components/JsonLd";
@@ -117,12 +117,15 @@ export default function RootLayout({
       <body className="antialiased">
         <JsonLd data={[organizationStructuredData, websiteStructuredData]} />
         <WebVitals />
-        {gaId && <GoogleAnalytics gaId={gaId} />}
-        {gtmId && <GoogleTagManager gtmId={gtmId} />}
+        {gtmId ? (
+          <GoogleTagManager gtmId={gtmId} />
+        ) : gaId ? (
+          <GoogleAnalytics gaId={gaId} />
+        ) : null}
               <NavBar />
 
         {children}
-        <ChatBotProvider/>
+        <LazyChatBotProvider/>
         <Footer/>
         <Toaster />
       </body>
