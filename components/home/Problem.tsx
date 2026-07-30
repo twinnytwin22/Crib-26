@@ -20,13 +20,16 @@ const problems = [
 export default function Problem() {
   return (
     <section className="bg-background">
-      <div className="crib-container grid gap-14 py-24 lg:grid-cols-[0.9fr_1.1fr] lg:gap-[72px] lg:py-28">
+      <div className="crib-container grid gap-14 py-24 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20 lg:py-32">
         <div>
           <div className="sticky top-28 flex flex-col gap-4">
             <div className="crib-eyebrow">The problem</div>
-            <h2 className="max-w-[13em] text-[clamp(30px,3.6vw,46px)] font-semibold leading-[1.08] tracking-[-0.025em] text-balance text-foreground">
-              Your team is working hard. Your systems aren&apos;t working together.
+            <h2 className="crib-display max-w-[10em] text-[clamp(44px,5.8vw,82px)] text-foreground">
+              Hard work.<br />Disconnected systems.
             </h2>
+            <p className="max-w-[30em] border-l-2 border-primary pl-4 text-sm leading-relaxed text-[var(--text-2)]">
+              Built for organizations with multiple customer or audience types, disconnected platforms, and leadership pressure to improve growth, reporting, or modernization.
+            </p>
           </div>
         </div>
         <div className="flex flex-col">
@@ -37,13 +40,16 @@ export default function Problem() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.08, duration: 0.5 }}
-              className="border-t border-border py-8"
+              className="grid gap-4 border-t border-foreground py-8 sm:grid-cols-[48px_1fr]"
             >
-              <h3 className="mb-2.5 text-xl font-semibold tracking-[-0.015em] text-foreground">{prob.title}</h3>
-              <p className="text-base leading-relaxed text-balance text-[var(--text-2)]">{prob.body}</p>
+              <div className="font-mono text-xs font-semibold text-primary">0{index + 1}</div>
+              <div>
+                <h3 className="mb-3 text-2xl font-bold leading-tight tracking-[-0.03em] text-foreground">{prob.title}</h3>
+                <p className="text-base leading-relaxed text-[var(--text-2)]">{prob.body}</p>
+              </div>
             </motion.div>
           ))}
-          <div className="border-t border-border pt-7 text-base font-semibold text-primary">
+          <div className="border-t-2 border-primary py-7 font-mono text-xs font-semibold uppercase tracking-[0.06em] text-primary">
             None of this means your team is behind. It means the system underneath them was never designed.
           </div>
         </div>

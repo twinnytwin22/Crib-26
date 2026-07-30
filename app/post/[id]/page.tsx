@@ -1,20 +1,18 @@
 import ArticleComponent from "@/components/ArticleComponent";
 import NavBar from "@/components/nav/NavBar";
 import { getBlogPosts, imageBuilder } from "@/lib/providers/sanity/sanity";
-import type { Metadata, ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 type Props = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export const revalidate = 0;
 
 export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata,
+  { params }: Props,
 ): Promise<Metadata> {
   // Read route params
   const { id } = await params;
@@ -81,7 +79,7 @@ export async function generateStaticParams() {
   }));
 }
 
-async function Page({ params, searchParams }: Props) {
+async function Page({ params }: Props) {
   const { success, slugs, res } = await getBlogPosts();
 
   if (success) {

@@ -8,7 +8,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
     let currentList: any[] = [];
     let currentListType: string | null = null;
 
-    blocks?.forEach((block, index) => {
+    blocks?.forEach((block) => {
       if (block?.listItem) {
         const listType = block.listItem; // 'bullet' or 'number'
         

@@ -5,27 +5,27 @@ import { motion } from "framer-motion";
 
 const rows = [
   {
-    title: "Repeat customers, memberships & renewals",
-    body: "See which first-time buyers, visitors, or sign-ups come back — and build the journeys that bring more of them back. One view of each relationship, across every tool that touches it.",
+    title: "Retention is hard to see",
+    body: "Customers engage across several tools, but repeat behavior and retention are unclear. Connect the journey and records that matter so you can see what brings people back.",
     chips: ["Customer journeys", "CRM & records", "Email & lifecycle", "Renewal signals"],
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80",
-    alt: "A team reviewing customer relationship data together",
+    image: "/wall-bg.jpg",
+    alt: "A red architectural wall and connected utility line",
     reverse: false,
   },
   {
-    title: "Reporting leadership can trust",
-    body: "No more assembling numbers by hand or defending definitions in meetings. Shared metrics, clean tracking, and dashboards that answer the questions leadership actually asks.",
+    title: "Reporting lacks trust",
+    body: "Leadership reporting is manual or disputed and cannot reliably explain customer behavior or performance. Create shared definitions, clean tracking, and reports built for real decisions.",
     chips: ["Tracking plans", "KPI definitions", "Dashboards", "Attribution"],
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80",
-    alt: "A dashboard of reporting metrics in use during a meeting",
+    image: "/pexels-atypeek-10323634.jpg",
+    alt: "A cracked red surface forming a branching map",
     reverse: true,
   },
   {
-    title: "A website that pulls its weight",
-    body: "Fast, modern, findable — and wired into the rest of your system, so every visit, booking, and sale feeds the picture instead of disappearing into another silo.",
-    chips: ["Design & build", "Search visibility", "Conversion", "Clean data capture"],
-    image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1200&q=80",
-    alt: "A modern website design shown on a laptop screen",
+    title: "Systems create manual work",
+    body: "Priority tools do not exchange information reliably, forcing staff to export, reconcile, and re-enter data. Repair the handoffs so information moves with less effort and fewer errors.",
+    chips: ["Integrations", "Workflow design", "Automation", "Owner handoff"],
+    image: "/flowr-bg.jpg",
+    alt: "Red flowers emerging against a dark field",
     reverse: false,
   },
 ];
@@ -33,31 +33,32 @@ const rows = [
 export default function InPractice() {
   return (
     <section className="bg-background">
-      <div className="crib-container py-24 lg:py-28">
+      <div className="crib-container py-24 lg:py-32">
         <div className="crib-eyebrow mb-4">In practice</div>
-        <h2 className="mb-16 max-w-[18em] text-[clamp(28px,3.4vw,42px)] font-semibold leading-[1.1] tracking-[-0.025em] text-balance text-foreground">
-          How that shows up in your business.
+        <h2 className="mb-16 max-w-[13em] text-[clamp(38px,5vw,68px)] font-extrabold leading-[0.98] tracking-[-0.045em] text-foreground">
+          Problems that signal it&apos;s time to connect the system.
         </h2>
-        <div className="flex flex-col gap-[72px]">
+        <div className="flex flex-col border-t border-foreground">
           {rows.map((row, index) => (
             <div
               key={row.title}
-              className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14"
+              className="grid items-stretch border-b border-foreground lg:grid-cols-2"
             >
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className={`flex flex-col gap-3.5 ${row.reverse ? "lg:order-2" : ""}`}
+                className={`flex flex-col justify-center gap-5 px-1 py-10 sm:px-8 lg:min-h-[440px] lg:px-12 ${row.reverse ? "lg:order-2 lg:border-l lg:border-foreground" : "lg:border-r lg:border-foreground"}`}
               >
-                <h3 className="text-[26px] font-semibold tracking-[-0.02em] text-foreground">{row.title}</h3>
-                <p className="text-base leading-relaxed text-balance text-[var(--text-2)]">{row.body}</p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="font-mono text-xs font-semibold text-primary">0{index + 1}</div>
+                <h3 className="max-w-[14em] text-[clamp(28px,3vw,42px)] font-extrabold leading-[1.02] tracking-[-0.04em] text-foreground">{row.title}</h3>
+                <p className="max-w-[38em] text-base leading-relaxed text-[var(--text-2)]">{row.body}</p>
+                <div className="flex flex-wrap gap-2 pt-2">
                   {row.chips.map((c) => (
                     <span
                       key={c}
-                      className="rounded-full border border-border bg-[var(--surface-2)] px-3 py-1 text-xs font-medium text-[var(--text-2)]"
+                      className="border border-border bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-[0.07em] text-[var(--text-2)]"
                     >
                       {c}
                     </span>
@@ -69,7 +70,7 @@ export default function InPractice() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className={`relative h-[280px] overflow-hidden rounded-[10px] sm:h-[340px] ${row.reverse ? "lg:order-1" : ""}`}
+                className={`relative min-h-[320px] overflow-hidden lg:min-h-[440px] ${row.reverse ? "lg:order-1" : ""}`}
               >
                 <Image
                   src={row.image}
@@ -77,7 +78,6 @@ export default function InPractice() {
                   fill
                   sizes="(min-width: 1024px) 50vw, 100vw"
                   className="object-cover"
-                  unoptimized
                   loading={index === 0 ? undefined : "lazy"}
                 />
               </motion.div>

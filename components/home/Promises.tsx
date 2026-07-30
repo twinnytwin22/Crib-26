@@ -3,15 +3,15 @@
 import { motion } from "framer-motion";
 
 const promises = [
-  { title: "One view of every customer", body: "Every tool that touches a relationship, connected into a single picture." },
+  { title: "A reliable view of each relationship", body: "The systems that matter, connected into a clearer customer picture." },
   { title: "Reports you can trust", body: "Shared definitions and clean tracking — no more assembling numbers by hand." },
   { title: "A plan you can act on", body: "What to fix now, next, and later. Sequenced by value, not by vendor." },
 ];
 
 export default function Promises() {
   return (
-    <section className="border-b border-border bg-background">
-      <div className="crib-container grid gap-10 py-11 sm:grid-cols-2 lg:grid-cols-3">
+    <section className="border-y border-foreground bg-[var(--neutral-0)]">
+      <div className="crib-container grid lg:grid-cols-3">
         {promises.map((p, index) => (
           <motion.div
             key={p.title}
@@ -19,10 +19,13 @@ export default function Promises() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.08, duration: 0.5 }}
-            className="border-l-2 border-primary pl-5"
+            className="grid grid-cols-[42px_1fr] gap-4 border-b border-border py-8 lg:border-r lg:border-b-0 lg:px-7 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
           >
-            <div className="text-lg font-semibold tracking-[-0.01em] text-foreground">{p.title}</div>
-            <div className="mt-1 text-sm leading-relaxed text-muted-foreground">{p.body}</div>
+            <div className="font-mono text-xs font-semibold text-primary">0{index + 1}</div>
+            <div>
+              <div className="text-lg font-bold leading-tight tracking-[-0.025em] text-foreground">{p.title}</div>
+              <div className="mt-2 text-sm leading-relaxed text-muted-foreground">{p.body}</div>
+            </div>
           </motion.div>
         ))}
       </div>

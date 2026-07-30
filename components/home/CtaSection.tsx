@@ -6,23 +6,28 @@ import { Button } from "@/components/ui/button";
 
 export default function CtaSection() {
   return (
-    <section className="bg-[var(--neutral-900)] text-white">
+    <section className="border-y border-foreground bg-primary text-white">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="crib-container flex flex-col items-center gap-5 py-24 text-center lg:py-28"
+        className="crib-container grid gap-10 py-24 lg:grid-cols-[1.35fr_0.65fr] lg:items-end lg:py-32"
       >
-        <h2 className="max-w-[15em] text-[clamp(32px,4.2vw,54px)] font-semibold leading-[1.05] tracking-[-0.03em] text-balance">
-          Ready to see your business clearly?
-        </h2>
-        <p className="max-w-[32em] text-[17px] leading-relaxed text-balance text-white/68">
-          Start with a 30-minute conversation. We&apos;ll meet you where your systems are today — and tell you honestly what we&apos;d fix first.
-        </p>
-        <Button asChild size="lg" className="mt-1.5">
-          <Link href="/how-it-works">Book an intro call</Link>
-        </Button>
+        <div>
+          <div className="mb-5 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-white/72">The first move / 30 minutes</div>
+          <h2 className="crib-display max-w-[10em] text-[clamp(52px,7vw,104px)]">
+            Find the right starting point.
+          </h2>
+        </div>
+        <div className="flex flex-col items-start gap-6 border-t border-white/55 pt-6 text-black hover:text-white">
+          <p className="max-w-[32em] text-[17px] leading-relaxed text-white/82">
+            Start with a straightforward conversation. We&apos;ll determine fit, define the priority question, and explain what we would examine first.
+          </p>
+          <Button asChild size="lg" variant="inverse">
+            <Link href="/how-it-works">Find the right starting point →</Link>
+          </Button>
+        </div>
       </motion.div>
     </section>
   );

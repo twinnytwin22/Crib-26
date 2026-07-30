@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Archivo, Bebas_Neue, IBM_Plex_Mono } from "next/font/google";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { WebVitals } from '@/components/WebVitals'
 import Footer from "@/components/Footer";
@@ -11,10 +11,10 @@ import NavBar from "@/components/nav/NavBar";
 export const metadata: Metadata = {
   metadataBase: new URL('https://cribnetwork.io'),
   title: {
-    default: "CRIB Network | Software, SEO & Social Media Marketing",
+    default: "CRIB Network | Systems, made clear.",
     template: "%s | CRIB Network",
   },
-  description: "Launch software 68% faster, grow organic traffic 140%, and scale pipeline 4x with CRIB's integrated development, SEO, and social media solutions.",
+  description: "CRIB maps and connects the websites, customer data, reporting, and everyday tools beneath your business—then makes them work as one.",
   keywords: [
     "software development",
     "SEO services",
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://cribnetwork.io",
     siteName: "CRIB Network",
-    title: "CRIB Network | Software, SEO & Social Media Marketing",
-    description: "Launch software 68% faster, grow organic traffic 140%, and scale pipeline 4x with CRIB's integrated development, SEO, and social media solutions.",
+    title: "CRIB Network | Systems, made clear.",
+    description: "CRIB maps and connects the websites, customer data, reporting, and everyday tools beneath your business—then makes them work as one.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CRIB Network | Software, SEO & Social Media Marketing",
-    description: "Launch software 68% faster, grow organic traffic 140%, and scale pipeline 4x with CRIB's integrated development, SEO, and social media solutions.",
+    title: "CRIB Network | Systems, made clear.",
+    description: "CRIB maps and connects the websites, customer data, reporting, and everyday tools beneath your business—then makes them work as one.",
     creator: "@cribnetwork",
   },
   robots: {
@@ -64,16 +64,26 @@ export const metadata: Metadata = {
   },
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   display: 'swap',
   preload: true,
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const bebasNeue = Bebas_Neue({
+  variable: "--font-bebas",
   subsets: ["latin"],
+  weight: ["400"],
+  display: 'swap',
+  preload: true,
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: 'swap',
   preload: true,
 });
@@ -87,14 +97,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${archivo.variable} ${bebasNeue.variable} ${plexMono.variable}`}
+    >
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="antialiased">
         <WebVitals />
         {gaId && <GoogleAnalytics gaId={gaId} />}
         {gtmId && <GoogleTagManager gtmId={gtmId} />}

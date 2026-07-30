@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     // Example: Google Analytics, Vercel Analytics, etc.
     
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false }, { status: 500 })
   }
 }

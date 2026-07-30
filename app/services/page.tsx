@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import NavBar from "@/components/nav/NavBar";
 import ServiceOffers from "@/components/services/ServiceOffers";
 import Capabilities from "@/components/services/Capabilities";
 import SiteFooterCompact from "@/components/SiteFooterCompact";
@@ -9,7 +8,7 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "We don't start with a rebuild, a platform, or a pitch deck of everything you could buy. We start by understanding your systems — then fix what matters most, and stay to keep it working.",
+    "Understand the growth question, fix the highest-value constraint, and keep the system and roadmap moving.",
   alternates: {
     canonical: "https://cribnetwork.io/services",
   },
@@ -18,29 +17,30 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <div>
-      <NavBar />
-      <header className="border-b border-border bg-background pt-14">
-        <div className="crib-container flex flex-col gap-4 pt-[88px] pb-[72px]">
+      <header className="border-b border-foreground bg-background pt-16">
+        <div className="crib-container grid gap-10 py-[96px] lg:grid-cols-[0.7fr_1.3fr] lg:py-[120px]">
           <div className="crib-eyebrow">Services</div>
-          <h1 className="max-w-[16em] text-[clamp(34px,4.6vw,54px)] font-semibold leading-[1.08] tracking-[-0.025em] text-balance text-foreground">
-            Three steps. Each one earns the next.
-          </h1>
-          <p className="max-w-[38em] text-[17px] leading-relaxed text-balance text-[var(--text-2)]">
-            We don&apos;t start with a rebuild, a platform, or a pitch deck of everything you could buy. We start by understanding your systems — then fix what matters most, and stay to keep it working.
-          </p>
+          <div className="flex flex-col gap-7">
+            <h1 className="crib-display max-w-[11em] text-[clamp(50px,7vw,104px)] text-foreground">
+              Three steps. Each earns the next.
+            </h1>
+            <p className="max-w-[38em] border-l-2 border-primary pl-5 text-[17px] leading-relaxed text-[var(--text-2)]">
+              We start with one priority growth question, map the systems behind it, fix the highest-value constraint, and keep the roadmap moving.
+            </p>
+          </div>
         </div>
       </header>
 
       <ServiceOffers />
       <Capabilities />
 
-      <section className="bg-[var(--neutral-900)] text-white">
-        <div className="crib-container flex flex-col items-start gap-4.5 py-20">
-          <h2 className="max-w-[18em] text-[clamp(26px,3.6vw,40px)] font-semibold leading-[1.12] tracking-[-0.02em] text-balance">
-            Not sure which step you need? That&apos;s the point of the first call.
+      <section className="border-y border-foreground bg-primary text-white">
+        <div className="crib-container grid gap-8 py-20 lg:grid-cols-[1fr_auto] lg:items-end lg:py-24">
+          <h2 className="crib-display max-w-[12em] text-[clamp(44px,6vw,80px)]">
+            Find the right starting point.
           </h2>
-          <Button asChild size="lg" className="mt-1">
-            <Link href="/how-it-works">Book an intro call</Link>
+          <Button asChild size="lg" variant="inverse">
+            <Link href="/how-it-works">See how the first call works →</Link>
           </Button>
         </div>
       </section>

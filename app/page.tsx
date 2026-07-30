@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import NavBar from "@/components/nav/NavBar";
 import Hero from "@/components/home/Hero";
 import Promises from "@/components/home/Promises";
 import Problem from "@/components/home/Problem";
@@ -11,18 +10,18 @@ import CtaSection from "@/components/home/CtaSection";
 import HomeFooter from "@/components/home/HomeFooter";
 
 export const metadata: Metadata = {
-  title: "CRIB Network — Clarity in your systems. Confidence in your growth.",
+  title: "CRIB Network — Systems, made clear.",
   description:
-    "CRIB connects your website, customer data, and everyday tools into one system you can see, trust, and grow with.",
+    "CRIB connects the customer journeys, data, and digital systems behind growth—then fixes the constraint that matters most.",
   openGraph: {
-    title: "CRIB Network — Clarity in your systems. Confidence in your growth.",
+    title: "CRIB Network — Systems, made clear.",
     description:
-      "CRIB connects your website, customer data, and everyday tools into one system you can see, trust, and grow with.",
+      "CRIB connects the customer journeys, data, and digital systems behind growth—then fixes the constraint that matters most.",
   },
   twitter: {
-    title: "CRIB Network — Clarity in your systems. Confidence in your growth.",
+    title: "CRIB Network — Systems, made clear.",
     description:
-      "CRIB connects your website, customer data, and everyday tools into one system you can see, trust, and grow with.",
+      "CRIB connects the customer journeys, data, and digital systems behind growth—then fixes the constraint that matters most.",
   },
 };
 

@@ -114,7 +114,7 @@ const PortableText: React.FC<PortableTextProps> = ({
         if (block?._type === "block") {
           return (
             <p key={index}>
-              {block?.children?.map((child, childIndex) => {
+              {block?.children?.map((child) => {
                 if (typeof child === "string") {
                   return child; // Plain text
                 } else {
