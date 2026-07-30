@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Timeline from "@/components/how-it-works/Timeline";
 import Principles from "@/components/how-it-works/Principles";
 import ContactForm from "@/components/how-it-works/ContactForm";
-import SiteFooterCompact from "@/components/SiteFooterCompact";
 
 export const metadata: Metadata = {
   title: "How it works",
@@ -47,8 +46,6 @@ export default function HowItWorksPage() {
           <ContactForm />
         </div>
       </section>
-
-      <SiteFooterCompact />
     </div>
   );
 }

@@ -7,7 +7,6 @@ import Approach from "@/components/home/Approach";
 import InPractice from "@/components/home/InPractice";
 import WhyCribSection from "@/components/home/WhyCribSection";
 import CtaSection from "@/components/home/CtaSection";
-import HomeFooter from "@/components/home/HomeFooter";
 import { SHARE_IMAGE, SHARE_IMAGE_URL } from "@/lib/share-image";
 
 export const metadata: Metadata = {
@@ -39,7 +38,6 @@ export default function Home() {
       <InPractice />
       <WhyCribSection />
       <CtaSection />
-      <HomeFooter />
     </div>
   );
 }

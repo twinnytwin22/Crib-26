@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import CtaSection from "@/components/home/CtaSection";
-import HomeFooter from "@/components/home/HomeFooter";
 import { getBlogPosts, imageBuilder } from "@/lib/providers/sanity/sanity";
 import { SHARE_IMAGE, SHARE_IMAGE_URL } from "@/lib/share-image";
 
@@ -163,7 +162,6 @@ export default async function BlogPage() {
   const [featuredPost, ...remainingPosts] = posts;
 
   return (
-    <>
       <main className="min-h-screen bg-background pt-14 antialiased">
         <section className="border-b border-border bg-[var(--surface)]">
           <div className="crib-container grid gap-10 py-20 lg:grid-cols-[0.82fr_1fr] lg:items-end lg:py-24">
@@ -224,7 +222,5 @@ export default async function BlogPage() {
 
         <CtaSection />
       </main>
-      <HomeFooter />
-    </>
   );
 }

@@ -1,13 +1,22 @@
 "use client";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import HomeFooter from "@/components/home/HomeFooter";
+import SiteFooterCompact from "@/components/SiteFooterCompact";
 
 export default function Footer() {
   const pathname = usePathname();
+  const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
 
-  // These pages render their own footer matching their design
-  if (pathname === "/" || pathname === "/services" || pathname === "/how-it-works") {
-    return null;
+  if (normalizedPathname === "/" || normalizedPathname === "/blog") {
+    return <HomeFooter />;
+  }
+
+  if (
+    normalizedPathname === "/services" ||
+    normalizedPathname === "/how-it-works"
+  ) {
+    return <SiteFooterCompact />;
   }
 
   return (

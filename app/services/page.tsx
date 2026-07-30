@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ServiceOffers from "@/components/services/ServiceOffers";
 import Capabilities from "@/components/services/Capabilities";
-import SiteFooterCompact from "@/components/SiteFooterCompact";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
@@ -44,8 +43,6 @@ export default function ServicesPage() {
           </Button>
         </div>
       </section>
-
-      <SiteFooterCompact />
     </div>
   );
 }
