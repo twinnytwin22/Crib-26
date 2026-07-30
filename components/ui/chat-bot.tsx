@@ -7,6 +7,7 @@ import { Input } from "./input";
 import { Card } from "./card";
 import { ScrollArea } from "./scroll-area";
 import { Avatar, AvatarFallback } from "./avatar";
+import { trackMarketingEvent } from "@/lib/analytics";
 
 export interface ChatMessage {
   id: string;
@@ -28,6 +29,7 @@ export type ChatSendHandlerResult =
   | {
       reply?: string;
       session?: ChatSessionInfo | null;
+      delivered?: boolean;
     };
 
 export interface ChatBotProps {
@@ -109,6 +111,8 @@ export function ChatBot({
   const [emailTouched, setEmailTouched] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const knownMessageIds = useRef<Set<string>>(new Set(["welcome"]));
+  const deliveredMessageCount = useRef(0);
+  const hasTrackedLead = useRef(false);
   const [sessionInfo, setSessionInfo] = useState<ChatSessionInfo | null>(null);
 
   const shouldCollectEmail = collectEmail || requireEmail;
@@ -217,7 +221,7 @@ export function ChatBot({
 
   const generateBotResponse = async (
     userMessage: string
-  ): Promise<{ reply: string; session?: ChatSessionInfo | null }> => {
+  ): Promise<{ reply: string; session?: ChatSessionInfo | null; delivered?: boolean }> => {
     const trimmedMessage = userMessage.trim();
 
     // If custom onSendMessage handler is provided, use it
@@ -232,6 +236,7 @@ export function ChatBot({
       return {
         reply: result?.reply || ACKNOWLEDGEMENT_RESPONSE,
         session: result?.session,
+        delivered: result?.delivered,
       };
     }
 
@@ -277,10 +282,12 @@ export function ChatBot({
 
     let botResponseContent: string;
     let sessionUpdate: ChatSessionInfo | null | undefined;
+    let delivered = false;
     try {
       const botResponse = await generateBotResponse(currentInput);
       botResponseContent = botResponse.reply || ACKNOWLEDGEMENT_RESPONSE;
       sessionUpdate = botResponse.session;
+      delivered = botResponse.delivered === true;
     } catch (error) {
       console.error("Chat bot failed to send message", error);
       botResponseContent = "We couldn't deliver that message. Please try again or email us directly.";
@@ -290,6 +297,23 @@ export function ChatBot({
       setSessionInfo((prev) => ({
         id: sessionUpdate?.id ?? prev?.id,
       }));
+    }
+
+    if (delivered) {
+      deliveredMessageCount.current += 1;
+      trackMarketingEvent({
+        event: "chat_message_sent",
+        chat_id: "sales_support",
+        message_number: deliveredMessageCount.current,
+      });
+
+      if (!hasTrackedLead.current) {
+        hasTrackedLead.current = true;
+        trackMarketingEvent({
+          event: "generate_lead",
+          lead_source_surface: "website_chat",
+        });
+      }
     }
 
     const botMessage: ChatMessage = {
@@ -446,7 +470,10 @@ export function ChatBot({
       {!isOpen && (
         <div className="relative">
           <Button
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setIsOpen(true);
+              trackMarketingEvent({ event: "chat_open", chat_id: "sales_support" });
+            }}
             size="lg"
             className="relative h-12 w-12 rounded-lg shadow-lg animate-in zoom-in"
           >

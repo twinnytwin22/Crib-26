@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Archivo, Bebas_Neue, IBM_Plex_Mono } from "next/font/google";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { WebVitals } from '@/components/WebVitals'
@@ -8,6 +9,7 @@ import { LazyChatBotProvider } from "@/components/LazyChatBotProvider";
 import { Toaster } from "@/components/ui/sonner";
 import NavBar from "@/components/nav/NavBar";
 import JsonLd from "@/components/JsonLd";
+import { ConsentManager } from "@/components/ConsentManager";
 import {
   organizationStructuredData,
   websiteStructuredData,
@@ -111,6 +113,23 @@ export default function RootLayout({
       className={`${archivo.variable} ${bebasNeue.variable} ${plexMono.variable}`}
     >
       <head>
+        <Script
+          id="google-consent-defaults"
+          strategy="beforeInteractive"
+        >{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          window.gtag = window.gtag || gtag;
+          gtag('consent', 'default', {
+            analytics_storage: 'denied',
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            wait_for_update: 500
+          });
+          gtag('set', 'ads_data_redaction', true);
+          gtag('set', 'url_passthrough', true);
+        `}</Script>
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
@@ -126,6 +145,7 @@ export default function RootLayout({
 
         {children}
         <LazyChatBotProvider/>
+        <ConsentManager />
         <Footer/>
         <Toaster />
       </body>

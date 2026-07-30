@@ -56,10 +56,14 @@ export function ChatBotProvider({
       return {
         reply: data.reply || defaultReply,
         session: data.session as ChatSessionInfo | undefined,
+        delivered: true,
       };
     } catch (error) {
       console.error("Chat relay failed", error);
-      return "We couldn't deliver that message. Please try again or email hello@cribnetwork.io.";
+      return {
+        reply: "We couldn't deliver that message. Please try again or email hello@cribnetwork.io.",
+        delivered: false,
+      };
     }
   }, []);
 

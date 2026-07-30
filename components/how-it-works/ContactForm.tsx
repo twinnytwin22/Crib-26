@@ -2,11 +2,19 @@
 
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
+import { trackMarketingEvent } from "@/lib/analytics";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  const handleStart = () => {
+    if (hasStarted) return;
+    setHasStarted(true);
+    trackMarketingEvent({ event: "form_start", form_id: "intro_call" });
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,13 +33,28 @@ export default function ContactForm() {
       const data = await response.json();
 
       if (response.ok) {
+        trackMarketingEvent({
+          event: "generate_lead",
+          lead_source_surface: "contact_form",
+          form_id: "intro_call",
+        });
         setSent(true);
         toast.success("Message sent! We'll be in touch within one business day.");
         setFormData({ name: "", email: "", message: "" });
       } else {
+        trackMarketingEvent({
+          event: "form_error",
+          form_id: "intro_call",
+          error_type: "server_error",
+        });
         toast.error("Failed to send message", { description: data.error || "Please try again later." });
       }
     } catch {
+      trackMarketingEvent({
+        event: "form_error",
+        form_id: "intro_call",
+        error_type: "network_error",
+      });
       toast.error("Failed to send message", { description: "Please try again later." });
     } finally {
       setIsSubmitting(false);
@@ -41,6 +64,7 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
+      onFocus={handleStart}
       className="crib-card flex flex-col gap-3.5 border-t-4 border-t-primary p-7 lg:p-9"
     >
       <input
