@@ -4,16 +4,16 @@ import { motion } from "framer-motion";
 
 const problems = [
   {
-    title: "Money is moving. You can't see why.",
-    body: "Sales, sign-ups, renewals, and campaigns are happening — but the data lives in five tools, attribution is a guessing game, and the questions leadership asks are the ones you can't answer.",
+    title: "You can see the outcome. Not the path behind it.",
+    body: "Revenue lands. Sign-ups climb. A campaign performs. But ask what actually drove any of it — which channel, which change, which month it started — and the honest answer is that no one can trace it back.",
   },
   {
-    title: "The tools multiplied. The picture didn't.",
-    body: "Every platform was added for a good reason. Now staff export, re-enter, and reconcile between them — and nobody owns how the whole thing fits together.",
+    title: "The tools multiplied. But they don't connect.",
+    body: "Every platform was added for a good reason. None of them were added with the others in mind. So staff export, re-enter, and reconcile by hand — and the seams between systems quietly become someone's second job.",
   },
   {
     title: "Everyone says AI. Nobody says what first.",
-    body: "The pressure to modernize is constant. But new technology stacked on fragmented data and broken reporting just produces faster confusion.",
+    body: "The mandate to modernize arrives without a sequence. But AI inherits whatever it's built on, and layered over fragmented data and reporting no one trusts, it doesn't resolve the confusion — it just produces it faster.",
   },
 ];
 
@@ -44,8 +44,8 @@ export default function Problem() {
             >
               <div className="font-mono text-xs font-semibold text-primary">0{index + 1}</div>
               <div>
-                <h3 className="mb-3 text-2xl font-bold leading-tight tracking-[-0.03em] text-foreground">{prob.title}</h3>
-                <p className="text-base leading-relaxed text-[var(--text-2)]">{prob.body}</p>
+                <h3 className="mb-3 text-2xl font-normal leading-tight tracking-[-0.03em] text-foreground">{prob.title}</h3>
+                <p className="text-base leading-relaxed text-(--text-2)">{prob.body}</p>
               </div>
             </motion.div>
           ))}

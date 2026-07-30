@@ -22,7 +22,7 @@ export default function Difference() {
     <section className="border-y border-foreground bg-[var(--neutral-0)]">
       <div className="crib-container py-24 lg:py-32">
         <div className="crib-eyebrow mb-4">The difference</div>
-        <h2 className="mb-14 max-w-[14em] text-[clamp(34px,4.6vw,64px)] font-extrabold leading-[0.98] tracking-[-0.045em] text-foreground">
+        <h2 className="mb-14 max-w-[14em] text-[clamp(34px,4.6vw,64px)] font-normal leading-[0.98] tracking-[-0.045em] text-foreground">
           What changes when your systems are designed to be understood.
         </h2>
         <div className="grid items-stretch border border-foreground sm:grid-cols-2">

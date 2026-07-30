@@ -30,11 +30,10 @@ export default function Hero() {
               initial="initial"
               animate="animate"
               transition={{ duration: 0.65, delay: 0.08 }}
-              className="crib-display  max-w-[8em] text-[clamp(64px,9.4vw,148px)] text-white"
+              className="crib-display  max-w-[8em] text-[clamp(54px,7.4vw,128px)] text-white"
             >
-              Systems<span className="text-primary">,</span><br />
-              made<br />
-              clear.
+              Connect what growth<br />
+              depends on<span className="text-primary">.</span>
             </motion.h1>
 
             <motion.p

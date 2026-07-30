@@ -106,7 +106,7 @@ async function Page({ params }: Props) {
     <section className="h-screen bg-background">
       <div className="crib-container flex h-full items-center py-16">
         <div className="mx-auto max-w-2xl text-center">
-          <h1 className="mb-6 text-7xl font-semibold text-primary lg:text-9xl">
+          <h1 className="mb-6 text-7xl font-normal text-primary lg:text-9xl">
             404
           </h1>
           <p className="mb-4 text-3xl font-semibold text-foreground md:text-4xl">

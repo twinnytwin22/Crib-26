@@ -67,7 +67,7 @@ export default function Timeline() {
             </div>
             <div className="py-7 pr-5 sm:py-9 sm:pr-9">
               <div className="mb-2 flex flex-wrap items-baseline gap-3">
-                <h2 className="text-[clamp(24px,3vw,36px)] font-extrabold leading-tight tracking-[-0.035em] text-foreground">{stage.title}</h2>
+                <h2 className="text-[clamp(24px,3vw,36px)] font-normal leading-tight tracking-[-0.035em] text-foreground">{stage.title}</h2>
                 <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.07em] text-muted-foreground">{stage.timing}</span>
               </div>
               <p className="mb-3.5 max-w-[44em] text-[15px] leading-relaxed text-balance text-[var(--text-2)]">{stage.body}</p>

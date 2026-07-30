@@ -35,7 +35,7 @@ export default function InPractice() {
     <section className="bg-background">
       <div className="crib-container py-24 lg:py-32">
         <div className="crib-eyebrow mb-4">In practice</div>
-        <h2 className="mb-16 max-w-[13em] text-[clamp(38px,5vw,68px)] font-extrabold leading-[0.98] tracking-[-0.045em] text-foreground">
+        <h2 className="mb-16 max-w-[13em] text-[clamp(38px,5vw,68px)] font-normal leading-[0.98] tracking-[-0.045em] text-foreground">
           Problems that signal it&apos;s time to connect the system.
         </h2>
         <div className="flex flex-col border-t border-foreground">
@@ -52,7 +52,7 @@ export default function InPractice() {
                 className={`flex flex-col justify-center gap-5 px-1 py-10 sm:px-8 lg:min-h-[440px] lg:px-12 ${row.reverse ? "lg:order-2 lg:border-l lg:border-foreground" : "lg:border-r lg:border-foreground"}`}
               >
                 <div className="font-mono text-xs font-semibold text-primary">0{index + 1}</div>
-                <h3 className="max-w-[14em] text-[clamp(28px,3vw,42px)] font-extrabold leading-[1.02] tracking-[-0.04em] text-foreground">{row.title}</h3>
+                <h3 className="max-w-[14em] text-[clamp(28px,3vw,42px)] font-normal leading-[1.02] tracking-[-0.04em] text-foreground">{row.title}</h3>
                 <p className="max-w-[38em] text-base leading-relaxed text-[var(--text-2)]">{row.body}</p>
                 <div className="flex flex-wrap gap-2 pt-2">
                   {row.chips.map((c) => (

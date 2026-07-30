@@ -54,7 +54,7 @@ export default function Approach() {
                 <span className="font-mono text-sm font-semibold text-[var(--brand-300)]">{step.num}</span>
                 <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-white/50">{step.label}</span>
               </div>
-              <h3 className="text-3xl font-extrabold leading-[1.02] tracking-[-0.035em]">{step.title}</h3>
+              <h3 className="text-3xl font-normal leading-[1.02] tracking-[-0.035em]">{step.title}</h3>
               <p className="text-[15px] leading-relaxed text-balance text-white/65">{step.body}</p>
             </motion.div>
           ))}

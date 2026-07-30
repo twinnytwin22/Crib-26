@@ -132,7 +132,7 @@ function PostCard({ post, featured = false }: { post: BlogPost; featured?: boole
           </span>
           {post.author && <span>By {post.author}</span>}
         </div>
-        <h2 className={featured ? "text-3xl font-semibold leading-tight text-foreground md:text-4xl" : "text-xl font-semibold leading-tight text-foreground"}>
+        <h2 className={featured ? "text-3xl font-normal leading-tight text-foreground md:text-4xl" : "text-xl font-normal leading-tight text-foreground"}>
           <Link href={href} className="transition hover:text-primary">
             {post.title}
           </Link>
@@ -168,7 +168,7 @@ export default async function BlogPage() {
           <div className="crib-container grid gap-10 py-20 lg:grid-cols-[0.82fr_1fr] lg:items-end lg:py-24">
             <div>
               <div className="crib-eyebrow mb-5">CRIB Blog</div>
-              <h1 className="max-w-[11em] text-[clamp(40px,5vw,68px)] font-semibold leading-[1.02] text-foreground text-balance">
+              <h1 className="max-w-[11em] text-[clamp(40px,5vw,68px)] font-normal leading-[1.02] text-foreground text-balance">
                 Notes for clearer systems and steadier growth.
               </h1>
             </div>
@@ -194,7 +194,7 @@ export default async function BlogPage() {
           <section className="crib-section">
             <div className="crib-container">
               <div className="crib-muted-panel mx-auto max-w-2xl p-8 text-center">
-                <h2 className="text-2xl font-semibold text-foreground">No posts yet</h2>
+                <h2 className="text-2xl font-normal text-foreground">No posts yet</h2>
                 <p className="mt-3 text-muted-foreground">
                   The blog is connected, but there are no published posts available right now.
                 </p>
@@ -208,7 +208,7 @@ export default async function BlogPage() {
             <div className="crib-container">
               <div className="mb-10 max-w-3xl">
                 <div className="crib-eyebrow mb-4">All Articles</div>
-                <h2 className="text-3xl font-semibold leading-tight text-foreground md:text-4xl">
+                <h2 className="text-3xl font-normal leading-tight text-foreground md:text-4xl">
                   More from the CRIB team
                 </h2>
               </div>

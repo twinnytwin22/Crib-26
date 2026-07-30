@@ -53,7 +53,7 @@ export default function SupportPage() {
           <div className="mb-6 inline-flex rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm font-medium text-white/72">
             Support
           </div>
-          <h1 className="mb-6 text-4xl font-semibold leading-tight text-white md:text-6xl">
+          <h1 className="mb-6 text-4xl font-normal leading-tight text-white md:text-6xl">
             CRIB Support
           </h1>
           <p className="max-w-2xl text-base leading-relaxed text-white/72 md:text-lg">
@@ -67,7 +67,7 @@ export default function SupportPage() {
         <div className="crib-container max-w-5xl">
           <div className="grid gap-6 md:grid-cols-[1.1fr_0.9fr]">
             <article className="crib-card p-6 md:p-10">
-              <h2 className="text-2xl font-semibold text-foreground">
+              <h2 className="text-2xl font-normal text-foreground">
                 Contact Support
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -102,7 +102,7 @@ export default function SupportPage() {
             </article>
 
             <aside className="crib-card p-6 md:p-8">
-              <h2 className="text-xl font-semibold text-foreground">
+              <h2 className="text-xl font-normal text-foreground">
                 Useful Links
               </h2>
               <div className="mt-5 space-y-3 text-sm">
@@ -122,7 +122,7 @@ export default function SupportPage() {
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {supportItems.map((item) => (
               <div key={item.title} className="crib-card p-6">
-                <h3 className="text-lg font-semibold text-foreground">
+                <h3 className="text-lg font-normal text-foreground">
                   {item.title}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">

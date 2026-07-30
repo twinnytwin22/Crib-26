@@ -81,7 +81,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
           switch (style) {
             case "h2":
               return (
-                <h2 key={index} className="text-3xl font-bold mt-12 mb-6">
+                <h2 key={index} className="text-3xl font-normal mt-12 mb-6">
                   {block?.children?.map((child: Child | string, childIndex: number) => {
                     if (typeof child === "string") {
                       return <span className="font-bold" key={childIndex}>{child}</span>;
@@ -93,7 +93,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
               );
             case "h3":
               return (
-                <h3 key={index} className="text-2xl font-bold  mt-8 mb-4">
+                <h3 key={index} className="text-2xl font-normal  mt-8 mb-4">
                   {block?.children?.map((child: Child | string, childIndex: number) => {
                     if (typeof child === "string") {
                       return <span className="font-bold" key={childIndex}>{child}</span>;
@@ -105,7 +105,7 @@ export const PortableBlogText: React.FC<PortableTextProps> = ({ content }) => {
               );
             case "h4":
               return (
-                <h4 key={index} className="text-xl font-bold mt-6 mb-3">
+                <h4 key={index} className="text-xl font-normal mt-6 mb-3">
                   <b>
                   {block?.children?.map((child: Child | string, childIndex: number) => {
                     if (typeof child === "string") {

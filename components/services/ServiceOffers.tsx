@@ -63,7 +63,7 @@ export default function ServiceOffers() {
                 <span className="font-mono text-sm font-semibold text-primary">{offer.num}</span>
                 <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{offer.kicker}</span>
               </div>
-              <h2 className="max-w-[16em] text-[clamp(30px,3.5vw,48px)] font-extrabold leading-[1.02] tracking-[-0.04em] text-foreground">{offer.title}</h2>
+              <h2 className="max-w-[16em] text-[clamp(30px,3.5vw,48px)] font-normal leading-[1.02] tracking-[-0.04em] text-foreground">{offer.title}</h2>
               <p className="text-[15px] leading-relaxed text-balance text-[var(--text-2)]">{offer.body}</p>
               <div className="mt-auto flex items-center gap-3 border-t border-border pt-4 font-mono text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
                 <span className="h-2 w-2 bg-primary" />

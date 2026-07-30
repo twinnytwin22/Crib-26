@@ -57,7 +57,7 @@ function ArticleComponent({ post }: { post: Post }) {
           </button>
         </div>
         
-        <h1 className="mb-8 text-4xl font-semibold leading-tight text-foreground md:text-5xl">
+        <h1 className="mb-8 text-4xl font-normal leading-tight text-foreground md:text-5xl">
           {post?.title}
         </h1>
       </header>

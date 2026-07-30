@@ -333,7 +333,7 @@ export function ChatBot({
                 </AvatarFallback>
               </Avatar>
               <div className="text-white">
-                <h3 className="text-sm font-semibold">{title}</h3>
+                <h3 className="text-sm font-normal">{title}</h3>
                 <p className="text-xs text-white/70">{subtitle}</p>
               </div>
             </div>

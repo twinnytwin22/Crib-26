@@ -34,13 +34,13 @@ export default function ServicesPage() {
       <ServiceOffers />
       <Capabilities />
 
-      <section className="border-y border-foreground bg-primary text-white">
+      <section className="border-y border-foreground bg-primary ">
         <div className="crib-container grid gap-8 py-20 lg:grid-cols-[1fr_auto] lg:items-end lg:py-24">
-          <h2 className="crib-display max-w-[12em] text-[clamp(44px,6vw,80px)]">
+          <h2 className="crib-display max-w-[12em] text-[clamp(44px,6vw,80px)] text-white">
             Find the right starting point.
           </h2>
           <Button asChild size="lg" variant="inverse">
-            <Link href="/how-it-works">See how the first call works →</Link>
+            <Link  href="/how-it-works">See how the first call works →</Link>
           </Button>
         </div>
       </section>

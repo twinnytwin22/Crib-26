@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 const promises = [
-  { title: "A reliable view of each relationship", body: "The systems that matter, connected into a clearer customer picture." },
+  { title: "A reliable view of each relationship", body: "The systems & tools that matter, connected into a clearer customer picture." },
   { title: "Reports you can trust", body: "Shared definitions and clean tracking — no more assembling numbers by hand." },
   { title: "A plan you can act on", body: "What to fix now, next, and later. Sequenced by value, not by vendor." },
 ];

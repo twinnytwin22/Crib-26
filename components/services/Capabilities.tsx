@@ -16,7 +16,7 @@ export default function Capabilities() {
     <section className="border-y border-foreground bg-background">
       <div className="crib-container py-24 lg:py-28">
         <div className="crib-eyebrow mb-4">Inside every step</div>
-        <h2 className="mb-12 max-w-[14em] text-[clamp(36px,4.6vw,62px)] font-extrabold leading-[1] tracking-[-0.045em] text-foreground">
+        <h2 className="mb-12 max-w-[14em] text-[clamp(36px,4.6vw,62px)] font-normal leading-[1] tracking-[-0.045em] text-foreground">
           The capabilities we bring to the work.
         </h2>
         <div className="grid border-y border-foreground sm:grid-cols-2 lg:grid-cols-3">

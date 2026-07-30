@@ -73,7 +73,7 @@ export default async function Page() {
           <div className="mb-6 inline-flex rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm font-medium text-white/72">
             Legal Information
           </div>
-          <h1 className="mb-6 text-4xl font-semibold leading-tight text-white md:text-6xl">
+          <h1 className="mb-6 text-4xl font-normal leading-tight text-white md:text-6xl">
             Privacy Policy
           </h1>
           <p className="max-w-2xl text-base leading-relaxed text-white/72 md:text-lg">

@@ -16,7 +16,7 @@ export default function CtaSection() {
       >
         <div>
           <div className="mb-5 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-white/72">The first move / 30 minutes</div>
-          <h2 className="crib-display max-w-[10em] text-[clamp(52px,7vw,104px)]">
+          <h2 className="crib-display max-w-[10em] text-[clamp(44px,6vw,80px)]">
             Find the right starting point.
           </h2>
         </div>
