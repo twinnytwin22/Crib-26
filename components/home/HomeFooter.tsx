@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function HomeFooter() {
   return (
-    <footer className="bg-[var(--neutral-1000)] text-white/60">
+    <footer className="bg-(--neutral-1000) text-white/60">
       <div className="crib-container flex flex-col gap-12 py-14 pb-10">
         <div className="flex flex-wrap justify-between gap-12">
           <div className="flex max-w-80 flex-col gap-3.5">
@@ -14,13 +14,13 @@ export default function HomeFooter() {
           </div>
           <div className="flex flex-wrap gap-16">
             <div className="flex flex-col gap-3 font-mono text-[10px] uppercase tracking-[0.08em]">
-              <span className="text-[9px] font-semibold text-[var(--brand-300)]">Explore / 01</span>
+              <span className="text-[9px] font-semibold text-(--brand-300)">Explore / 01</span>
               <Link href="/services" className="text-white/60 transition hover:text-white">Services</Link>
               <Link href="/how-it-works" className="text-white/60 transition hover:text-white">How it works</Link>
               <Link href="/blog" className="text-white/60 transition hover:text-white">Blog</Link>
             </div>
             <div className="flex flex-col gap-3 font-mono text-[10px] uppercase tracking-[0.08em]">
-              <span className="text-[9px] font-semibold text-[var(--brand-300)]">Company / 02</span>
+              <span className="text-[9px] font-semibold text-(--brand-300)">Company / 02</span>
               <Link href="/support" className="text-white/60 transition hover:text-white">Support</Link>
               <Link href="/privacy-policy" className="text-white/60 transition hover:text-white">Privacy policy</Link>
               <Link href="/terms" className="text-white/60 transition hover:text-white">Terms of service</Link>

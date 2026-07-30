@@ -20,7 +20,7 @@ export default function Footer() {
   }
 
   return (
-    <section id="contact" className="border-t border-white/20 bg-[var(--neutral-1000)] py-14 text-white">
+    <section id="contact" className="border-t border-white/20 bg-(--neutral-1000) py-14 text-white">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

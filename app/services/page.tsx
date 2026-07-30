@@ -23,7 +23,7 @@ export default function ServicesPage() {
             <h1 className="crib-display max-w-[11em] text-[clamp(50px,7vw,104px)] text-foreground">
               Three steps. Each earns the next.
             </h1>
-            <p className="max-w-[38em] border-l-2 border-primary pl-5 text-[17px] leading-relaxed text-[var(--text-2)]">
+            <p className="max-w-[38em] border-l-2 border-primary pl-5 text-[17px] leading-relaxed text-(--text-2)">
               We start with one priority growth question, map the systems behind it, fix the highest-value constraint, and keep the roadmap moving.
             </p>
           </div>

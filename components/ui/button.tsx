@@ -9,13 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-primary bg-primary text-white hover:-translate-y-0.5 hover:border-[var(--neutral-1000)] hover:bg-[var(--neutral-1000)] hover:text-white",
-        destructive: "border-destructive bg-destructive text-white hover:bg-[var(--danger-600)] hover:text-white",
-        inverse: "border-white bg-white text-[var(--neutral-1000)] hover:-translate-y-0.5 hover:border-[var(--neutral-1000)] hover:bg-[var(--neutral-1000)] hover:text-white",
+        default: "border-primary bg-primary text-white hover:-translate-y-0.5 hover:border-(--neutral-1000) hover:bg-(--neutral-1000) hover:text-white",
+        destructive: "border-destructive bg-destructive text-white hover:bg-(--danger-600) hover:text-white",
+        inverse: "border-white bg-white text-(--neutral-1000) hover:-translate-y-0.5 hover:border-(--neutral-1000) hover:bg-(--neutral-1000) hover:text-white",
         outline: "border-foreground bg-transparent text-foreground hover:-translate-y-0.5 hover:bg-foreground hover:text-background",
         secondary: "border-border bg-secondary text-secondary-foreground hover:border-foreground hover:bg-card",
         ghost: "border-transparent text-foreground hover:border-foreground hover:bg-transparent",
-        link: "h-auto border-0 p-0 text-primary underline decoration-1 underline-offset-4 hover:text-[var(--brand-hover)]",
+        link: "h-auto border-0 p-0 text-primary underline decoration-1 underline-offset-4 hover:text-(--brand-hover)",
       },
       size: {
         default: "h-10 px-4 py-2",

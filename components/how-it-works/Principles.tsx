@@ -11,7 +11,7 @@ const principles = [
 
 export default function Principles() {
   return (
-    <section className="bg-[var(--neutral-1000)] text-white">
+    <section className="bg-(--neutral-1000) text-white">
       <div className="crib-container py-[96px] lg:py-32">
         <div className="crib-eyebrow mb-5 text-white/55">How we operate</div>
         <h2 className="crib-display mb-12 max-w-[11em] text-[clamp(46px,6vw,84px)]">
@@ -27,8 +27,8 @@ export default function Principles() {
               transition={{ delay: index * 0.08, duration: 0.45 }}
               className="min-h-[220px] border-b border-white/25 p-7 sm:border-r sm:odd:border-r lg:p-9"
             >
-              <div className="mb-9 font-mono text-xs font-semibold text-[var(--brand-300)]">0{index + 1}</div>
-              <div className="mb-3 text-xl font-extrabold tracking-[-0.025em]">{p.title}</div>
+              <div className="mb-9 font-mono text-xs font-semibold text-(--brand-300)">0{index + 1}</div>
+              <div className="mb-3 text-xl font-extrabold tracking-tight">{p.title}</div>
               <p className="text-sm leading-relaxed text-white/62">{p.body}</p>
             </motion.div>
           ))}

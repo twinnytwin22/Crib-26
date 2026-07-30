@@ -325,7 +325,7 @@ export function ChatBot({
           } flex flex-col`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 bg-[var(--neutral-900)] p-4">
+          <div className="flex items-center justify-between border-b border-white/10 bg-(--neutral-900) p-4">
             <div className="relative z-10 flex items-center gap-3">
               <Avatar className="h-10 w-10 rounded-md border border-white/15">
                 <AvatarFallback className="rounded-md bg-white/10 text-white">
@@ -389,7 +389,7 @@ export function ChatBot({
                       <div
                         className={`max-w-[80%] rounded-lg p-3 shadow-sm ${
                           message.sender === "user"
-                            ? "border border-white/10 bg-[var(--neutral-900)] text-white"
+                            ? "border border-white/10 bg-(--neutral-900) text-white"
                             : "border border-border bg-card text-foreground"
                         }`}
                       >

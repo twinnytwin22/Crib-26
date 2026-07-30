@@ -47,7 +47,7 @@ const offers = [
 
 export default function ServiceOffers() {
   return (
-    <section className="bg-[var(--surface-2)]">
+    <section className="bg-(--surface-2)">
       <div className="crib-container flex flex-col border-t border-foreground py-[72px] lg:py-28">
         {offers.map((offer, index) => (
           <motion.div
@@ -64,7 +64,7 @@ export default function ServiceOffers() {
                 <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{offer.kicker}</span>
               </div>
               <h2 className="max-w-[16em] text-[clamp(30px,3.5vw,48px)] font-normal leading-[1.02] tracking-[-0.04em] text-foreground">{offer.title}</h2>
-              <p className="text-[15px] leading-relaxed text-balance text-[var(--text-2)]">{offer.body}</p>
+              <p className="text-[15px] leading-relaxed text-balance text-(--text-2)">{offer.body}</p>
               <div className="mt-auto flex items-center gap-3 border-t border-border pt-4 font-mono text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
                 <span className="h-2 w-2 bg-primary" />
                 {offer.timing}

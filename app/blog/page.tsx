@@ -110,7 +110,7 @@ function PostCard({ post, featured = false }: { post: BlogPost; featured?: boole
           : "group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
       }
     >
-      <Link href={href} className={featured ? "relative block min-h-[320px]" : "relative block aspect-[4/3]"}>
+      <Link href={href} className={featured ? "relative block min-h-[320px]" : "relative block aspect-4/3"}>
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -121,7 +121,7 @@ function PostCard({ post, featured = false }: { post: BlogPost; featured?: boole
             priority={featured}
           />
         ) : (
-          <div className="absolute inset-0 bg-[var(--neutral-900)] crib-grid-bg" />
+          <div className="absolute inset-0 bg-(--neutral-900) crib-grid-bg" />
         )}
       </Link>
 
@@ -141,7 +141,7 @@ function PostCard({ post, featured = false }: { post: BlogPost; featured?: boole
         <p className={featured ? "mt-5 text-base leading-relaxed text-muted-foreground md:text-lg" : "mt-3 flex-1 text-sm leading-relaxed text-muted-foreground"}>
           {getExcerpt(post)}
         </p>
-        <Link href={href} className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-[var(--brand-hover)]">
+        <Link href={href} className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-(--brand-hover)">
           Read article
           <ArrowRight className="h-4 w-4" />
         </Link>
@@ -163,7 +163,7 @@ export default async function BlogPage() {
 
   return (
       <main className="min-h-screen bg-background pt-14 antialiased">
-        <section className="border-b border-border bg-[var(--surface)]">
+        <section className="border-b border-border bg-(--surface)">
           <div className="crib-container grid gap-10 py-20 lg:grid-cols-[0.82fr_1fr] lg:items-end lg:py-24">
             <div>
               <div className="crib-eyebrow mb-5">CRIB Blog</div>
@@ -203,7 +203,7 @@ export default async function BlogPage() {
         )}
 
         {remainingPosts.length > 0 && (
-          <section className="border-t border-border bg-[var(--surface)] py-16 lg:py-20">
+          <section className="border-t border-border bg-(--surface) py-16 lg:py-20">
             <div className="crib-container">
               <div className="mb-10 max-w-3xl">
                 <div className="crib-eyebrow mb-4">All Articles</div>

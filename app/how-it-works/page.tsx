@@ -22,7 +22,7 @@ export default function HowItWorksPage() {
             <h1 className="crib-display max-w-[11em] text-[clamp(50px,7vw,104px)] text-foreground">
               From first call to a system that runs.
             </h1>
-            <p className="max-w-[38em] border-l-2 border-primary pl-5 text-[17px] leading-relaxed text-[var(--text-2)]">
+            <p className="max-w-[38em] border-l-2 border-primary pl-5 text-[17px] leading-relaxed text-(--text-2)">
               Every engagement follows the same honest sequence. You&apos;ll always know where you are, what comes next, and what you&apos;re getting out of it.
             </p>
           </div>
@@ -39,7 +39,7 @@ export default function HowItWorksPage() {
             <h2 className="crib-display max-w-[9em] text-[clamp(46px,6vw,78px)] text-foreground">
               Book the intro call.
             </h2>
-            <p className="max-w-[32em] border-l-2 border-primary pl-5 text-base leading-relaxed text-[var(--text-2)]">
+            <p className="max-w-[32em] border-l-2 border-primary pl-5 text-base leading-relaxed text-(--text-2)">
               Thirty minutes, no obligation. Come with the decision that&apos;s hardest to make right now. We&apos;ll determine fit and explain what we would examine first.
             </p>
           </div>

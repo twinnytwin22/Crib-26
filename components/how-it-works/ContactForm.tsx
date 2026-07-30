@@ -71,7 +71,7 @@ export default function ContactForm() {
       <button type="submit" disabled={isSubmitting} className="crib-button-primary min-h-[46px] w-full text-[14px]">
         {isSubmitting ? "Sending..." : sent ? "Thanks — we'll be in touch" : "Request the call"}
       </button>
-      <p className="text-center font-mono text-[9px] uppercase tracking-[0.07em] text-[var(--text-3)]">We reply within one business day.</p>
+      <p className="text-center font-mono text-[9px] uppercase tracking-[0.07em] text-(--text-3)">We reply within one business day.</p>
     </form>
   );
 }

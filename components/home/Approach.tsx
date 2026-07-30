@@ -26,7 +26,7 @@ const path = [
 
 export default function Approach() {
   return (
-    <section className="bg-[var(--neutral-1000)] text-white">
+    <section className="bg-(--neutral-1000) text-white">
       <div className="crib-container py-24 lg:py-32">
         <div className="crib-eyebrow mb-5 text-white/60">Our approach</div>
         <div className="mb-16 grid items-end gap-8 lg:grid-cols-[1fr_auto]">
@@ -35,7 +35,7 @@ export default function Approach() {
           </h2>
           <Link
             href="/services"
-            className="border-b border-primary pb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-white whitespace-nowrap transition-colors hover:text-[var(--brand-300)]"
+            className="border-b border-primary pb-1 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-white whitespace-nowrap transition-colors hover:text-(--brand-300)"
           >
             Explore the services →
           </Link>
@@ -51,7 +51,7 @@ export default function Approach() {
               className="flex min-h-[280px] flex-col gap-4 border-b border-white/20 py-8 lg:border-r lg:border-b-0 lg:px-8 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
             >
               <div className="flex items-baseline gap-3.5">
-                <span className="font-mono text-sm font-semibold text-[var(--brand-300)]">{step.num}</span>
+                <span className="font-mono text-sm font-semibold text-(--brand-300)">{step.num}</span>
                 <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-white/50">{step.label}</span>
               </div>
               <h3 className="text-3xl font-normal leading-[1.02] tracking-[-0.035em]">{step.title}</h3>

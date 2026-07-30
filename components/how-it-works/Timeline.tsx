@@ -49,7 +49,7 @@ const stages = [
 
 export default function Timeline() {
   return (
-    <section className="bg-[var(--surface-2)]">
+    <section className="bg-(--surface-2)">
       <div className="crib-container flex flex-col border-t border-foreground py-[72px] lg:py-28">
         {stages.map((stage, index) => (
           <motion.div
@@ -70,10 +70,10 @@ export default function Timeline() {
                 <h2 className="text-[clamp(24px,3vw,36px)] font-normal leading-tight tracking-[-0.035em] text-foreground">{stage.title}</h2>
                 <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.07em] text-muted-foreground">{stage.timing}</span>
               </div>
-              <p className="mb-3.5 max-w-[44em] text-[15px] leading-relaxed text-balance text-[var(--text-2)]">{stage.body}</p>
-              <div className="inline-flex max-w-[44em] items-start gap-3 border-l-2 border-primary bg-[var(--brand-50)] px-4 py-3">
+              <p className="mb-3.5 max-w-[44em] text-[15px] leading-relaxed text-balance text-(--text-2)">{stage.body}</p>
+              <div className="inline-flex max-w-[44em] items-start gap-3 border-l-2 border-primary bg-(--brand-50) px-4 py-3">
                 <span className="mt-0.5 shrink-0 font-mono text-[9px] font-semibold uppercase tracking-[0.06em] whitespace-nowrap text-primary">You leave with</span>
-                <span className="text-sm leading-relaxed text-[var(--brand-800)]">{stage.outcome}</span>
+                <span className="text-sm leading-relaxed text-(--brand-800)">{stage.outcome}</span>
               </div>
             </div>
           </motion.div>

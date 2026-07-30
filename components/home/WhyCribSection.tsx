@@ -23,7 +23,7 @@ const reasons = [
 
 export default function WhyCribSection() {
   return (
-    <section className="border-t border-foreground bg-[var(--surface-2)]">
+    <section className="border-t border-foreground bg-(--surface-2)">
       <div className="crib-container py-24 lg:py-32">
         <div className="crib-eyebrow mb-4">Why CRIB</div>
         <h2 className="mb-14 max-w-[13em] text-[clamp(38px,5vw,68px)] font-normal leading-[0.98] tracking-[-0.045em] text-foreground">

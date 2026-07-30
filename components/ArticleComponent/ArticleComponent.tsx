@@ -48,7 +48,7 @@ function ArticleComponent({ post }: { post: Post }) {
       <header className="mb-12">
         <div className="mb-8 flex items-start justify-between gap-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-md border border-[var(--brand-100)] bg-[var(--brand-50)] text-primary">
+            <div className="flex h-12 w-12 items-center justify-center rounded-md border border-(--brand-100) bg-(--brand-50) text-primary">
               <User className="h-6 w-6" />
             </div>
             <div>

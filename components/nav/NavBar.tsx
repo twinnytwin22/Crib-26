@@ -41,12 +41,12 @@ export default function NavBar() {
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="fixed inset-x-0 top-0 z-50 border-b border-[var(--neutral-900)] bg-[var(--neutral-0)]"
+      className="fixed inset-x-0 top-0 z-50 border-b border-(--neutral-900) bg-(--neutral-0)"
     >
       <div className="crib-container flex h-16 items-center justify-between gap-6">
         <SiteLogo />
 
-        <nav className="hidden items-center gap-7 font-mono text-xs font-medium uppercase tracking-[0.08em] text-[var(--text-2)] md:flex">
+        <nav className="hidden items-center gap-7 font-mono text-xs font-medium uppercase tracking-[0.08em] text-(--text-2) md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -85,7 +85,7 @@ export default function NavBar() {
             exit={{ opacity: 0, height: 0 }}
             className="mx-auto w-[calc(100%-28px)] max-w-2xl overflow-hidden border-x border-b border-foreground bg-card p-3 md:hidden"
           >
-            <div className="flex flex-col font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--text-2)]">
+            <div className="flex flex-col font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-(--text-2)">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}

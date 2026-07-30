@@ -27,7 +27,7 @@ export default function Problem() {
             <h2 className="crib-display max-w-[10em] text-[clamp(44px,5.8vw,82px)] text-foreground">
               Hard work.<br />Disconnected systems.
             </h2>
-            <p className="max-w-[30em] border-l-2 border-primary pl-4 text-sm leading-relaxed text-[var(--text-2)]">
+            <p className="max-w-[30em] border-l-2 border-primary pl-4 text-sm leading-relaxed text-(--text-2)">
               Built for organizations with multiple customer or audience types, disconnected platforms, and leadership pressure to improve growth, reporting, or modernization.
             </p>
           </div>

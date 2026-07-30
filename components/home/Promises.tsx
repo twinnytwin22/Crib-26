@@ -10,7 +10,7 @@ const promises = [
 
 export default function Promises() {
   return (
-    <section className="border-y border-foreground bg-[var(--neutral-0)]">
+    <section className="border-y border-foreground bg-(--neutral-0)">
       <div className="crib-container grid lg:grid-cols-3">
         {promises.map((p, index) => (
           <motion.div
@@ -23,7 +23,7 @@ export default function Promises() {
           >
             <div className="font-mono text-xs font-semibold text-primary">0{index + 1}</div>
             <div>
-              <div className="text-lg font-bold leading-tight tracking-[-0.025em] text-foreground">{p.title}</div>
+              <div className="text-lg font-bold leading-tight tracking-tight text-foreground">{p.title}</div>
               <div className="mt-2 text-sm leading-relaxed text-muted-foreground">{p.body}</div>
             </div>
           </motion.div>

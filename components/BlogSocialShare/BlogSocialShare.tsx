@@ -25,7 +25,7 @@ function BlogSocialShare({ title }: { title?: string }) {
   return (
     <div className="relative flex w-full items-center justify-center">
       <div className="w-full overflow-hidden rounded-lg border border-border bg-card shadow-lg">
-        <div className="border-b border-border bg-[var(--neutral-900)] px-6 py-4">
+        <div className="border-b border-border bg-(--neutral-900) px-6 py-4">
           <h3 className="text-lg font-normal text-white">
             Share this article
           </h3>

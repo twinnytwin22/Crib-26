@@ -16,7 +16,7 @@ export default function Capabilities() {
     <section className="border-y border-foreground bg-background">
       <div className="crib-container py-24 lg:py-28">
         <div className="crib-eyebrow mb-4">Inside every step</div>
-        <h2 className="mb-12 max-w-[14em] text-[clamp(36px,4.6vw,62px)] font-normal leading-[1] tracking-[-0.045em] text-foreground">
+        <h2 className="mb-12 max-w-[14em] text-[clamp(36px,4.6vw,62px)] font-normal leading-none tracking-[-0.045em] text-foreground">
           The capabilities we bring to the work.
         </h2>
         <div className="grid border-y border-foreground sm:grid-cols-2 lg:grid-cols-3">
@@ -27,10 +27,10 @@ export default function Capabilities() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.06, duration: 0.45 }}
-              className="min-h-[200px] border-b border-foreground p-6 sm:border-r lg:p-7 lg:[&:nth-child(3n)]:border-r-0"
+              className="min-h-[200px] border-b border-foreground p-6 sm:border-r lg:p-7 lg:nth-[3n]:border-r-0"
             >
               <div className="mb-7 font-mono text-[10px] font-semibold text-primary">0{index + 1}</div>
-              <div className="mb-2 text-lg font-extrabold leading-tight tracking-[-0.025em] text-foreground">{cap.title}</div>
+              <div className="mb-2 text-lg font-extrabold leading-tight tracking-tight text-foreground">{cap.title}</div>
               <p className="text-sm leading-relaxed text-muted-foreground">{cap.body}</p>
             </motion.div>
           ))}

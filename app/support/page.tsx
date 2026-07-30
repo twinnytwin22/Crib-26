@@ -47,7 +47,7 @@ const supportItems = [
 export default function SupportPage() {
   return (
     <div className="min-h-screen bg-background">
-      <section className="border-b border-border bg-[var(--neutral-900)] pt-28 pb-16 text-white">
+      <section className="border-b border-border bg-(--neutral-900) pt-28 pb-16 text-white">
         <div className="crib-container max-w-4xl">
           <div className="mb-6 inline-flex rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm font-medium text-white/72">
             Support

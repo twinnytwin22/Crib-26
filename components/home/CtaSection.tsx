@@ -15,7 +15,7 @@ export default function CtaSection() {
         className="crib-container grid gap-10 py-24 lg:grid-cols-[1.35fr_0.65fr] lg:items-end lg:py-32"
       >
         <div>
-          <div className="mb-5 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-white/72">The first move / 30 minutes</div>
+          <div className="mb-5 font-mono text-[10px] font-semibold uppercase tracking-widest text-white/72">The first move / 30 minutes</div>
           <h2 className="crib-display max-w-[10em] text-[clamp(44px,6vw,80px)]">
             Find the right starting point.
           </h2>

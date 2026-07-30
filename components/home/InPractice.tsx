@@ -53,12 +53,12 @@ export default function InPractice() {
               >
                 <div className="font-mono text-xs font-semibold text-primary">0{index + 1}</div>
                 <h3 className="max-w-[14em] text-[clamp(28px,3vw,42px)] font-normal leading-[1.02] tracking-[-0.04em] text-foreground">{row.title}</h3>
-                <p className="max-w-[38em] text-base leading-relaxed text-[var(--text-2)]">{row.body}</p>
+                <p className="max-w-[38em] text-base leading-relaxed text-(--text-2)">{row.body}</p>
                 <div className="flex flex-wrap gap-2 pt-2">
                   {row.chips.map((c) => (
                     <span
                       key={c}
-                      className="border border-border bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-[0.07em] text-[var(--text-2)]"
+                      className="border border-border bg-(--surface-2) px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-[0.07em] text-(--text-2)"
                     >
                       {c}
                     </span>
