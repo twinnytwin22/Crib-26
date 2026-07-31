@@ -63,8 +63,8 @@ export default function NavBar() {
         <div className="hidden items-center gap-3 md:flex text-white">
           <FitCheckLink surface="primary_nav" className="h-9 border border-foreground bg-transparent px-3 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground transition-[background-color,color,border-color,transform] duration-150 hover:-translate-y-0.5 hover:bg-foreground hover:text-background" />
           <Button asChild size="sm" className="text-white">
-            <Link href="/how-it-works" className="text-white">
-              Book a Strategy Session
+            <Link href="/contact" className="text-white">
+              Talk to Us
             </Link>
           </Button>
         </div>
@@ -101,8 +101,8 @@ export default function NavBar() {
               ))}
               <FitCheckLink surface="mobile_nav" className="mt-2 h-10 w-full border border-foreground px-4" />
               <Button asChild className="mt-2 w-full">
-                <Link href="/how-it-works" onClick={() => setIsOpen(false)}>
-                  Book a Strategy Session
+                <Link href="/contact" onClick={() => setIsOpen(false)}>
+                  Talk to Us
                 </Link>
               </Button>
             </div>

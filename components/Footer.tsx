@@ -15,7 +15,8 @@ export default function Footer() {
 
   if (
     normalizedPathname === "/services" ||
-    normalizedPathname === "/how-it-works"
+    normalizedPathname === "/how-it-works" ||
+    normalizedPathname === "/contact"
   ) {
     return <SiteFooterCompact />;
   }

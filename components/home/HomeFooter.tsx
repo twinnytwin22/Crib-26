@@ -19,6 +19,7 @@ export default function HomeFooter() {
               <span className="text-[9px] font-semibold text-(--brand-300)">Explore / 01</span>
               <Link href="/services" className="text-white/60 transition hover:text-white">Services</Link>
               <Link href="/how-it-works" className="text-white/60 transition hover:text-white">How it works</Link>
+              <Link href="/contact" className="text-white/60 transition hover:text-white">Contact</Link>
               <Link href="/blog" className="text-white/60 transition hover:text-white">Blog</Link>
             </div>
             <div className="flex flex-col gap-3 font-mono text-[10px] uppercase tracking-[0.08em]">

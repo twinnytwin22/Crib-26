@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronLeft, Download, ExternalLink, RotateCcw } from "lucide-react";
 import { trackMarketingEvent } from "@/lib/analytics";
@@ -24,7 +24,20 @@ type PageSpeedScan = {
   fetchTime: string | null;
 };
 
-type ScanResult = { url: string; mobile: PageSpeedScan; desktop: PageSpeedScan; cached?: boolean; cachedAt?: string };
+type AnalyticsSignal = { id: string; name: string; status: "observed_network" | "configured" | "waiting_for_consent"; evidence: string[] };
+type HeaderSignal = { name: string; value: string; present: boolean };
+type PriorityFinding = { title: string; why: string; evidence: string; action: string; priority: "high" | "medium" };
+type SiteEvidence = {
+  availability: "complete" | "partial";
+  measurementStatus: "Strong" | "Partial" | "Limited" | "Not observed";
+  analytics: AnalyticsSignal[];
+  dataLayer: { present: boolean; pushCount: number; eventNames: string[] };
+  consentPlatform: string | null;
+  headers: HeaderSignal[];
+  technologies: string[];
+  notes: string[];
+};
+type ScanResult = { url: string; overallScore: number | null; mobile: PageSpeedScan; desktop: PageSpeedScan; evidence: SiteEvidence; priorities: PriorityFinding[]; cached?: boolean; cachedAt?: string };
 type FieldMetric = { percentile: number; category: string | null };
 type AuditFinding = { id: string; title: string; detail: string | null; score: number | null };
 
@@ -38,6 +51,10 @@ const initialForm: FormData = {
 
 const systemOptions = ["CRM", "Analytics", "E-commerce", "Email / automation", "Customer support", "External forms", "None / not sure"];
 
+function combinedLighthouseScore(scan: ScanResult | null) {
+  return scan?.overallScore ?? null;
+}
+
 function hasValidUrl(value: string) {
   try {
     const url = new URL(value.includes("://") ? value : `https://${value}`);
@@ -45,19 +62,6 @@ function hasValidUrl(value: string) {
   } catch {
     return false;
   }
-}
-
-function scoreAssessment(form: FormData) {
-  let score = 38;
-  if (hasValidUrl(form.website)) score += 12;
-  if (form.sector) score += 8;
-  if (form.users === "1,000–10,000" || form.users === "10,000+") score += 14;
-  else if (form.users) score += 8;
-  if (form.systems.length >= 2 && !form.systems.includes("None / not sure")) score += 16;
-  else if (form.systems.length === 1 && !form.systems.includes("None / not sure")) score += 8;
-  if (form.challenge === "Scale a working offer" || form.challenge === "Connect fragmented systems") score += 12;
-  else if (form.challenge) score += 6;
-  return Math.min(score, 100);
 }
 
 export default function ReadinessCheck() {
@@ -68,9 +72,7 @@ export default function ReadinessCheck() {
   const [scanError, setScanError] = useState<string | null>(null);
   const [scan, setScan] = useState<ScanResult | null>(null);
   const [started, setStarted] = useState(false);
-  const businessScore = useMemo(() => scoreAssessment(form), [form]);
-  const pageSpeedScore = scan?.mobile.scores.performance ?? null;
-  const score = pageSpeedScore === null ? businessScore : Math.round((businessScore * 0.35) + (pageSpeedScore * 0.65));
+  const score = combinedLighthouseScore(scan);
 
   const update = <K extends keyof FormData>(key: K, value: FormData[K]) => setForm((current) => ({ ...current, [key]: value }));
   const toggleSystem = (system: string) => {
@@ -95,7 +97,7 @@ export default function ReadinessCheck() {
       const data = await response.json() as ScanResult & { error?: string };
       if (!response.ok) throw new Error(data.error ?? "We could not scan that website.");
       setScan(data);
-      trackMarketingEvent({ event: "fit_check_scan_complete", form_id: "fit_check", cached: Boolean(data.cached), mobile_performance_score: data.mobile.scores.performance });
+      trackMarketingEvent({ event: "fit_check_scan_complete", form_id: "fit_check", cached: Boolean(data.cached), combined_site_score: combinedLighthouseScore(data), mobile_performance_score: data.mobile.scores.performance, desktop_performance_score: data.desktop.scores.performance });
       setShowResult(true);
     } catch (error) {
       setScanError(error instanceof Error ? error.message : "We could not scan that website.");
@@ -109,20 +111,20 @@ export default function ReadinessCheck() {
 
   if (showResult) {
     const systemsReady = form.systems.length >= 2 && !form.systems.includes("None / not sure");
-    const level = score >= 76 ? "Strong foundation" : score >= 58 ? "Promising, with gaps" : "A clear starting point";
+    const level = score === null ? "Site score unavailable" : score >= 90 ? "Strong site health" : score >= 50 ? "Site health needs work" : "Site health needs attention";
     return (
       <section className="min-h-screen border-b border-foreground bg-background pt-16">
         <div className="crib-container grid gap-10 py-16 lg:grid-cols-[0.72fr_1.28fr] lg:py-24">
           <div>
-            <div className="crib-eyebrow">Your fit snapshot</div>
+            <div className="crib-eyebrow">Your site performance check</div>
             <h1 className="crib-display mt-7 text-[clamp(56px,8vw,108px)]">{level}.</h1>
-            <p className="mt-7 max-w-md text-[17px] leading-relaxed text-(--text-2)">This is a directional fit signal: how closely your context aligns with a focused CRIB working session, supported by live site evidence.</p>
+            <p className="mt-7 max-w-md text-[17px] leading-relaxed text-(--text-2)">This is the equal-weight average of every available mobile and desktop Lighthouse score across performance, accessibility, best practices, and SEO. Higher is better. It does not grade your business or decide whether you are a fit for CRIB.</p>
           </div>
           <div className="crib-card shadow-(--shadow-md)">
             <div className="grid border-b border-border sm:grid-cols-[0.9fr_1.1fr]">
               <div className="bg-primary p-8 text-white sm:p-10">
-                <div className="crib-mono text-white/70">CRIB fit score</div>
-                <div className="mt-5 font-display text-[108px] leading-none">{score}</div>
+                <div className="crib-mono text-white/70">Combined site score</div>
+                <div className="mt-5 font-display text-[108px] leading-none">{score ?? "—"}</div>
                 <div className="mt-1 font-mono text-xs uppercase tracking-[0.12em] text-white/80">out of 100</div>
               </div>
               <div className="p-8 sm:p-10">
@@ -134,17 +136,21 @@ export default function ReadinessCheck() {
               </div>
             </div>
             <div className="grid gap-px bg-border md:grid-cols-3">
-              <Finding title="Focus" ready={Boolean(form.challenge)} text={form.challenge ? "A priority has been identified." : "Clarify the immediate priority."} />
-              <Finding title="Systems" ready={systemsReady} text={systemsReady ? "There is enough infrastructure to connect." : "Map the essential operating systems first."} />
-              <Finding title="Next move" ready={score >= 58} text={score >= 58 ? "Translate your inputs into a sequenced roadmap." : "Start with the highest-value constraint."} />
+              <Finding title="Business priority" ready={Boolean(form.challenge)} text={form.challenge || "Clarify the immediate priority."} />
+              <Finding title="Measurement" ready={scan?.evidence.measurementStatus === "Strong" || scan?.evidence.measurementStatus === "Partial"} text={scan ? `${scan.evidence.measurementStatus} readiness based on observed implementation signals.` : "Measurement evidence unavailable."} />
+              <Finding title="Operating context" ready={systemsReady} text={systemsReady ? "Recommendations account for the systems already in use." : "Map the essential operating systems before expanding the stack."} />
             </div>
             {scan && <div className="border-t border-border p-8 sm:p-10">
-              <div className="flex flex-wrap items-end justify-between gap-4"><div><div className="crib-mono text-(--text-3)">{scan.cached ? "Recent mobile site scan" : "Live mobile site scan"}</div><h2 className="crib-display mt-2 text-4xl">The evidence.</h2></div><div className="font-mono text-xs uppercase tracking-[0.08em] text-(--text-2)">Google PageSpeed Insights{scan.cached ? " · cached for up to 1 hour" : ""}</div></div>
+              <div className="flex flex-wrap items-end justify-between gap-4"><div><div className="crib-mono text-(--text-3)">{scan.cached ? "Recent site scan" : "Live site scan"}</div><h2 className="crib-display mt-2 text-4xl">The evidence.</h2></div><div className="font-mono text-xs uppercase tracking-[0.08em] text-(--text-2)">Google PageSpeed Insights{scan.cached ? " · cached for up to 1 hour" : ""}</div></div>
               <div className="mt-7 grid gap-px border border-border bg-border sm:grid-cols-4">
-                <Metric label="Performance" value={scan.mobile.scores.performance} suffix="/100" />
-                <Metric label="Accessibility" value={scan.mobile.scores.accessibility} suffix="/100" />
-                <Metric label="Best practices" value={scan.mobile.scores.bestPractices} suffix="/100" />
-                <Metric label="SEO" value={scan.mobile.scores.seo} suffix="/100" />
+                <Metric label="Mobile performance" value={scan.mobile.scores.performance} suffix="/100" />
+                <Metric label="Mobile accessibility" value={scan.mobile.scores.accessibility} suffix="/100" />
+                <Metric label="Mobile best practices" value={scan.mobile.scores.bestPractices} suffix="/100" />
+                <Metric label="Mobile SEO" value={scan.mobile.scores.seo} suffix="/100" />
+                <Metric label="Desktop performance" value={scan.desktop.scores.performance} suffix="/100" />
+                <Metric label="Desktop accessibility" value={scan.desktop.scores.accessibility} suffix="/100" />
+                <Metric label="Desktop best practices" value={scan.desktop.scores.bestPractices} suffix="/100" />
+                <Metric label="Desktop SEO" value={scan.desktop.scores.seo} suffix="/100" />
               </div>
               <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <Detail label="Largest contentful paint" value={scan.mobile.metrics.largestContentfulPaint} />
@@ -152,6 +158,8 @@ export default function ReadinessCheck() {
                 <Detail label="Cumulative layout shift" value={scan.mobile.metrics.cumulativeLayoutShift} />
               </div>
               <div className="mt-7 grid gap-5 border-t border-border pt-8">
+                <MeasurementEvidence evidence={scan.evidence} />
+                <PriorityEvidence priorities={scan.priorities} />
                 <EvidenceGroup title="Performance opportunities" empty="No high-priority performance opportunities were returned." findings={scan.mobile.opportunities} />
                 <EvidenceGroup title="Technical diagnostics" empty="No technical diagnostics were returned." findings={scan.mobile.diagnostics} />
                 <EvidenceGroup title="Checks passed" empty="No completed checks were returned." findings={scan.mobile.passedChecks} />
@@ -163,8 +171,8 @@ export default function ReadinessCheck() {
               </div>
             </div>}
               <div className="flex flex-col gap-4 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
-              <p className="max-w-md text-sm text-(--text-2)">Want the full assessment? We’ll review your site, systems, and most valuable next move together.</p>
-              <div className="flex flex-wrap gap-3">{scan && <button type="button" onClick={() => downloadReport(form, scan, score)} className="crib-button-secondary"><Download className="h-4 w-4" /> Download report</button>}<Link href="/how-it-works" className="crib-button-primary shrink-0">Book a working session <ArrowRight className="h-4 w-4" /></Link></div>
+              <p className="max-w-md text-sm text-(--text-2)">The one-page PDF carries the same score breakdown, context, measurement evidence, priorities, opportunities, diagnostics, and passed checks shown here.</p>
+              <div className="flex flex-wrap gap-3">{scan && <button type="button" onClick={async () => { const { downloadFitReport } = await import("@/lib/fit-check/report-pdf"); await downloadFitReport({ website: scan.url, finalUrl: scan.mobile.finalUrl ?? scan.url, generatedAt: new Date(scan.cachedAt ?? Date.now()).toLocaleString(), cached: Boolean(scan.cached), score, context: { sector: form.sector, users: form.users, priority: form.challenge, systems: form.systems }, mobile: scan.mobile, desktop: scan.desktop, evidence: scan.evidence, priorities: scan.priorities }); trackMarketingEvent({ event: "fit_check_report_downloaded", form_id: "fit_check", cached: Boolean(scan.cached) }); }} className="crib-button-secondary"><Download className="h-4 w-4" /> Download one-page PDF</button>}<Link href="/contact" className="crib-button-primary shrink-0">Book a working session <ArrowRight className="h-4 w-4" /></Link></div>
             </div>
           </div>
           <button type="button" onClick={() => { setShowResult(false); setStep(1); }} className="crib-button-ghost w-fit"><RotateCcw className="h-4 w-4" /> Start again</button>
@@ -177,12 +185,12 @@ export default function ReadinessCheck() {
     <section className="min-h-screen border-b border-foreground bg-background pt-16">
       <div className="crib-container grid gap-12 py-16 lg:grid-cols-[0.75fr_1.25fr] lg:py-24">
         <div>
-          <div className="crib-eyebrow">2-minute fit check</div>
+          <div className="crib-eyebrow">2-minute site performance check</div>
           <h1 className="crib-display mt-7 max-w-[7em] text-[clamp(56px,8vw,108px)]">Find your next move.</h1>
-          <p className="mt-7 max-w-md text-[17px] leading-relaxed text-(--text-2)">Tell us a little about your business. We’ll give you a transparent starting-point score and show where a focused working session can help.</p>
+          <p className="mt-7 max-w-md text-[17px] leading-relaxed text-(--text-2)">Tell us a little about your business. We’ll measure mobile and desktop site health, inspect the implementation signals, and show the most valuable next move.</p>
           <div className="mt-10 hidden border-t border-foreground pt-5 lg:block">
             <div className="crib-mono text-(--text-3)">What this covers</div>
-            <p className="mt-3 max-w-sm text-sm text-(--text-2)">Business context, systems maturity, and the growth constraint you want to solve—not a generic website grade.</p>
+            <p className="mt-3 max-w-sm text-sm text-(--text-2)">PageSpeed performance, experience quality, measurement readiness, and your operating context.</p>
           </div>
         </div>
         <form onSubmit={submit} className="crib-card shadow-(--shadow-md)">
@@ -195,7 +203,7 @@ export default function ReadinessCheck() {
               <h2 className="crib-display text-4xl">Start with the business.</h2>
               <div className="mt-8 grid gap-6">
                 <Field label="Website URL" hint="We’ll use this for the deeper assessment."><input className="crib-input" value={form.website} onFocus={startFitCheck} onChange={(e) => update("website", e.target.value)} placeholder="yourcompany.com" inputMode="url" required /></Field>
-                <Field label="What sector are you in?"><select className="crib-input" value={form.sector} onFocus={startFitCheck} onChange={(e) => update("sector", e.target.value)} required><option value="">Choose a sector</option><option>Professional services</option><option>Healthcare</option><option>Education</option><option>Real estate / construction</option><option>Retail / e-commerce</option><option>Technology / SaaS</option><option>Other</option></select></Field>
+                <Field label="What sector are you in?"><select className="crib-input" value={form.sector} onFocus={startFitCheck} onChange={(e) => update("sector", e.target.value)} required><option value="">Choose a sector</option><option>Professional services</option><option>Government / public sector</option><option>Nonprofit / social impact</option><option>Healthcare</option><option>Education</option><option>Financial services</option><option>Real estate / construction</option><option>Retail / e-commerce</option><option>Hospitality / travel</option><option>Media / arts / culture</option><option>Manufacturing</option><option>Technology / SaaS</option><option>Other</option></select></Field>
               </div>
             </> : <>
               <h2 className="crib-display text-4xl">Now the operating context.</h2>
@@ -242,23 +250,31 @@ function FieldData({ label, metric, kind }: { label: string; metric: FieldMetric
   return <div className="border-t border-foreground pt-3"><div className="crib-mono text-(--text-3)">{label}</div><div className="mt-2 text-lg font-medium">{value}</div>{metric?.category && <div className="mt-1 text-xs text-(--text-3)">{metric.category.replace(/_/g, " ").toLowerCase()}</div>}</div>;
 }
 
-function ScanProgress({ website }: { website: string }) {
-  const [stage, setStage] = useState(0);
-  const stages = ["Checking the public URL", "Measuring mobile experience", "Reviewing accessibility and SEO", "Building your readiness snapshot"];
-  useEffect(() => { const timer = window.setInterval(() => setStage((current) => Math.min(current + 1, stages.length - 1)), 1800); return () => window.clearInterval(timer); }, [stages.length]);
-  return <section className="min-h-screen border-b border-foreground bg-background pt-16"><div className="crib-container grid min-h-[calc(100vh-64px)] place-items-center py-16"><div className="w-full max-w-2xl text-center"><div className="crib-eyebrow justify-center">Fit check</div><div className="mx-auto mt-8 grid h-24 w-24 place-items-center rounded-full border-4 border-(--neutral-200) border-t-primary animate-spin"><div className="h-14 w-14 rounded-full border border-primary/30" /></div><h1 className="crib-display mt-10 text-[clamp(52px,8vw,88px)]">Reading the signals.</h1><p className="mx-auto mt-5 max-w-lg text-[17px] text-(--text-2)">We’re scanning <span className="font-medium text-foreground">{website}</span> and assembling your report.</p><div className="mx-auto mt-10 max-w-md border-y border-foreground text-left">{stages.map((item, index) => <div key={item} className="flex items-center gap-3 border-b border-border py-4 last:border-b-0"><span className={`grid h-6 w-6 place-items-center rounded-full border font-mono text-[10px] ${index < stage ? "border-primary bg-primary text-white" : index === stage ? "border-primary text-primary" : "border-border text-(--text-3)"}`}>{index < stage ? "✓" : `0${index + 1}`}</span><span className={index <= stage ? "text-foreground" : "text-(--text-3)"}>{item}</span>{index === stage && <span className="ml-auto h-2 w-2 rounded-full bg-primary animate-pulse" />}</div>)}</div><p className="mt-7 font-mono text-[10px] uppercase tracking-[0.08em] text-(--text-3)">Usually ready in 15–45 seconds</p></div></div></section>;
+function MeasurementEvidence({ evidence }: { evidence: SiteEvidence }) {
+  return <div>
+    <div className="flex flex-wrap items-end justify-between gap-3">
+      <div><div className="crib-mono text-(--text-3)">Measurement implementation</div><div className="mt-2 text-2xl font-medium">{evidence.measurementStatus}</div></div>
+      <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-(--text-3)">{evidence.availability === "complete" ? "HTML + headers + rendered network" : "Partial evidence available"}</div>
+    </div>
+    <p className="mt-3 max-w-3xl text-sm leading-relaxed text-(--text-2)">We inspect configuration in the initial HTML and compare it with requests observed during Lighthouse&apos;s rendered page load. “Not observed” does not prove a tool is absent; consent and runtime conditions can suppress collection.</p>
+    <div className="mt-4 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+      {evidence.analytics.length ? evidence.analytics.map((signal) => <div key={signal.id} className="bg-background p-4"><div className="font-medium">{signal.name}</div><div className="mt-1 font-mono text-[10px] uppercase tracking-[0.06em] text-primary">{signal.status.replaceAll("_", " ")}</div><div className="mt-2 text-xs text-(--text-3)">{signal.evidence.join(" · ")}</div></div>) : <div className="bg-background p-4 text-sm text-(--text-2)">No supported analytics platform was observed.</div>}
+      <div className="bg-background p-4"><div className="font-medium">dataLayer</div><div className="mt-1 text-sm text-(--text-2)">{evidence.dataLayer.present ? `Present · ${evidence.dataLayer.pushCount} static push${evidence.dataLayer.pushCount === 1 ? "" : "es"}${evidence.dataLayer.eventNames.length ? ` · Events: ${evidence.dataLayer.eventNames.join(", ")}` : ""}` : "Not observed in initial HTML"}</div></div>
+      {evidence.consentPlatform && <div className="bg-background p-4"><div className="font-medium">Consent platform</div><div className="mt-1 text-sm text-(--text-2)">{evidence.consentPlatform}</div></div>}
+      <div className="bg-background p-4"><div className="font-medium">Technology signals</div><div className="mt-1 text-sm text-(--text-2)">{evidence.technologies.join(", ") || "Not observed"}</div></div>
+    </div>
+    <div className="mt-4 flex flex-wrap gap-2">{evidence.headers.map((header) => <span key={header.name} title={header.value} className={`border px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.05em] ${header.present ? "border-(--success-500) text-(--success-500)" : "border-border text-(--text-3)"}`}>{header.name}: {header.present ? "present" : "not observed"}</span>)}</div>
+    <div className="mt-4 grid gap-1">{evidence.notes.map((note) => <p key={note} className="text-xs text-(--text-3)">{note}</p>)}</div>
+  </div>;
 }
 
-function downloadReport(form: FormData, scan: ScanResult, score: number) {
-  const metricLines = Object.entries(scan.mobile.metrics).map(([key, value]) => `- ${key.replace(/([A-Z])/g, " $1")}: ${value ?? "Not available"}`);
-  const findingLines = [...scan.mobile.opportunities, ...scan.mobile.diagnostics].map((finding) => `- ${finding.title}${finding.detail ? ` (${finding.detail})` : ""}`);
-  const report = ["CRIB FIT SNAPSHOT", `Generated: ${new Date().toLocaleString()}`, `Scan source: ${scan.cached ? "one-hour domain cache" : "fresh PageSpeed Insights scan"}`, "", `Website: ${scan.url}`, `Final scanned URL: ${scan.mobile.finalUrl ?? scan.url}`, `Sector: ${form.sector}`, `Estimated users / customers: ${form.users}`, `Priority: ${form.challenge}`, `Systems: ${form.systems.join(", ") || "None supplied"}`, "", `CRIB fit score: ${score}/100`, "", "MOBILE LIGHTHOUSE SCORES", `- Performance: ${scan.mobile.scores.performance ?? "Not available"}/100`, `- Accessibility: ${scan.mobile.scores.accessibility ?? "Not available"}/100`, `- Best practices: ${scan.mobile.scores.bestPractices ?? "Not available"}/100`, `- SEO: ${scan.mobile.scores.seo ?? "Not available"}/100`, "", "DESKTOP LIGHTHOUSE SCORES", `- Performance: ${scan.desktop.scores.performance ?? "Not available"}/100`, `- Accessibility: ${scan.desktop.scores.accessibility ?? "Not available"}/100`, `- Best practices: ${scan.desktop.scores.bestPractices ?? "Not available"}/100`, `- SEO: ${scan.desktop.scores.seo ?? "Not available"}/100`, "", "MOBILE LAB METRICS", ...metricLines, "", "OPPORTUNITIES & DIAGNOSTICS", ...(findingLines.length ? findingLines : ["- No prioritized findings returned."]), "", "CHECKS PASSED", ...(scan.mobile.passedChecks.length ? scan.mobile.passedChecks.map((finding) => `- ${finding.title}`) : ["- No completed checks returned."]), "", "Source: Google PageSpeed Insights. Results can change by device, network, and test time."].join("\n");
-  const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `crib-fit-snapshot-${new URL(scan.url).hostname.replace(/^www\./, "")}.txt`;
-  link.click();
-  URL.revokeObjectURL(url);
-  trackMarketingEvent({ event: "fit_check_report_downloaded", form_id: "fit_check", cached: Boolean(scan.cached) });
+function PriorityEvidence({ priorities }: { priorities: PriorityFinding[] }) {
+  return <div className="border-t border-border pt-7"><div className="crib-mono text-(--text-3)">Highest-value next moves</div>{priorities.length ? <div className="mt-3 grid gap-px border border-border bg-border">{priorities.map((finding, index) => <div key={`${finding.title}-${index}`} className="grid gap-3 bg-background p-5 md:grid-cols-[44px_1fr]"><div className="font-mono text-xs text-primary">0{index + 1}</div><div><div className="flex flex-wrap items-center gap-2"><div className="font-medium">{finding.title}</div><span className="font-mono text-[9px] uppercase tracking-[0.06em] text-(--text-3)">{finding.priority}</span></div><p className="mt-2 text-sm text-(--text-2)">{finding.why}</p><p className="mt-2 text-sm"><span className="font-medium">Evidence:</span> {finding.evidence}</p><p className="mt-1 text-sm text-primary"><span className="font-medium">Next:</span> {finding.action}</p></div></div>)}</div> : <p className="mt-2 text-sm text-(--text-2)">No prioritized findings were returned.</p>}</div>;
+}
+
+function ScanProgress({ website }: { website: string }) {
+  const [stage, setStage] = useState(0);
+  const stages = ["Checking the public URL", "Measuring mobile and desktop", "Inspecting analytics and headers", "Building your performance report"];
+  useEffect(() => { const timer = window.setInterval(() => setStage((current) => Math.min(current + 1, stages.length - 1)), 1800); return () => window.clearInterval(timer); }, [stages.length]);
+  return <section className="min-h-screen border-b border-foreground bg-background pt-16"><div className="crib-container grid min-h-[calc(100vh-64px)] place-items-center py-16"><div className="w-full max-w-2xl text-center"><div className="crib-eyebrow justify-center">Site performance check</div><div className="mx-auto mt-8 grid h-24 w-24 place-items-center rounded-full border-4 border-(--neutral-200) border-t-primary animate-spin"><div className="h-14 w-14 rounded-full border border-primary/30" /></div><h1 className="crib-display mt-10 text-[clamp(52px,8vw,88px)]">Reading the signals.</h1><p className="mx-auto mt-5 max-w-lg text-[17px] text-(--text-2)">We’re scanning <span className="font-medium text-foreground">{website}</span> and assembling your report.</p><div className="mx-auto mt-10 max-w-md border-y border-foreground text-left">{stages.map((item, index) => <div key={item} className="flex items-center gap-3 border-b border-border py-4 last:border-b-0"><span className={`grid h-6 w-6 place-items-center rounded-full border font-mono text-[10px] ${index < stage ? "border-primary bg-primary text-white" : index === stage ? "border-primary text-primary" : "border-border text-(--text-3)"}`}>{index < stage ? "✓" : `0${index + 1}`}</span><span className={index <= stage ? "text-foreground" : "text-(--text-3)"}>{item}</span>{index === stage && <span className="ml-auto h-2 w-2 rounded-full bg-primary animate-pulse" />}</div>)}</div><p className="mt-7 font-mono text-[10px] uppercase tracking-[0.08em] text-(--text-3)">Usually ready in 15–45 seconds</p></div></div></section>;
 }

@@ -73,6 +73,7 @@ export default function ContactForm() {
         onChange={handleChange}
         required
         placeholder="Your name"
+        aria-label="Your name"
         className="crib-input"
       />
       <input
@@ -82,6 +83,7 @@ export default function ContactForm() {
         onChange={handleChange}
         required
         placeholder="Work email"
+        aria-label="Work email"
         className="crib-input"
       />
       <textarea
@@ -90,6 +92,7 @@ export default function ContactForm() {
         onChange={handleChange}
         rows={3}
         placeholder="What's going on with your systems? (optional)"
+        aria-label="How can we help?"
         className="crib-input resize-y"
       />
       <button type="submit" disabled={isSubmitting} className="crib-button-primary min-h-[46px] w-full text-[14px]">

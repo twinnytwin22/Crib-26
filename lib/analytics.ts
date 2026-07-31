@@ -32,7 +32,9 @@ export type MarketingEvent =
       event: "fit_check_scan_complete";
       form_id: "fit_check";
       cached: boolean;
+      combined_site_score: number | null;
       mobile_performance_score: number | null;
+      desktop_performance_score: number | null;
     }
   | {
       event: "fit_check_report_downloaded";

@@ -25,7 +25,7 @@ export default function CtaSection() {
             Start with a straightforward conversation. We&apos;ll determine fit, define the priority question, and explain what we would examine first.
           </p>
           <Button asChild size="lg" variant="inverse">
-            <Link href="/how-it-works">Find the right starting point →</Link>
+            <Link href="/contact">Find the right starting point →</Link>
           </Button>
         </div>
       </motion.div>

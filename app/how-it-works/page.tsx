@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Timeline from "@/components/how-it-works/Timeline";
 import Principles from "@/components/how-it-works/Principles";
-import ContactForm from "@/components/how-it-works/ContactForm";
+import ContactForm from "@/components/contact/ContactForm";
 
 export const metadata: Metadata = {
   title: "How it works",

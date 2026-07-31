@@ -55,7 +55,7 @@ export default function Hero() {
             className="flex flex-wrap items-center gap-3"
           >
             <Button asChild size="lg">
-              <Link href="/how-it-works">Find the right starting point →</Link>
+              <Link href="/contact">Find the right starting point →</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-black">
               <Link href="/services">See the system</Link>
