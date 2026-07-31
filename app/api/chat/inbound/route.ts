@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordAgentMessage } from "@/lib/providers/supabase/chat-storage";
+import {
+  formatAvailability,
+  getOwnerChatAvailability,
+} from "@/lib/google/chat-availability";
 
 // PRE-ROLLOUT: Rotate this value in both the deployed environment and the
 // Google Chat endpoint configuration. Never log it or expose it to the client.
@@ -40,7 +44,7 @@ const WELCOME_MESSAGE =
   "Welcome to CRIB Support. Website visitor messages are delivered to this space in their own threads. Reply in the matching thread to send a response back to the visitor.";
 
 const HELP_MESSAGE =
-  "CRIB Support routes website chat inquiries into this space. When an inquiry arrives, reply in its thread to respond to that visitor. You can also contact support@cribnetwork.io for setup help.";
+  "CRIB Support routes website chat inquiries into this space. When an inquiry arrives, reply in its thread to respond to that visitor. Send /status to view the connected internal Workspace status. You can also contact support@cribnetwork.io for setup help.";
 
 function chatResponse(text: string) {
   return NextResponse.json({ text });
@@ -165,6 +169,10 @@ export async function POST(req: NextRequest) {
 
   if (/^\/?help\b/i.test(messageText)) {
     return chatResponse(HELP_MESSAGE);
+  }
+
+  if (/^\/?status\b/i.test(messageText)) {
+    return chatResponse(formatAvailability(await getOwnerChatAvailability()));
   }
 
   try {

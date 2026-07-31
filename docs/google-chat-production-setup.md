@@ -104,7 +104,34 @@ A 403 response saying that an administrator must grant the required OAuth
 scope means this step is incomplete. Outbound messages should continue working
 because write and read tokens are isolated in the code.
 
-## 5. Configure business email
+## 5. Connect the owner availability status
+
+Availability uses **user OAuth**, not the Chat app service account. It reads
+only the Google Chat™ availability of the Workspace account that authorizes it.
+
+1. In Google Cloud Console > Google Auth platform, create a **Web application**
+   OAuth client for this project.
+2. Add this scope to the OAuth consent screen and Google Workspace Marketplace
+   SDK configuration:
+
+   `https://www.googleapis.com/auth/chat.users.availability.readonly`
+
+3. Complete one authorization as the internal account whose status should be
+   shown. Request offline access and store the resulting refresh token only in
+   the encrypted `GOOGLE_CHAT_AVAILABILITY_REFRESH_TOKEN` environment variable.
+4. Set `GOOGLE_CHAT_AVAILABILITY_CLIENT_ID` and
+   `GOOGLE_CHAT_AVAILABILITY_CLIENT_SECRET` from that OAuth client, then
+   redeploy.
+5. In Google Chat™, send `/status` to CRIB Support. It must report only that
+   authorized account's state. The protected
+   `GET /api/chat/availability` diagnostic endpoint returns the same data when
+   called with the `x-chat-diagnostics-secret` header.
+
+Do not use domain-wide delegation or add scopes for other users' availability.
+If this authorization fails, website chat delivery and support-thread sync stay
+available.
+
+## 6. Configure business email
 
 For the Workspace mailbox in `SMTP_USER`:
 
@@ -118,7 +145,7 @@ The app password is not the Google account password and is not the Chat service
 account key. If Workspace policy disables app passwords, use a transactional
 SMTP provider instead; the application already supports standard SMTP.
 
-## 6. Deploy and verify without exposing secrets
+## 7. Deploy and verify without exposing secrets
 
 Copy the variable names from `.env.example` into the hosting provider, fill
 their values there, and redeploy.

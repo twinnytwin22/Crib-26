@@ -54,6 +54,10 @@ const cachedPublicAssets = [
 ];
 
 const nextConfig: NextConfig = {
+  // reCAPTCHA site keys are intentionally public; the secret stays server-only.
+  env: {
+    NEXT_PUBLIC_RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY,
+  },
   compress: true, // Enable gzip compression
   experimental: {},
   images: {

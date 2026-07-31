@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import NavBar from "@/components/nav/NavBar";
 import JsonLd from "@/components/JsonLd";
 import { ConsentManager } from "@/components/ConsentManager";
+import { LazyChatBotProvider } from "@/components/LazyChatBotProvider";
 import {
   organizationStructuredData,
   websiteStructuredData,
@@ -145,6 +146,7 @@ export default function RootLayout({
         {children}
         <ConsentManager />
         <Footer/>
+        <LazyChatBotProvider />
         <Toaster />
       </body>
     </html>

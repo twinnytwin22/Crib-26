@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { verifyRecaptcha } from '@/lib/recaptcha';
 
 const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587');
@@ -12,13 +13,24 @@ const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'info@cribnetwork.io';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, company, companySize, budget, message } = body;
+    const { name, email, company, companySize, budget, message, recaptchaToken } = body;
 
     // Validate required fields
     if (!name || !email) {
       return NextResponse.json(
         { error: 'Name and email are required' },
         { status: 400 }
+      );
+    }
+
+    const verified = await verifyRecaptcha(
+      recaptchaToken,
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip')
+    );
+    if (!verified) {
+      return NextResponse.json(
+        { error: 'reCAPTCHA verification failed. Please try again.' },
+        { status: 403 }
       );
     }
 

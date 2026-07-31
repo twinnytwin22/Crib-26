@@ -23,6 +23,7 @@ Key capabilities:
 - Help internal teams manage website support from Google Chat™.
 - Keep visitor chat sessions scoped to the original browser session.
 - Store message history in CRIB Network's backend for continuity.
+- Let the authorized internal Workspace account check its own Google Chat™ availability with the `/status` command.
 
 CRIB Support is intended for CRIB Network-managed properties and authorized internal users. It does not expose Google Chat™ content publicly. Website visitors interact with the CRIB Network chat widget, while internal teams use Google Chat™ to review and respond to inquiries.
 
@@ -54,8 +55,8 @@ Internal CRIB Network team members who manage website support, sales inquiries, 
 
 ## Data Usage Summary
 
-CRIB Support processes website chat messages, visitor-provided contact email addresses, Google Chat™ thread identifiers, and message metadata needed to route conversations between the website chat widget and the configured Google Chat™ space. Data is used only to deliver, organize, and synchronize support conversations.
+CRIB Support processes website chat messages, visitor-provided contact email addresses, Google Chat™ thread identifiers, message metadata, and the authorized internal account's own availability status. Data is used only to deliver, organize, and synchronize support conversations.
 
 ## Permissions Explanation
 
-CRIB Support requires access to Google Chat™ so it can post website inquiries into a configured space and read matching thread replies for synchronization back to the website chat session. Access is limited to the configured Google Chat™ space where the app is installed.
+CRIB Support requires access to Google Chat™ so it can post website inquiries into a configured space and read matching thread replies for synchronization back to the website chat session. With explicit user authorization, it also reads only the connected internal account's own Google Chat™ availability to display it through the `/status` command. Access is limited to the configured Google Chat™ space and authorized account.

@@ -1,14 +1,17 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 import { trackMarketingEvent } from "@/lib/analytics";
+import RecaptchaCheckbox, { type RecaptchaCheckboxHandle } from "@/components/recaptcha/RecaptchaCheckbox";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<RecaptchaCheckboxHandle>(null);
 
   const handleStart = () => {
     if (hasStarted) return;
@@ -22,13 +25,19 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!recaptchaToken) {
+      toast.error("Please complete the reCAPTCHA check.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       });
       const data = await response.json();
 
@@ -41,6 +50,7 @@ export default function ContactForm() {
         setSent(true);
         toast.success("Message sent! We'll be in touch within one business day.");
         setFormData({ name: "", email: "", message: "" });
+        recaptchaRef.current?.reset();
       } else {
         trackMarketingEvent({
           event: "form_error",
@@ -95,6 +105,7 @@ export default function ContactForm() {
         aria-label="How can we help?"
         className="crib-input resize-y"
       />
+      <RecaptchaCheckbox ref={recaptchaRef} onChange={setRecaptchaToken} />
       <button type="submit" disabled={isSubmitting} className="crib-button-primary min-h-[46px] w-full text-[14px]">
         {isSubmitting ? "Sending..." : sent ? "Thanks — we'll be in touch" : "Request the call"}
       </button>
