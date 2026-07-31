@@ -36,6 +36,16 @@ type GoogleChatEvent = {
   };
 };
 
+const WELCOME_MESSAGE =
+  "Welcome to CRIB Support. Website visitor messages are delivered to this space in their own threads. Reply in the matching thread to send a response back to the visitor.";
+
+const HELP_MESSAGE =
+  "CRIB Support routes website chat inquiries into this space. When an inquiry arrives, reply in its thread to respond to that visitor. You can also contact support@cribnetwork.io for setup help.";
+
+function chatResponse(text: string) {
+  return NextResponse.json({ text });
+}
+
 function getEventMessage(body: GoogleChatEvent) {
   return body?.message ?? body?.chat?.messagePayload?.message;
 }
@@ -82,13 +92,6 @@ function isAuthorized(req: NextRequest) {
   return headerToken === INBOUND_SECRET || urlToken === INBOUND_SECRET;
 }
 
-function isPingEvent(body: GoogleChatEvent) {
-  if (body?.chat?.messagePayload?.message) {
-    return false;
-  }
-  const type = body?.type;
-  return type && type !== "MESSAGE";
-}
 
 export async function GET() {
   return NextResponse.json({ ok: true });
@@ -131,7 +134,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  if (isPingEvent(body)) {
+  if (body?.type === "ADDED_TO_SPACE") {
+    return chatResponse(WELCOME_MESSAGE);
+  }
+
+  // Google Chat sends lifecycle events that do not need a visible response.
+  if (body?.type && body.type !== "MESSAGE") {
     return NextResponse.json({ success: true });
   }
 
@@ -144,7 +152,9 @@ export async function POST(req: NextRequest) {
       reason: !messageText ? "no-text" : "bot-sender",
       senderType,
     });
-    return NextResponse.json({ success: true });
+    return !messageText && senderType !== "BOT"
+      ? chatResponse(HELP_MESSAGE)
+      : NextResponse.json({ success: true });
   }
 
   const threadName = eventMessage?.thread?.name ?? null;
@@ -152,6 +162,10 @@ export async function POST(req: NextRequest) {
     eventMessage?.thread?.threadKey || eventMessage?.threadKey || null;
   const senderDisplayName = eventMessage?.sender?.displayName ?? null;
   const senderEmail = eventMessage?.sender?.email ?? null;
+
+  if (/^\/?help\b/i.test(messageText)) {
+    return chatResponse(HELP_MESSAGE);
+  }
 
   try {
     logInbound("persisting", {
@@ -181,11 +195,12 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Failed to persist Google Chat reply", error);
-    return NextResponse.json(
-      { error: "Failed to store message" },
-      { status: 500 }
+    return chatResponse(
+      "Thanks — CRIB Support received your message, but it could not be synchronized to the website conversation. Please try again shortly or contact support@cribnetwork.io."
     );
   }
 
-  return NextResponse.json({ success: true });
+  return chatResponse(
+    "Thanks — your reply has been recorded. If this message belongs to a website visitor, send it in that visitor's thread so it can be delivered to the correct conversation."
+  );
 }
