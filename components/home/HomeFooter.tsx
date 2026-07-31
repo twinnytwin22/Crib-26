@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import FitCheckLink from "@/components/FitCheckLink";
 
 export default function HomeFooter() {
   return (
@@ -11,6 +12,7 @@ export default function HomeFooter() {
             <p className="max-w-[28em] text-[13px] leading-relaxed">
               Websites, customer data, reporting, and everyday tools—mapped, connected, and designed to be understood.
             </p>
+            <FitCheckLink surface="footer" className="mt-2 w-fit border border-white/40 px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.08em] text-white transition hover:border-white hover:bg-white hover:text-(--neutral-1000)" />
           </div>
           <div className="flex flex-wrap gap-16">
             <div className="flex flex-col gap-3 font-mono text-[10px] uppercase tracking-[0.08em]">

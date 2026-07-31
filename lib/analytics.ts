@@ -3,7 +3,7 @@
 export type MarketingEvent =
   | {
       event: "fit_check_opened";
-      surface: "primary_nav" | "mobile_nav";
+      surface: "primary_nav" | "mobile_nav" | "footer";
     }
   | {
       event: "generate_lead";

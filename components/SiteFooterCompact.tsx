@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import FitCheckLink from "@/components/FitCheckLink";
 
 export default function SiteFooterCompact() {
   return (
@@ -12,6 +13,7 @@ export default function SiteFooterCompact() {
         <div className="flex flex-wrap gap-6">
           <Link href="/services" className="transition hover:text-white">Services</Link>
           <Link href="/how-it-works" className="transition hover:text-white">How it works</Link>
+          <FitCheckLink surface="footer" className="transition hover:text-white" />
           <Link href="/blog" className="transition hover:text-white">Blog</Link>
         </div>
       </div>

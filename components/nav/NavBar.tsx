@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { trackMarketingEvent } from "@/lib/analytics";
+import FitCheckLink from "@/components/FitCheckLink";
 import { Menu, X } from "lucide-react";
 import SiteLogo from "../SiteLogo";
 
@@ -61,11 +61,7 @@ export default function NavBar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex text-white">
-          <Button asChild size="sm" variant="outline">
-            <Link href="/readiness-check" onClick={() => trackMarketingEvent({ event: "fit_check_opened", surface: "primary_nav" })}>
-              Fit Check
-            </Link>
-          </Button>
+          <FitCheckLink surface="primary_nav" className="h-9 border border-foreground bg-transparent px-3 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground transition-[background-color,color,border-color,transform] duration-150 hover:-translate-y-0.5 hover:bg-foreground hover:text-background" />
           <Button asChild size="sm" className="text-white">
             <Link href="/how-it-works" className="text-white">
               Book a Strategy Session
@@ -103,11 +99,7 @@ export default function NavBar() {
                   <span>{link.label}</span>
                 </Link>
               ))}
-              <Button asChild variant="outline" className="mt-2 w-full">
-                <Link href="/readiness-check" onClick={() => { trackMarketingEvent({ event: "fit_check_opened", surface: "mobile_nav" }); setIsOpen(false); }}>
-                  Fit Check
-                </Link>
-              </Button>
+              <FitCheckLink surface="mobile_nav" className="mt-2 h-10 w-full border border-foreground px-4" />
               <Button asChild className="mt-2 w-full">
                 <Link href="/how-it-works" onClick={() => setIsOpen(false)}>
                   Book a Strategy Session
