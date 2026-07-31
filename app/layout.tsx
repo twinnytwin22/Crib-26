@@ -5,7 +5,6 @@ import { Archivo, Bebas_Neue, IBM_Plex_Mono } from "next/font/google";
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { WebVitals } from '@/components/WebVitals'
 import Footer from "@/components/Footer";
-import { LazyChatBotProvider } from "@/components/LazyChatBotProvider";
 import { Toaster } from "@/components/ui/sonner";
 import NavBar from "@/components/nav/NavBar";
 import JsonLd from "@/components/JsonLd";
@@ -144,7 +143,6 @@ export default function RootLayout({
               <NavBar />
 
         {children}
-        <LazyChatBotProvider/>
         <ConsentManager />
         <Footer/>
         <Toaster />
