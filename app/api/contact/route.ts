@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
 
     const verified = await verifyRecaptcha(
       recaptchaToken,
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip')
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip'),
+      'contact_form'
     );
     if (!verified) {
       return NextResponse.json(

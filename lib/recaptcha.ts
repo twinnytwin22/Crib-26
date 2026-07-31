@@ -2,10 +2,12 @@ const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
 type RecaptchaResponse = {
   success?: boolean;
+  action?: string;
+  score?: number;
 };
 
 /** Verify a reCAPTCHA v2 checkbox token without exposing the secret to clients. */
-export async function verifyRecaptcha(token: unknown, remoteIp?: string | null) {
+export async function verifyRecaptcha(token: unknown, remoteIp?: string | null, expectedAction?: string) {
   const secret = process.env.RECAPTCHA_SECRET_KEY || process.env.RECAPTCHA_SECREET_KEY;
 
   if (!secret || typeof token !== "string" || !token.trim()) {
@@ -24,7 +26,8 @@ export async function verifyRecaptcha(token: unknown, remoteIp?: string | null) 
     });
 
     if (!response.ok) return false;
-    return Boolean((await response.json() as RecaptchaResponse).success);
+    const result = await response.json() as RecaptchaResponse;
+    return Boolean(result.success) && (!expectedAction || (result.action === expectedAction && (result.score ?? 0) >= 0.5));
   } catch {
     return false;
   }

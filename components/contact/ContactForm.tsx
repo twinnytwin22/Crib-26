@@ -10,7 +10,6 @@ export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const recaptchaRef = useRef<RecaptchaCheckboxHandle>(null);
 
   const handleStart = () => {
@@ -26,8 +25,9 @@ export default function ContactForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const recaptchaToken = await recaptchaRef.current?.execute();
     if (!recaptchaToken) {
-      toast.error("Please complete the reCAPTCHA check.");
+      toast.error("Spam protection is still loading. Please try again in a moment.");
       return;
     }
 
@@ -50,7 +50,6 @@ export default function ContactForm() {
         setSent(true);
         toast.success("Message sent! We'll be in touch within one business day.");
         setFormData({ name: "", email: "", message: "" });
-        recaptchaRef.current?.reset();
       } else {
         trackMarketingEvent({
           event: "form_error",
@@ -105,11 +104,11 @@ export default function ContactForm() {
         aria-label="How can we help?"
         className="crib-input resize-y"
       />
-      <RecaptchaCheckbox ref={recaptchaRef} onChange={setRecaptchaToken} />
+      <RecaptchaCheckbox ref={recaptchaRef} />
       <button type="submit" disabled={isSubmitting} className="crib-button-primary min-h-[46px] w-full text-[14px]">
         {isSubmitting ? "Sending..." : sent ? "Thanks — we'll be in touch" : "Request the call"}
       </button>
-      <p className="text-center font-mono text-[9px] uppercase tracking-[0.07em] text-(--text-3)">We reply within one business day.</p>
+      <p className="text-center font-mono text-[9px] uppercase tracking-[0.07em] text-(--text-3)">Protected by reCAPTCHA · We reply within one business day.</p>
     </form>
   );
 }
