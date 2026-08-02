@@ -10,17 +10,17 @@ import CtaSection from "@/components/home/CtaSection";
 import { SHARE_IMAGE, SHARE_IMAGE_URL } from "@/lib/share-image";
 
 export const metadata: Metadata = {
-  title: "CRIB Network — Systems, made clear.",
+  title: "CRIB Network — Web and Technology, Built for Growth.",
   description:
     "CRIB connects the customer journeys, data, and digital systems behind growth—then fixes the constraint that matters most.",
   openGraph: {
-    title: "CRIB Network — Systems, made clear.",
+    title: "CRIB Network — Web and Technology, Built for Growth.",
     description:
       "CRIB connects the customer journeys, data, and digital systems behind growth—then fixes the constraint that matters most.",
     images: [SHARE_IMAGE],
   },
   twitter: {
-    title: "CRIB Network — Systems, made clear.",
+    title: "CRIB Network — Web and Technology, Built for Growth.",
     description:
       "CRIB connects the customer journeys, data, and digital systems behind growth—then fixes the constraint that matters most.",
     images: [SHARE_IMAGE_URL],
