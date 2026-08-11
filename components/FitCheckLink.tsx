@@ -12,7 +12,7 @@ type FitCheckLinkProps = {
 export default function FitCheckLink({ surface, className = "" }: FitCheckLinkProps) {
   return (
     <Link
-      href="/readiness-check"
+      href="/site-scan"
       onClick={() => trackMarketingEvent({ event: "fit_check_opened", surface })}
       className={`group inline-flex items-center justify-center gap-1.5 ${className}`}
     >

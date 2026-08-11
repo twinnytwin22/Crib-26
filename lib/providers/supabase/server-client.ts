@@ -18,7 +18,7 @@ export function getSupabaseServerClient(): SupabaseClient | null {
 
   const supabaseUrl =
     getEnv("SUPABASE_URL") ?? getEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const serviceRoleKey = getEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const serviceRoleKey = getEnv("SUPABASE_DEFAULT_SECRET");
 
   if (!supabaseUrl || !serviceRoleKey) {
     console.warn(

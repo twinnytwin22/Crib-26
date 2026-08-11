@@ -29,6 +29,7 @@ const publicAssetCacheHeaders = [
 
 const cachedPublicAssets = [
   "/og.png",
+  "/site-scan-og-image.png",
   "/brand-graphics/:path*",
   "/flowr-bg.jpg",
   "/wall-bg.jpg",
@@ -79,6 +80,15 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/readiness-check",
+        destination: "/site-scan",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
