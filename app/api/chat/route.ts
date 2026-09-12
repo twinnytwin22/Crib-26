@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 import {
   recordVisitorMessage,
   type RecordVisitorMessageResult,
@@ -18,6 +17,7 @@ import {
   GOOGLE_CHAT_SPACE,
   GOOGLE_CHAT_WEBHOOK_URL,
 } from "@/lib/google/chat-api";
+import * as nodemailer from "nodemailer";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
