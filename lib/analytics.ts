@@ -1,5 +1,7 @@
 "use client";
 
+import posthog from "posthog-js";
+
 export type MarketingEvent =
   | {
       event: "fit_check_opened";
@@ -68,4 +70,9 @@ export function trackMarketingEvent(event: MarketingEvent) {
 
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push(event);
+
+  if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
+    const { event: eventName, ...properties } = event;
+    posthog.capture(eventName, properties);
+  }
 }
