@@ -98,7 +98,7 @@
     "Only Human Thread Replies": { "main": [[{ "node": "Forward Reply to CRIB", "type": "main", "index": 0 }], [{ "node": "Respond to Google Chat", "type": "main", "index": 0 }]] },
     "Forward Reply to CRIB": { "main": [[{ "node": "Respond to Google Chat", "type": "main", "index": 0 }]] }
   },
-  "active": false,
+  "active": true,
   "settings": { "executionOrder": "v1" },
   "versionId": "crib-google-chat-reply-bridge-v1",
   "meta": { "templateCredsSetupCompleted": true },

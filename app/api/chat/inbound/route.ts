@@ -81,7 +81,10 @@ function isAuthorized(req: NextRequest) {
     return false;
   }
 
-  const headerToken = req.headers.get("x-crib-chat-bridge-secret");
+  const headerToken =
+    req.headers.get("x-crib-chat-bridge-secret") ||
+    req.headers.get("x-goog-chat-secret") ||
+    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
 
   if (!headerToken) {
     return false;
@@ -101,7 +104,11 @@ export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
     logInbound("unauthorized", {
       hasSecret: Boolean(INBOUND_SECRET),
-      hasBridgeSecretHeader: Boolean(req.headers.get("x-crib-chat-bridge-secret")),
+      hasBridgeSecretHeader: Boolean(
+        req.headers.get("x-crib-chat-bridge-secret") ||
+          req.headers.get("x-goog-chat-secret") ||
+          req.headers.get("authorization")
+      ),
     });
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
