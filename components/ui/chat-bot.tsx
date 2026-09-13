@@ -115,7 +115,9 @@ export function ChatBot({
   const knownMessageIds = useRef<Set<string>>(new Set(["welcome"]));
   const deliveredMessageCount = useRef(0);
   const hasTrackedLead = useRef(false);
+  const sessionStartPromise = useRef<Promise<void> | null>(null);
   const [sessionInfo, setSessionInfo] = useState<ChatSessionInfo | null>(null);
+  const [hasActiveSession, setHasActiveSession] = useState(false);
 
   const shouldCollectEmail = collectEmail || requireEmail;
   const emailIsValid = contactEmail
@@ -145,6 +147,45 @@ export function ChatBot({
     knownMessageIds.current.add(message.id);
     setMessages((prev) => [...prev, message]);
   }, []);
+
+  const startSession = useCallback(() => {
+    if (!onSendMessage || hasActiveSession) return Promise.resolve();
+    if (sessionStartPromise.current) return sessionStartPromise.current;
+
+    sessionStartPromise.current = fetch("/api/chat/session", { method: "POST" })
+      .then((response) => {
+        if (!response.ok) throw new Error("Unable to start chat session");
+        setHasActiveSession(true);
+      })
+      .catch((error) => {
+        console.error("Failed to start chat session", error);
+      })
+      .finally(() => {
+        sessionStartPromise.current = null;
+      });
+
+    return sessionStartPromise.current;
+  }, [hasActiveSession, onSendMessage]);
+
+  const endSession = useCallback(async () => {
+    try {
+      await fetch("/api/chat/session", { method: "DELETE" });
+    } catch (error) {
+      console.error("Failed to end chat session", error);
+    } finally {
+      setHasActiveSession(false);
+      setSessionInfo(null);
+      knownMessageIds.current = new Set(["welcome"]);
+      setMessages([
+        {
+          id: "welcome",
+          content: welcomeMessage,
+          sender: "bot",
+          timestamp: new Date(),
+        },
+      ]);
+    }
+  }, [welcomeMessage]);
 
   const fetchMessages = useCallback(
     async () => {
@@ -210,13 +251,6 @@ export function ChatBot({
       clearInterval(pollInterval);
     };
   }, [sessionInfo?.id, fetchMessages]);
-
-  useEffect(() => {
-    const initialFetch = window.setTimeout(() => {
-      void fetchMessages();
-    }, 0);
-    return () => window.clearTimeout(initialFetch);
-  }, [fetchMessages]);
 
   const ACKNOWLEDGEMENT_RESPONSE =
     "Thanks for reaching out! Our team just received your message and will follow up shortly.";
@@ -287,6 +321,7 @@ export function ChatBot({
     let sessionUpdate: ChatSessionInfo | null | undefined;
     let delivered = false;
     try {
+      await startSession();
       const botResponse = await generateBotResponse(currentInput, clientMessageId);
       botResponseContent = botResponse.reply || ACKNOWLEDGEMENT_RESPONSE;
       sessionUpdate = botResponse.session;
@@ -378,7 +413,10 @@ export function ChatBot({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 text-white hover:bg-white/15 hover:text-white"
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  void endSession();
+                  setIsOpen(false);
+                }}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -475,6 +513,7 @@ export function ChatBot({
         <div className="relative">
           <Button
             onClick={() => {
+              void startSession();
               setIsOpen(true);
               trackMarketingEvent({ event: "chat_open", chat_id: "sales_support" });
             }}

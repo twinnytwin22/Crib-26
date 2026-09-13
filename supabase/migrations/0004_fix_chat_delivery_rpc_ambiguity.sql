@@ -1,22 +1,6 @@
--- Makes chat writes idempotent and keeps a Google Chat thread bound to one
--- browser conversation. Apply after 0001 and 0002.
+-- Fixes the PL/pgSQL output-column ambiguity in migration 0003. This is a
+-- follow-up migration because 0003 may already be recorded as applied.
 
-alter table public.chat_messages
-  add column if not exists external_message_id text;
-
--- Null IDs are intentionally allowed for legacy messages. New website and
--- Google Chat messages always supply an immutable external ID.
-create unique index if not exists uq_chat_messages_external_message
-  on public.chat_messages (session_id, source, external_message_id);
-
--- A Chat thread must never resolve to more than one visitor session.
-create unique index if not exists uq_chat_sessions_google_thread_name
-  on public.chat_sessions (google_thread_name)
-  where google_thread_name is not null;
-
--- One transaction creates/updates the session and records the visitor message.
--- The service-role server client is the only caller; anonymous clients have no
--- table policies granting access.
 create or replace function public.record_visitor_chat_message(
   p_session_key text,
   p_message text,
@@ -80,21 +64,15 @@ begin
     session_id, role, source, content, email, metadata, external_message_id
   )
   values (
-    v_session.id,
-    'visitor',
-    p_source,
-    p_message,
-    nullif(lower(trim(p_email)), ''),
-    p_message_metadata,
-    p_client_message_id
+    v_session.id, 'visitor', p_source, p_message,
+    nullif(lower(trim(p_email)), ''), p_message_metadata, p_client_message_id
   )
   on conflict (session_id, source, external_message_id) do nothing
   returning id into v_message_id;
 
   v_inserted := v_message_id is not null;
-
   if v_message_id is null then
-    select id into v_message_id
+    select chat_message.id into v_message_id
     from public.chat_messages as chat_message
     where chat_message.session_id = v_session.id
       and chat_message.source = p_source

@@ -32,3 +32,15 @@ export function setChatSessionCookie(response: NextResponse, token: string) {
     maxAge: CHAT_SESSION_COOKIE_MAX_AGE,
   });
 }
+
+export function clearChatSessionCookie(response: NextResponse) {
+  response.cookies.set({
+    name: CHAT_SESSION_COOKIE,
+    value: "",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 0,
+  });
+}
