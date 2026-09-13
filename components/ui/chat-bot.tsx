@@ -48,7 +48,8 @@ export interface ChatBotProps {
   /** Custom function to handle sending messages - for backend integration */
   onSendMessage?: (
     message: string,
-    email?: string
+    email?: string,
+    clientMessageId?: string
   ) => Promise<ChatSendHandlerResult>;
   /** Mock responses for demo purposes */
   mockResponses?: { trigger: string; response: string }[];
@@ -107,6 +108,7 @@ export function ChatBot({
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const sendInFlight = useRef(false);
   const [contactEmail, setContactEmail] = useState(initialEmail);
   const [emailTouched, setEmailTouched] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -220,14 +222,15 @@ export function ChatBot({
     "Thanks for reaching out! Our team just received your message and will follow up shortly.";
 
   const generateBotResponse = async (
-    userMessage: string
+    userMessage: string,
+    clientMessageId: string
   ): Promise<{ reply: string; session?: ChatSessionInfo | null; delivered?: boolean }> => {
     const trimmedMessage = userMessage.trim();
 
     // If custom onSendMessage handler is provided, use it
     if (onSendMessage) {
       const emailPayload = shouldCollectEmail ? contactEmail.trim() || undefined : undefined;
-      const result = await onSendMessage(trimmedMessage, emailPayload);
+      const result = await onSendMessage(trimmedMessage, emailPayload, clientMessageId);
 
       if (typeof result === "string") {
         return { reply: result };
@@ -258,6 +261,7 @@ export function ChatBot({
   };
 
   const handleSendMessage = async () => {
+    if (sendInFlight.current) return;
     const currentInput = inputValue.trim();
     if (!currentInput) return;
 
@@ -266,8 +270,9 @@ export function ChatBot({
       return;
     }
 
+    const clientMessageId = crypto.randomUUID();
     const userMessage: ChatMessage = {
-      id: Date.now().toString(),
+      id: clientMessageId,
       content: currentInput,
       sender: "user",
       timestamp: new Date(),
@@ -276,15 +281,13 @@ export function ChatBot({
     appendMessage(userMessage);
     setInputValue("");
     setIsTyping(true);
-
-    // Simulate typing delay
-    await new Promise((resolve) => setTimeout(resolve, 500 + Math.random() * 1000));
+    sendInFlight.current = true;
 
     let botResponseContent: string;
     let sessionUpdate: ChatSessionInfo | null | undefined;
     let delivered = false;
     try {
-      const botResponse = await generateBotResponse(currentInput);
+      const botResponse = await generateBotResponse(currentInput, clientMessageId);
       botResponseContent = botResponse.reply || ACKNOWLEDGEMENT_RESPONSE;
       sessionUpdate = botResponse.session;
       delivered = botResponse.delivered === true;
@@ -324,6 +327,7 @@ export function ChatBot({
     };
 
     setIsTyping(false);
+    sendInFlight.current = false;
     appendMessage(botMessage);
   };
 
@@ -454,7 +458,7 @@ export function ChatBot({
                   <Button
                     onClick={handleSendMessage}
                     size="icon"
-                    disabled={!canSend}
+                    disabled={!canSend || isTyping}
                     className="text-white"
                   >
                     <Send className="h-4 w-4" />

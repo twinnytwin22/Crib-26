@@ -8,6 +8,8 @@ import { syncGoogleChatThreadReplies } from "@/lib/google/chat-thread-sync";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+const GOOGLE_RECONCILIATION_ENABLED =
+  process.env.CHAT_GOOGLE_RECONCILIATION_ENABLED === "true";
 
 // POST-REVIEW: Availability should be served by a dedicated, short-cached
 // user-OAuth route; do not couple presence failures to durable message sync.
@@ -30,7 +32,12 @@ export async function GET(req: NextRequest) {
       return privateJson({ success: true, session: null, messages: [] });
     }
 
-    await syncGoogleChatThreadReplies(sessionKey);
+    // n8n is the primary inbound path. Listing Google Chat on every visitor
+    // poll is expensive and races the push path, so it is opt-in only for a
+    // short reconciliation window during an incident.
+    if (GOOGLE_RECONCILIATION_ENABLED) {
+      await syncGoogleChatThreadReplies(sessionKey);
+    }
 
     const sessionData = await getSessionWithMessages(sessionKey);
 

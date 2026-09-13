@@ -128,14 +128,19 @@ export async function syncGoogleChatThreadReplies(sessionKey: string) {
   );
 
   for (const reply of replies) {
+    if (!reply.name) {
+      console.warn("Skipping Google Chat reply without a message name");
+      continue;
+    }
     await recordAgentMessage({
       message: reply.text!.trim(),
+      googleMessageName: reply.name,
       threadName: reply.thread?.name ?? threadName,
       threadKey: sessionKey,
       senderDisplayName: reply.sender?.displayName ?? null,
       senderEmail: reply.sender?.email ?? null,
       messageMetadata: {
-        google_message_name: reply.name ?? null,
+        google_message_name: reply.name,
         google_create_time: reply.createTime ?? null,
         sync_source: "google_chat_messages_list",
       },

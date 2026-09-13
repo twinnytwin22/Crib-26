@@ -66,15 +66,45 @@ function isValidEmail(value?: string) {
   return /[^\s@]+@[^\s@]+\.[^\s@]+/.test(value.trim());
 }
 
+function isValidClientMessageId(value?: string) {
+  return Boolean(
+    value &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        value
+      )
+  );
+}
+
+function escapeHtml(value: string) {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const message = typeof body.message === "string" ? body.message.trim() : "";
     const email = typeof body.email === "string" ? body.email.trim() : "";
+    const clientMessageId =
+      typeof body.clientMessageId === "string" ? body.clientMessageId.trim() : "";
 
     if (!message) {
       return privateJson(
         { error: "Message is required" },
+        { status: 400 }
+      );
+    }
+    if (message.length > 4_000 || !isValidClientMessageId(clientMessageId)) {
+      return privateJson(
+        { error: "A valid message ID and a message under 4,000 characters are required" },
         { status: 400 }
       );
     }
@@ -86,20 +116,37 @@ export async function POST(req: NextRequest) {
     const shouldSetSessionCookie = !existingSessionToken;
 
     let sessionRecord: RecordVisitorMessageResult | null | undefined = null;
+    let rateLimited = false;
     try {
       sessionRecord = await recordVisitorMessage({
         email,
         message,
+        clientMessageId,
         visitorIdentifier,
         source: "web",
       });
     } catch (storageError) {
       console.error("Failed to persist chat message", storageError);
+      rateLimited =
+        storageError instanceof Error &&
+        storageError.message.toLowerCase().includes("rate limit");
+    }
+
+    if (!sessionRecord?.sessionId || !sessionRecord.sessionKey || !sessionRecord.messageId) {
+      return privateJson(
+        {
+          error: rateLimited
+            ? "You are sending messages too quickly. Please wait a moment."
+            : "Chat is temporarily unavailable. Please try again.",
+        },
+        { status: rateLimited ? 429 : 503 }
+      );
     }
 
     let sentToGoogleChat = false;
+    let sentToEmail = false;
 
-    if (GOOGLE_CHAT_SPACE) {
+    if (sessionRecord.inserted && GOOGLE_CHAT_SPACE) {
       try {
         const accessToken = await getChatWriteAccessToken();
 
@@ -179,7 +226,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (!sentToGoogleChat && GOOGLE_CHAT_WEBHOOK_URL) {
+    if (sessionRecord.inserted && !sentToGoogleChat && GOOGLE_CHAT_WEBHOOK_URL) {
       try {
         const details = [
           "?? *New Website Chat*",
@@ -241,7 +288,7 @@ export async function POST(req: NextRequest) {
       console.warn("Google Chat delivery is not configured or failed.");
     }
 
-    if (SMTP_USER && SMTP_PASS && CHAT_FORWARD_EMAIL) {
+    if (sessionRecord.inserted && SMTP_USER && SMTP_PASS && CHAT_FORWARD_EMAIL) {
       try {
         const transport = getTransporter();
         if (!transport) {
@@ -253,10 +300,10 @@ export async function POST(req: NextRequest) {
           <html>
             <body style="font-family: Arial, sans-serif;">
               <h2>New Website Chat</h2>
-              <p><strong>From:</strong> ${previewEmail}</p>
+              <p><strong>From:</strong> ${escapeHtml(previewEmail)}</p>
               <p><strong>Time:</strong> ${timestamp}</p>
               <p><strong>Message:</strong></p>
-              <p style="white-space: pre-wrap;">${message}</p>
+              <p style="white-space: pre-wrap;">${escapeHtml(message)}</p>
             </body>
           </html>
         `;
@@ -271,6 +318,7 @@ export async function POST(req: NextRequest) {
           replyTo: isValidEmail(email) ? email : undefined,
           html: emailHtml,
         });
+        sentToEmail = true;
       } catch (emailError) {
         console.error("Failed to send chat notification email", emailError);
       }
@@ -278,9 +326,12 @@ export async function POST(req: NextRequest) {
       console.warn("SMTP credentials or CHAT_FORWARD_EMAIL not configured.");
     }
 
-    const reply = isValidEmail(email)
-      ? `Thanks! We just sent your note to the team. We'll reach out at ${email}.`
-      : "Thanks! Our team just received your message and will follow up shortly.";
+    const forwarded = sentToGoogleChat || sentToEmail;
+    const reply = forwarded
+      ? isValidEmail(email)
+        ? `Thanks! We sent your note to the team. We'll reach out at ${email}.`
+        : "Thanks! Our team received your message and will follow up shortly."
+      : "Thanks! We received your message, but the support relay is temporarily unavailable. Please try again shortly.";
 
     const response = privateJson({
       success: true,
@@ -290,6 +341,13 @@ export async function POST(req: NextRequest) {
             id: sessionRecord.sessionId,
           }
         : undefined,
+      delivery: {
+        persisted: true,
+        duplicate: sessionRecord.inserted === false,
+        forwarded,
+        googleChat: sentToGoogleChat,
+        email: sentToEmail,
+      },
     });
     if (shouldSetSessionCookie && sessionRecord?.sessionKey) {
       setChatSessionCookie(response, sessionRecord.sessionKey);

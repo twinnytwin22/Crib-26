@@ -25,6 +25,7 @@ interface ChatMessageRecord {
 export interface RecordVisitorMessageOptions {
   email?: string;
   message: string;
+  clientMessageId: string;
   visitorIdentifier?: string;
   threadName?: string | null;
   source?: ChatMessageSource;
@@ -36,10 +37,12 @@ export interface RecordVisitorMessageResult {
   sessionId?: string;
   sessionKey?: string;
   messageId?: string;
+  inserted?: boolean;
 }
 
 export interface RecordAgentMessageOptions {
   message: string;
+  googleMessageName: string;
   threadName?: string | null;
   threadKey?: string | null;
   senderDisplayName?: string | null;
@@ -87,35 +90,6 @@ function preview(message: string) {
   return message.slice(0, MAX_PREVIEW_LENGTH);
 }
 
-async function upsertSessionFromVisitor(
-  supabase: SupabaseClient,
-  options: RecordVisitorMessageOptions,
-  sessionKey: string,
-  normalizedEmail?: string
-) {
-  const sessionPayload: Record<string, unknown> = {
-    session_key: sessionKey,
-    visitor_email: normalizedEmail ?? null,
-    last_message_at: nowISO(),
-    last_message_preview: preview(options.message),
-    updated_at: nowISO(),
-  };
-
-  if (options.threadName) {
-    sessionPayload.google_thread_name = options.threadName;
-  }
-
-  if (options.sessionMetadata) {
-    sessionPayload.metadata = options.sessionMetadata;
-  }
-
-  return supabase
-    .from("chat_sessions")
-    .upsert(sessionPayload, { onConflict: "session_key" })
-    .select("id, session_key, google_thread_name")
-    .single();
-}
-
 async function findSessionByKey(sessionKey?: string | null) {
   const supabase = getSupabaseServerClient();
   if (!supabase || !sessionKey) return { supabase, session: null } as const;
@@ -151,7 +125,8 @@ async function insertMessage(
   content: string,
   source: ChatMessageSource,
   metadata: Record<string, unknown> | null,
-  email?: string | null
+  email?: string | null,
+  externalMessageId?: string | null
 ) {
   return supabase
     .from("chat_messages")
@@ -162,29 +137,31 @@ async function insertMessage(
       content,
       email: email ?? null,
       metadata,
+      external_message_id: externalMessageId ?? null,
       created_at: nowISO(),
     })
     .select("id")
     .single();
 }
 
-async function googleMessageAlreadyStored(
+async function externalMessageAlreadyStored(
   supabase: SupabaseClient,
   sessionId: string,
-  googleMessageName?: string | null
+  source: ChatMessageSource,
+  externalMessageId?: string | null
 ) {
-  if (!googleMessageName) return false;
+  if (!externalMessageId) return false;
 
   const { data, error } = await supabase
     .from("chat_messages")
     .select("id")
     .eq("session_id", sessionId)
-    .eq("source", "google_chat")
-    .contains("metadata", { google_message_name: googleMessageName })
+    .eq("source", source)
+    .eq("external_message_id", externalMessageId)
     .maybeSingle();
 
   if (error) {
-    console.error("Failed to check existing Google Chat message", error);
+    console.error("Failed to check existing chat message", error);
     return false;
   }
 
@@ -207,40 +184,31 @@ export async function recordVisitorMessage(
     return undefined;
   }
 
-  const { data: session, error: sessionError } = await upsertSessionFromVisitor(
-    supabase,
-    options,
-    sessionKey,
-    normalizedEmail
-  );
+  const { data, error } = await supabase.rpc("record_visitor_chat_message", {
+    p_session_key: sessionKey,
+    p_message: options.message,
+    p_client_message_id: options.clientMessageId,
+    p_email: normalizedEmail ?? null,
+    p_source: options.source || "web",
+    p_session_metadata: options.sessionMetadata ?? null,
+    p_message_metadata: options.messageMetadata ?? null,
+  });
+  const result = Array.isArray(data) ? data[0] : data;
 
-  if (sessionError || !session) {
-    console.error("Failed to upsert chat session", sessionError);
+  if (error) {
+    console.error("Failed to persist visitor chat message", error);
+    throw new Error(error.message);
+  }
+  if (!result?.session_id) {
+    console.error("Visitor chat persistence returned no session");
     return undefined;
   }
 
-  const { data: message, error: messageError } = await insertMessage(
-    supabase,
-    session.id,
-    "visitor",
-    options.message,
-    options.source || "web",
-    options.messageMetadata ?? null,
-    normalizedEmail ?? null
-  );
-
-  if (messageError || !message) {
-    console.error("Failed to record chat message", messageError);
-    return {
-      sessionId: session.id,
-      sessionKey: session.session_key,
-    };
-  }
-
   return {
-    sessionId: session.id,
-    sessionKey: session.session_key,
-    messageId: message.id,
+    sessionId: result.session_id,
+    sessionKey: result.session_key,
+    messageId: result.message_id,
+    inserted: result.inserted === true,
   };
 }
 
@@ -265,31 +233,19 @@ export async function recordAgentMessage(
     session = lookup.session;
   }
 
-  if (!session && options.threadKey) {
-    const { data, error } = await supabase
-      .from("chat_sessions")
-      .insert({
-        session_key: options.threadKey,
-        google_thread_name: options.threadName ?? null,
-        last_message_at: nowISO(),
-        last_message_preview: preview(options.message),
-        created_at: nowISO(),
-        updated_at: nowISO(),
-      })
-      .select("id, session_key, google_thread_name")
-      .single();
-
-    if (error || !data) {
-      throw error ?? new Error("Unable to create chat session for agent reply");
-    }
-    session = data;
-  }
-
   if (!session) {
-    throw new Error("Unable to map agent reply to a chat session");
+    throw new Error("Inbound reply does not match an existing chat session");
   }
 
-  await supabase
+  if (
+    session.google_thread_name &&
+    options.threadName &&
+    session.google_thread_name !== options.threadName
+  ) {
+    throw new Error("Inbound reply thread does not match the session binding");
+  }
+
+  const { error: threadUpdateError } = await supabase
     .from("chat_sessions")
     .update({
       google_thread_name: options.threadName ?? session.google_thread_name ?? null,
@@ -299,17 +255,24 @@ export async function recordAgentMessage(
     })
     .eq("id", session.id);
 
+  if (threadUpdateError) {
+    throw threadUpdateError;
+  }
+
   const metadata: Record<string, unknown> = {
     sender_display_name: options.senderDisplayName ?? null,
     sender_email: options.senderEmail ?? null,
     ...(options.messageMetadata ?? {}),
   };
 
-  const googleMessageName =
-    typeof metadata.google_message_name === "string"
-      ? metadata.google_message_name
-      : null;
-  if (await googleMessageAlreadyStored(supabase, session.id, googleMessageName)) {
+  if (
+    await externalMessageAlreadyStored(
+      supabase,
+      session.id,
+      "google_chat",
+      options.googleMessageName
+    )
+  ) {
     return null;
   }
 
@@ -320,7 +283,8 @@ export async function recordAgentMessage(
     options.message,
     "google_chat",
     metadata,
-    options.senderEmail ?? null
+    options.senderEmail ?? null,
+    options.googleMessageName
   );
 }
 

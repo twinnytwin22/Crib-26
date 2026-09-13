@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { recordAgentMessage } from "@/lib/providers/supabase/chat-storage";
 import {
   formatAvailability,
@@ -12,6 +13,7 @@ const INBOUND_SECRET = process.env.GOOGLE_CHAT_INBOUND_SECRET;
 type GoogleChatEvent = {
   type?: string;
   message?: {
+    name?: string;
     text?: string;
     thread?: {
       name?: string;
@@ -79,21 +81,15 @@ function isAuthorized(req: NextRequest) {
     return false;
   }
 
-  const headerToken =
-    req.headers.get("x-goog-chat-secret") || req.headers.get("authorization");
-  const urlToken =
-    req.nextUrl.searchParams.get("secret") ||
-    req.nextUrl.searchParams.get("token");
+  const headerToken = req.headers.get("x-crib-chat-bridge-secret");
 
-  if (!headerToken && !urlToken) {
+  if (!headerToken) {
     return false;
   }
 
-  if (headerToken?.startsWith("Bearer ")) {
-    return headerToken.slice(7) === INBOUND_SECRET;
-  }
-
-  return headerToken === INBOUND_SECRET || urlToken === INBOUND_SECRET;
+  const provided = Buffer.from(headerToken);
+  const expected = Buffer.from(INBOUND_SECRET);
+  return provided.length === expected.length && timingSafeEqual(provided, expected);
 }
 
 
@@ -105,14 +101,7 @@ export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
     logInbound("unauthorized", {
       hasSecret: Boolean(INBOUND_SECRET),
-      hasAuthorizationHeader: Boolean(req.headers.get("authorization")),
-      hasGoogleChatSecretHeader: Boolean(
-        req.headers.get("x-goog-chat-secret")
-      ),
-      hasUrlToken: Boolean(
-        req.nextUrl.searchParams.get("secret") ||
-          req.nextUrl.searchParams.get("token")
-      ),
+      hasBridgeSecretHeader: Boolean(req.headers.get("x-crib-chat-bridge-secret")),
     });
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -164,6 +153,7 @@ export async function POST(req: NextRequest) {
   const threadName = eventMessage?.thread?.name ?? null;
   const threadKey =
     eventMessage?.thread?.threadKey || eventMessage?.threadKey || null;
+  const googleMessageName = eventMessage?.name?.trim();
   const senderDisplayName = eventMessage?.sender?.displayName ?? null;
   const senderEmail = eventMessage?.sender?.email ?? null;
 
@@ -175,21 +165,27 @@ export async function POST(req: NextRequest) {
     return chatResponse(formatAvailability(await getOwnerChatAvailability()));
   }
 
+  if (!googleMessageName) {
+    console.error("Inbound Google Chat reply is missing its immutable message name");
+    return NextResponse.json({ error: "Missing Google Chat message name" }, { status: 400 });
+  }
+
   try {
     logInbound("persisting", {
-      messageText,
       threadName,
       threadKey,
       senderDisplayName,
-      senderEmail,
+      hasMessage: Boolean(messageText),
     });
     await recordAgentMessage({
       message: messageText,
+      googleMessageName,
       threadName,
       threadKey,
       senderDisplayName,
       senderEmail,
       messageMetadata: {
+        google_message_name: googleMessageName,
         space: getEventSpaceName(body),
         raw_event_type:
           body?.type ??
@@ -199,7 +195,7 @@ export async function POST(req: NextRequest) {
     logInbound("persisted", {
       threadName,
       threadKey,
-      senderEmail,
+      hasGoogleMessageName: Boolean(googleMessageName),
     });
   } catch (error) {
     console.error("Failed to persist Google Chat reply", error);

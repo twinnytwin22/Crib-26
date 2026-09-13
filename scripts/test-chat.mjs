@@ -4,6 +4,8 @@
  * Run with: node scripts/test-chat.mjs
  */
 
+import { randomUUID } from 'node:crypto';
+
 const SITE_URL = process.env.SITE_URL || 'http://localhost:3000';
 const TEST_EMAIL = 'test@example.com';
 const TEST_MESSAGE = 'Hello from test script!';
@@ -18,6 +20,7 @@ async function testOutbound() {
       body: JSON.stringify({
         message: TEST_MESSAGE,
         email: TEST_EMAIL,
+        clientMessageId: randomUUID(),
       }),
     });
 
@@ -28,7 +31,7 @@ async function testOutbound() {
       return null;
     }
 
-    console.log('✅ Message sent successfully!');
+    console.log(data.delivery?.forwarded ? '✅ Message forwarded successfully!' : '⚠️ Message persisted but was not forwarded.');
     console.log('📋 Session info:', data.session);
     console.log('💬 Reply:', data.reply);
     

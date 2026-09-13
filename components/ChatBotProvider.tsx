@@ -25,7 +25,11 @@ export function ChatBotProvider({
   emailLabel,
   ...props
 }: ChatBotProviderProps) {
-  const sendToSupport = useCallback(async (message: string, email?: string) => {
+  const sendToSupport = useCallback(async (
+    message: string,
+    email?: string,
+    clientMessageId?: string
+  ) => {
     const trimmedMessage = message.trim();
     if (!trimmedMessage) {
       return "Please enter a message so we can help.";
@@ -39,7 +43,7 @@ export function ChatBotProvider({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: trimmedMessage, email }),
+        body: JSON.stringify({ message: trimmedMessage, email, clientMessageId }),
       });
 
       if (!response.ok) {
@@ -48,6 +52,9 @@ export function ChatBotProvider({
       }
 
       const data = await response.json();
+      if (!data.success || !data.delivery?.persisted) {
+        throw new Error(data.error || "Chat message was not accepted");
+      }
 
       const defaultReply = normalizedEmail
         ? `Thanks! We just sent your note to the team. We'll reach out at ${normalizedEmail}.`
@@ -56,7 +63,7 @@ export function ChatBotProvider({
       return {
         reply: data.reply || defaultReply,
         session: data.session as ChatSessionInfo | undefined,
-        delivered: true,
+        delivered: data.delivery.forwarded === true,
       };
     } catch (error) {
       console.error("Chat relay failed", error);

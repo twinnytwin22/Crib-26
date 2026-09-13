@@ -60,12 +60,20 @@ In APIs & Services > Google Chat API > Configuration:
 1. Set the app name, avatar, and description.
 2. Enable interactive features and **Join spaces and group conversations**.
 3. Choose **HTTP endpoint URL**.
-4. Set the endpoint to:
+4. Point Google Chat at the n8n production webhook, not directly at the
+   website inbound route. Place a gateway in front of that webhook which
+   validates Google's signed bearer token (issuer, audience, expiry, and
+   signature) before n8n accepts the event.
+5. In **Forward Reply to CRIB**, attach an encrypted **HTTP Header Auth**
+   credential named `CRIB inbound bridge secret` with header name
+   `x-crib-chat-bridge-secret` and value equal to the server-only
+   `GOOGLE_CHAT_INBOUND_SECRET`. The request URL is exactly:
 
-   `https://YOUR_DOMAIN/api/chat/inbound?secret=YOUR_RANDOM_INBOUND_SECRET`
+   `https://YOUR_DOMAIN/api/chat/inbound`
 
-5. Set the same random value as the server-only
-   `GOOGLE_CHAT_INBOUND_SECRET`.
+   Do not put this secret in a workflow expression, custom variable, query
+   string, execution data, or source control. n8n must be configured to retain
+   failed execution data and alert on this node's failures.
 6. During testing, restrict visibility to your Workspace user or a test group.
 7. Save the configuration.
 
@@ -161,6 +169,29 @@ Then verify in this order:
    interval, the reply should appear only in the first browser conversation.
 5. Submit the contact form and verify both the team notification and visitor
    confirmation email.
+
+## 8. Delivery integrity rollout
+
+Run `supabase/migrations/0003_chat_delivery_integrity.sql` before deploying
+the application changes. It adds immutable external message IDs, a unique
+Google-thread binding, and an atomic visitor-message RPC.
+
+Use the n8n bridge as the primary inbound path. The website's Google Chat list
+polling is a reconciliation fallback only; disable it after the bridge has been
+observed delivering and deduplicating replies in production. Do not enable both
+paths as primary delivery mechanisms.
+
+Production acceptance checks:
+
+1. Send the same `clientMessageId` twice. Only one database row, Google Chat
+   post, and notification must exist.
+2. Replay one Google event. Only one agent message must appear in the visitor
+   session.
+3. Send a reply for an unknown thread. It must be rejected; no new session may
+   be created.
+4. Temporarily invalidate the bridge credential. n8n must show a failed
+   execution and alert; the website must report the message as persisted but
+   not forwarded.
 
 The browser conversation cookie now has a rolling one-year lifetime. Supabase
 remains the durable source of truth. Clearing cookies or switching browsers
