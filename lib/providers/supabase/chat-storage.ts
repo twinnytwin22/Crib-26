@@ -90,6 +90,92 @@ function preview(message: string) {
   return message.slice(0, MAX_PREVIEW_LENGTH);
 }
 
+function isMissingVisitorMessageRpc(error: { code?: string; message?: string } | null) {
+  return (
+    error?.code === "PGRST202" ||
+    Boolean(error?.message?.includes("record_visitor_chat_message"))
+  );
+}
+
+/**
+ * Temporary compatibility path for deployments where the application update
+ * arrives before migration 0003. It preserves availability, but lacks the
+ * transaction/constraint guarantees supplied by the RPC and should disappear
+ * once every environment has the migration.
+ */
+async function recordVisitorMessageLegacy(
+  supabase: SupabaseClient,
+  options: RecordVisitorMessageOptions,
+  sessionKey: string,
+  normalizedEmail?: string
+): Promise<RecordVisitorMessageResult | undefined> {
+  const { data: session, error: sessionError } = await supabase
+    .from("chat_sessions")
+    .upsert(
+      {
+        session_key: sessionKey,
+        visitor_email: normalizedEmail ?? null,
+        last_message_at: nowISO(),
+        last_message_preview: preview(options.message),
+        updated_at: nowISO(),
+      },
+      { onConflict: "session_key" }
+    )
+    .select("id, session_key, google_thread_name")
+    .single();
+
+  if (sessionError || !session) {
+    throw sessionError ?? new Error("Unable to create chat session");
+  }
+
+  const clientMessageMetadata = {
+    ...(options.messageMetadata ?? {}),
+    client_message_id: options.clientMessageId,
+  };
+  const { data: existing } = await supabase
+    .from("chat_messages")
+    .select("id")
+    .eq("session_id", session.id)
+    .eq("source", options.source || "web")
+    .contains("metadata", { client_message_id: options.clientMessageId })
+    .maybeSingle();
+
+  if (existing) {
+    return {
+      sessionId: session.id,
+      sessionKey: session.session_key,
+      messageId: existing.id,
+      inserted: false,
+    };
+  }
+
+  const { data: message, error: messageError } = await supabase
+    .from("chat_messages")
+    .insert({
+      session_id: session.id,
+      role: "visitor",
+      source: options.source || "web",
+      content: options.message,
+      email: normalizedEmail ?? null,
+      metadata: clientMessageMetadata,
+      created_at: nowISO(),
+    })
+    .select("id")
+    .single();
+
+  if (messageError || !message) {
+    throw messageError ?? new Error("Unable to record chat message");
+  }
+
+  console.warn("Chat is using the pre-migration compatibility writer");
+  return {
+    sessionId: session.id,
+    sessionKey: session.session_key,
+    messageId: message.id,
+    inserted: true,
+  };
+}
+
 async function findSessionByKey(sessionKey?: string | null) {
   const supabase = getSupabaseServerClient();
   if (!supabase || !sessionKey) return { supabase, session: null } as const;
@@ -195,6 +281,14 @@ export async function recordVisitorMessage(
   });
   const result = Array.isArray(data) ? data[0] : data;
 
+  if (error && isMissingVisitorMessageRpc(error)) {
+    return recordVisitorMessageLegacy(
+      supabase,
+      options,
+      sessionKey,
+      normalizedEmail
+    );
+  }
   if (error) {
     console.error("Failed to persist visitor chat message", error);
     throw new Error(error.message);
